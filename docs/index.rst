@@ -6,8 +6,9 @@ pybv
 for use with electrophysiology datasets stored in the
 `Brain Imaging Data Structure <https://bids.neuroimaging.io>`_.
 
-Information on the data format
-==============================
+About the BrainVision data format
+=================================
+
 BrainVision is the name of a file format commonly used for storing
 electrophysiology data. Originally, it was put forward by the
 company `Brain Products <https://www.brainproducts.com>`_, however the
