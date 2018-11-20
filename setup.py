@@ -1,13 +1,11 @@
 #! /usr/bin/env python
 #
-# Copyright (C) 2017-2018 The BIDS Community
+# Copyright (C) 2018 The BIDS Community
 
 import os
-from os import path as op
+from setuptools import setup, find_packages
 
-from setuptools import setup
-
-# get the version (don't import mne here, so dependencies are not needed)
+# get the version
 version = None
 with open(os.path.join('pybv', '__init__.py'), 'r') as fid:
     for line in (line.strip() for line in fid):
@@ -30,15 +28,6 @@ DOWNLOAD_URL = 'https://github.com/bids-standard/pybv'
 VERSION = version
 
 
-def package_tree(pkgroot):
-    """Get the submodule list."""
-    # Adapted from MNE-Python
-    path = os.path.dirname(__file__)
-    subdirs = [os.path.relpath(i[0], path).replace(os.path.sep, '.')
-               for i in os.walk(os.path.join(path, pkgroot))
-               if '__init__.py' in i[2]]
-    return sorted(subdirs)
-
 if __name__ == "__main__":
     if os.path.exists('MANIFEST'):
         os.remove('MANIFEST')
@@ -53,6 +42,7 @@ if __name__ == "__main__":
           version=VERSION,
           download_url=DOWNLOAD_URL,
           long_description=open('README.md').read(),
+          long_description_content_type='text/markdown',
           zip_safe=True,  # the package can run out of an .egg file
           classifiers=['Intended Audience :: Science/Research',
                        'Intended Audience :: Developers',
@@ -65,5 +55,12 @@ if __name__ == "__main__":
                        'Operating System :: Unix',
                        'Operating System :: MacOS'],
           platforms='any',
-          packages=package_tree('pybv'),
-    )
+          keywords='Brain Products BrainVision vhdr vmrk eeg',
+          packages=find_packages(),
+          install_requires=['numpy'],
+          project_urls={
+            'Documentation': 'https://pybv.readthedocs.io',
+            'Bug Reports': 'https://github.com/bids-standard/pybv/issues',
+            'Source': 'https://github.com/bids-standard/pybv'
+            }
+          )

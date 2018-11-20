@@ -5,4 +5,4 @@
 
 __version__ = '0.0.0'
 
-from .io import (write_brainvision, )
+from .io import (write_brainvision, )  # noqa: F401

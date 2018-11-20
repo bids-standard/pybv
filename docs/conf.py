@@ -19,7 +19,6 @@
 #
 import os
 import sys
-from datetime import date
 import pybv
 curdir = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(curdir, '..', 'pybv')))
@@ -160,9 +159,6 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'pybv', 'pybv Documentation',
-     author, 'pybv', 'One line description of project.',
+     author, 'pybv', 'I/O for the BrainVision data format.',
      'Miscellaneous'),
 ]
-
-
-
