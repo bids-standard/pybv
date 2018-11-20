@@ -6,8 +6,32 @@ pybv
 for use with electrophysiology datasets stored in the
 `Brain Imaging Data Structure <https://bids.neuroimaging.io>`_.
 
-You can find more information on the BrainVision data format on the
-`WIKI page of the Fieldtrip Toolbox <http://www.fieldtriptoolbox.org/getting_started/brainvision>`_
+Information on the data format
+==============================
+BrainVision is the name of a file format commonly used for storing
+electrophysiology data. Originally, it was put forward by the
+company `Brain Products <https://www.brainproducts.com>`_, however the
+simplicity of the format has allowed for a diversity of tools reading from and
+writing to the format.
+
+The format consists of three separate files:
+
+1. A text header file (``.vhdr``) containing meta data
+2. A text marker file (``.vmrk``) containing information about events in the
+   data
+3. A binary data file (``.eeg``) containing the voltage values of the EEG
+
+Both text files are based on the
+`Microsoft Windows INI format <https://en.wikipedia.org/wiki/INI_file)>`_
+consisting of:
+
+- sections marked as ``[square brackets]``
+- comments marked as ``; comment``
+- key-value pairs marked as ``key=value``
+
+A documentation for core BrainVision file format is provided by Brain Products.
+You can `view the specification here <http://www.fieldtriptoolbox.org/_media/getting_started/brainvisioncorefileformat_1.0_2018-08-02.pdf>`_
+.
 
 Usage
 =====
