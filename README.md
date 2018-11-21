@@ -13,7 +13,8 @@ feedback and ideas on how to improve either of these is more than welcome!
 
 ## Acknowledgements
 
-This package was originally adapted from [palday](https://github.com/palday)'s
+This package was originally adapted from
+[palday](https://palday.bitbucket.io/)'s
 [Philistine package](https://gitlab.com/palday/philistine). It copies much of
 the BrainVision exporting code, removes the dependence on MNE, and focuses the
 code around BrainVision I/O.

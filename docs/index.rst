@@ -34,6 +34,17 @@ A documentation for core BrainVision file format is provided by Brain Products.
 You can `view the specification here <http://www.fieldtriptoolbox.org/_media/getting_started/brainvisioncorefileformat_1.0_2018-08-02.pdf>`_
 .
 
+Installation
+============
+Currently we recommend that you install MNE-Python for reading BrainVision
+data. See their instructions
+`here <https://www.martinos.org/mne/stable/install_mne_python.html>`_.
+
+After you have a working installation of MNE-Python, you can install ``pybv``
+through the following: Simply download the package using ``git clone`` or make
+use of the "Download ZIP" utility in Github. Then move to the package root and
+from the command line run ``pip install -e .``.
+
 Usage
 =====
 
