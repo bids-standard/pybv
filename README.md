@@ -1,6 +1,6 @@
 [![CircleCI](https://circleci.com/gh/bids-standard/pybv.svg?style=svg)](https://circleci.com/gh/bids-standard/pybv)
 
-# pyBV
+# pybv
 
 A lightweight I/O utility for the BrainVision data format, written in Python.
 
