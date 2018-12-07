@@ -1,6 +1,10 @@
 #! /usr/bin/env python
+
+# Authors: Philip Alday <phillip.alday@unisa.edu.au>
+#          Chris Holdgraf <choldgraf@berkeley.edu>
+#          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
 #
-# Copyright (C) 2018 The BIDS Community
+# License: BSD (3-clause)
 
 import os
 from setuptools import setup, find_packages
@@ -20,8 +24,8 @@ descr = """A lightweight I/O utility for the BrainVision data format."""
 
 DISTNAME = 'pybv'
 DESCRIPTION = descr
-MAINTAINER = 'The BIDS Community'
-MAINTAINER_EMAIL = 'TODO'
+MAINTAINER = 'Stefan Appelhoff'
+MAINTAINER_EMAIL = 'stefan.appelhoff@mailbox.org'
 URL = 'https://github.com/bids-standard/pybv'
 LICENSE = 'BSD (3-clause)'
 DOWNLOAD_URL = 'https://github.com/bids-standard/pybv'
@@ -57,7 +61,6 @@ if __name__ == "__main__":
           platforms='any',
           keywords='Brain Products BrainVision vhdr vmrk eeg',
           packages=find_packages(),
-          install_requires=['numpy'],
           project_urls={
             'Documentation': 'https://pybv.readthedocs.io',
             'Bug Reports': 'https://github.com/bids-standard/pybv/issues',

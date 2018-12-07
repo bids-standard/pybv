@@ -57,8 +57,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'pybv'
-copyright = '2018, the BIDS Community'
-author = 'The BIDS Community'
+copyright = '2018, pybv developers'
+author = 'pybv developers'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

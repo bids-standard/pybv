@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2018 The BIDS Community
-# License: BSD (3-clause)
 """BrainVision Writer tests."""
+
+# Authors: Philip Alday <phillip.alday@unisa.edu.au>
+#          Chris Holdgraf <choldgraf@berkeley.edu>
+#          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
+#
+# License: BSD (3-clause)
 
 import os
 import os.path as op
@@ -90,7 +94,7 @@ def test_bv_writer_oi_cycle():
     assert_allclose(events[:, 0], events_written[:, 0], 1)
     assert_array_equal(events[:, 1], events_written[:, 2])
     # Should be 2 unique event types
-    assert len(event_id) == 2  
+    assert len(event_id) == 2
 
     # data round-trip.
     assert_allclose(data, raw_written._data)
