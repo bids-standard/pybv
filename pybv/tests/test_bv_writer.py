@@ -32,9 +32,11 @@ event_times = np.array([1., 2., 3., 4.])
 events = np.column_stack([(event_times * sfreq).astype(int), [1, 1, 2, 2]])
 data = np.random.randn(n_chans, n_times)
 
+
 def _mktmpdir():
     """Create a temporary directory for testing writers."""
     return mkdtemp(prefix='pybv_tmp_')
+
 
 def test_bv_writer_events():
     """Test that all event options work without throwing an error."""
