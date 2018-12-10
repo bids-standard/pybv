@@ -1,4 +1,6 @@
 [![CircleCI](https://circleci.com/gh/bids-standard/pybv.svg?style=svg)](https://circleci.com/gh/bids-standard/pybv)
+[![Downloads](https://pepy.tech/badge/pybv)](https://pepy.tech/project/pybv)
+[![Documentation Status](https://readthedocs.org/projects/pybv/badge/?version=latest)](https://pybv.readthedocs.io/en/latest/?badge=latest)
 
 # pybv
 
