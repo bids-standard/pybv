@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2018 The BIDS Community
-# License: BSD (3-clause)
 """pybv: a lightweight BrainVision I/O tool"""
 
-__version__ = '0.0.0'
+# Authors: Philip Alday <phillip.alday@unisa.edu.au>
+#          Chris Holdgraf <choldgraf@berkeley.edu>
+#          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
+#
+# License: BSD (3-clause)
+
+__version__ = '0.0.1'
 
 from .io import (write_brainvision, )  # noqa: F401

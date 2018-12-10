@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2018 The BIDS Community
-# License: BSD (3-clause)
 """File I/O utilities for EEG data."""
+
+# Authors: Philip Alday <phillip.alday@unisa.edu.au>
+#          Chris Holdgraf <choldgraf@berkeley.edu>
+#          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
+#
+# License: BSD (3-clause)
 
 import codecs
 import os
@@ -19,8 +23,8 @@ supported_formats = {
 supported_orients = set(['multiplexed'])
 
 
-def write_brainvision(data, sfreq, ch_names, fname_base, folder_out, events=None,
-                      resolution=1e-7):
+def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
+                      events=None, resolution=1e-7):
     """Write raw data to BrainVision format.
 
     Parameters
@@ -41,13 +45,13 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out, events=None
         Events to write in the marker file. This array has two columns.
         The first column is the index of each event (corresponding to the
         "time" dimension of the data array). The second column is a number
-        associated with the "type" of event. 
+        associated with the "type" of event.
     resolution : float
         The resolution **in volts** in which you'd like the data to be stored.
         By default, this will be 1e-7, or .1 microvolts. Since data is stored
-        in microvolts, the data will be multiplied by the inverse of this factor,
-        and all decimals will be cut off after this. So, this number controls
-        the amount of round-trip resolution you want.
+        in microvolts, the data will be multiplied by the inverse of this
+        factor, and all decimals will be cut off after this. So, this number
+        controls the amount of round-trip resolution you want.
     """
     # Create output file names/paths
     if not op.isdir(folder_out):
@@ -68,10 +72,12 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out, events=None
 
     if len(data) != len(ch_names):
         raise ValueError("Number of channels in data ({}) does "
-                         "not match number of channel names ({})".format(len(data), len(ch_names)))
-    
+                         "not match number of channel names ({})"
+                         .format(len(data), len(ch_names)))
+
     if len(set(ch_names)) != len(ch_names):
-        raise ValueError("Channel names must be unique, found a repeated name.")
+        raise ValueError("Channel names must be unique,"
+                         " found a repeated name.")
 
     if not isinstance(sfreq, (int, float)):
         raise ValueError("sfreq must be one of (float | int)")
@@ -114,11 +120,13 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events):
         for ii, irow in enumerate(range(len(events)), start=2):
             i_ix = events[irow, 0]
             i_val = events[irow, 1]
-            print(r'Mk{}=Stimulus,{},{},1,0'.format(ii, tformat.format(i_val), i_ix), file=fout)
+            print(r'Mk{}=Stimulus,{},{},1,0'
+                  .format(ii, tformat.format(i_val), i_ix), file=fout)
 
 
 def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
-                     orientation='multiplexed', format='binary_float32', resolution=1e-7):
+                     orientation='multiplexed', format='binary_float32',
+                     resolution=1e-7):
     """Write BrainvVision header file."""
     fmt = format.lower()
 
@@ -162,12 +170,13 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
 
         print(r'[Channel Infos]', file=fout)
         print(r'; Each entry: Ch<Channel number>=<Name>,<Reference channel name>,', file=fout)  # noqa: E501
-        print(r';             <Resolution in microvolts>,<Future extensions..', file=fout)
+        print(r';             <Resolution in microvolts>,<Future extensions..', file=fout)  # noqa: E501
         print(r'; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
         print(r'; Commas in channel names are coded as "\1".', file=fout)
         resolution_in_microv = resolution / 1e-6
         for ii, ch in enumerate(ch_names, start=1):
-            print(r'Ch{}={},,{:0.1f}'.format(ii, ch, resolution_in_microv), file=fout)
+            print(r'Ch{}={},,{:0.1f}'
+                  .format(ii, ch, resolution_in_microv), file=fout)
 
         print(r'', file=fout)
         print(r'[Comment]', file=fout)
