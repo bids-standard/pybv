@@ -21,8 +21,14 @@ jobs:
             - ~/.cache/pip
       # Run tests
       - run:
-          name: Running tests
-          command: pytest
+          name: Running tests and coverage
+          command: |
+            pytest --cov
+      - run:
+          name: Upload coverage report to codecov CI
+          command: |
+            bash <(curl -s https://codecov.io/bash)
+
 
   build_docs:
     # This is the base environment that Circle will use

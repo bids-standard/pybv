@@ -1,4 +1,5 @@
 numpy
 mne
 pytest
+pytest-cov
 scipy
