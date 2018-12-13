@@ -1,61 +1,66 @@
 version: 2
 jobs:
   tests:
-    docker:
-      - image: circleci/python:3.6-stretch
-    steps:
-      - run: sudo apt-get update
-      - checkout
-      - run: echo "export PATH=~/.local/bin:$PATH" >> $BASH_ENV
-      # Restore cached files to speed things up
-      - restore_cache:
-          keys:
-            - cache-pip
-
-      # Install requirements and run tests
-      - run: pip install --user -r requirements.txt
-      - run: pip install --user .
-      - save_cache:
-          key: cache-pip
-          paths:
-            - ~/.cache/pip
-      # Run tests
-      - run:
-          name: Running tests and coverage
-          command: |
-            pytest --cov
-      - run:
-          name: Upload coverage report to codecov CI
-          command: |
-            bash <(curl -s https://codecov.io/bash)
-
-
-  build_docs:
     # This is the base environment that Circle will use
     docker:
       - image: circleci/python:3.6-stretch
     steps:
       - run: sudo apt-get update
       - checkout
-      - run: echo "export PATH=~/.local/bin:$PATH" >> $BASH_ENV
-      # Restore cached files to speed things up
-      - restore_cache:
-          keys:
-            - cache-pip
-      # Install the packages needed to build our documentation
-      # This will depend on your particular package!
-      - run: pip install --user -r docs/requirements.txt
-      - run: pip install --user .
+      # Using conda manager for python environment and packages
+      - run:
+          name: Install miniconda
+          command: |
+            wget -q http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O ~/miniconda.sh;
+            chmod +x ~/miniconda.sh;
+            ~/miniconda.sh -b -p ~/miniconda;
+            echo "export PATH=~/miniconda/bin:$PATH" >> $BASH_ENV;
+      # Setup the python environment
+      - run:
+          name: Setup Python environment
+          command: |
+            conda update --yes --quiet conda
+            conda create -n testenv --yes python=3.6
+            source activate testenv
+            pip install -r requirements.txt
+            python setup.py develop
+      # Run tests and upload coverage
+      - run:
+          name: Running tests and coverage + uploading it
+          command: |
+            source activate testenv
+            pytest --cov
+            bash <(curl -s https://codecov.io/bash)
 
-      # Cache some files for a speedup in subsequent builds
-      - save_cache:
-          key: cache-pip
-          paths:
-            - ~/.cache/pip
+  build_docs:
+    docker:
+      - image: circleci/python:3.6-stretch
+    steps:
+      - run: sudo apt-get update
+      - checkout
+      # Using conda manager for python environment and packages
+      - run:
+          name: Install miniconda
+          command: |
+            wget -q http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O ~/miniconda.sh;
+            chmod +x ~/miniconda.sh;
+            ~/miniconda.sh -b -p ~/miniconda;
+            echo "export PATH=~/miniconda/bin:$PATH" >> $BASH_ENV;
+      # Setup the python environment
+      - run:
+          name: Setup Python environment
+          command: |
+            conda update --yes --quiet conda
+            conda create -n testenv --yes python=3.6
+            source activate testenv
+            pip install -r requirements.txt
+            pip install -r docs/requirements.txt
+            python setup.py develop
       # Build the docs
       - run:
           name: Build docs to store
           command: |
+            source activate testenv
             cd docs
             make html
       # Tell Circle to store the documentation output in a folder that we can access later
