@@ -31,7 +31,7 @@ consisting of:
 - key-value pairs marked as ``key=value``
 
 A documentation for core BrainVision file format is provided by Brain Products.
-You can `view the specification here <http://www.fieldtriptoolbox.org/_media/getting_started/brainvisioncorefileformat_1.0_2018-08-02.pdf>`_
+You can `view the specification here <https://www.brainproducts.com/productdetails.php?id=21&tab=5>`_
 .
 
 Installation
