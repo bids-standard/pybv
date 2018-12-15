@@ -2,4 +2,5 @@ numpy
 mne
 pytest
 pytest-cov
+coverage
 scipy

@@ -41,15 +41,18 @@ data. See their instructions
 `here <https://www.martinos.org/mne/stable/install_mne_python.html>`_.
 
 After you have a working installation of MNE-Python, you can install ``pybv``
-through the following: Simply download the package using ``git clone`` or make
-use of the "Download ZIP" utility in Github. Then move to the package root and
-from the command line run ``pip install -e .``.
+through the following: `pip install -U pybv`
+
+Contributing
+============
+The development of ``pybv`` is taking place on `Github <https://github.com/bids-standard/pybv>`_
+.
+
+Please see `CONTRIBUTING.md <https://github.com/bids-standard/pybv/blob/master/CONTRIBUTING.md>`_
+for more information.
 
 Usage
 =====
-
-``pybv`` provides lightweight I/O functionality for the BrainVision data
-format. See below for an example of how this works.
 
 Writing BrainVision files
 -------------------------
