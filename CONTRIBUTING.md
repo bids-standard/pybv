@@ -1,18 +1,22 @@
 Contributions
 -------------
 
-Contributions are welcome in the form of pull requests.
+ Contributions are welcome in the form of feedback and discussion in issues,
+ or pull requests for changes to the code.
 
-Once the implementation of a piece of functionality is considered to be bug
-free and properly documented, it can be incorporated into the master branch.
+Once the implementation of a piece of functionality is considered to be free of
+bugs and properly documented, it can be incorporated into the master branch.
 
 To help developing `pybv`, you will need a few adjustments to your
 installation as shown below.
 
 ##### Install the development version
 
+First make a fork of the repository under your USERNAME Github account. Then
+follow these steps:
+
     $ pip uninstall pybv
-    $ git clone https://github.com/bids-standard/pybv
+    $ git clone https://github.com/USERNAME/pybv
     $ cd pybv
     $ pip install -e .
 
