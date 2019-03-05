@@ -208,6 +208,5 @@ def _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
 
     # Invert the resolution so that we know how much to scale our data
     scaling_factor = 1 / resolution
-    with open(eeg_fname, 'wb') as fout:
-        data = data * scaling_factor
-        fout.write(data.astype(dtype=dtype).ravel(order='F').tobytes())
+    data = data * scaling_factor
+    data.astype(dtype=dtype).ravel(order='F').tofile(eeg_fname)
