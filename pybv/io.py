@@ -110,7 +110,7 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events):
         print(r'; Commas in type or description text are coded as "\1".', file=fout)  # noqa: E501
         print(r'Mk1=New Segment,,1,1,0,0', file=fout)
 
-        if events is None:
+        if events is None or len(events) == 0:
             return
 
         # Handle events
