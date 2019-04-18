@@ -155,7 +155,7 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
             print(r'DataFormat=BINARY', file=fout)
 
         if 'multiplexed' == orientation.lower():
-            print(r'Data orientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...', file=fout)  # noqa: E501
+            print(r'; DataOrientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...', file=fout)  # noqa: E501
             print(r'DataOrientation=MULTIPLEXED', file=fout)
 
         print(r'NumberOfChannels={}'.format(len(data)), file=fout)  # noqa: E501
