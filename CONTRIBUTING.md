@@ -44,3 +44,16 @@ install the following:
 
 Then from the command line navigate to the `/docs` directory and call `make
 html`. The HTML pages will be in `_build/html`.
+
+##### Making a release (needs admin rights)
+1. go to your python environment for `pybv`
+1. run `pip install -U setuptools wheel twine`
+1. update the `__version__` variable in `__init__.py`
+1. commit the change and then git tag the commit with the version
+1. git push to master (or make a pull request)
+1. also push the git tag to upstream: `git push upstream --tags`
+1. run `python setup.py sdist bdist_wheel`
+1. run `twine upload dist/*` (needs admin rights for pypi)
+1. Make a release on GitHub
+1. append `-dev` to the `__version__` variable in `__init__.py` (updating it
+   accordingly)

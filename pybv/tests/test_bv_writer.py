@@ -80,9 +80,7 @@ def test_bv_writer_oi_cycle():
     tmpdir = _mktmpdir()
 
     # Write, then read the data to BV format
-    write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events,
-                      resolution=np.power(10., -np.arange(10)))
-    annot = mne.read_annotations(op.join(tmpdir, fname + '.vmrk'))
+    write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events)
     raw_written = mne.io.read_raw_brainvision(op.join(tmpdir, fname + '.vhdr'),
                                               preload=True, stim_channel=False)
     # Delete the first annotation because it's just marking a new segment
