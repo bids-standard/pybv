@@ -45,15 +45,24 @@ install the following:
 Then from the command line navigate to the `/docs` directory and call `make
 html`. The HTML pages will be in `_build/html`.
 
-##### Making a release (needs admin rights)
+##### Making a release
+(needs admin rights for GitHub and PyPi)
+
 1. go to your python environment for `pybv`
 1. run `pip install -U setuptools wheel twine`
 1. update the `__version__` variable in `__init__.py`
-1. commit the change and then git tag the commit with the version
-1. git push to master (or make a pull request)
-1. also push the git tag to upstream: `git push upstream --tags`
-1. run `python setup.py sdist bdist_wheel`
-1. run `twine upload dist/*` (needs admin rights for pypi)
-1. Make a release on GitHub
-1. append `-dev` to the `__version__` variable in `__init__.py` (updating it
-   accordingly)
+    - remove the `-dev` suffix
+    - bump up the `major.minor.patch` version according to
+      [semantic versioning](https://semver.org/)
+1. commit the change and git push to master (or make a pull request)
+1. run `pip install -e .` and then `python setup.py sdist bdist_wheel`
+1. run `twine upload dist/*` to upload to pypi
+1. Make a [release on GitHub](https://help.github.com/en/articles/creating-releases)
+   , simultaneously making a git tag that is named like the current version
+   with a prefix of `v` (e.g., `1.2.3` --> `v1.2.3`)
+
+Then the release is done and `master` has to be prepared for development of
+the next release:
+
+1. append `-dev` to the `__version__` variable in `__init__.py`
+1. commit the change and git push to master (or make a pull request)
