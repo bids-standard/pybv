@@ -46,12 +46,14 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         The first column is the index of each event (corresponding to the
         "time" dimension of the data array). The second column is a number
         associated with the "type" of event.
-    resolution : float
+    resolution : float | ndarray
         The resolution **in volts** in which you'd like the data to be stored.
         By default, this will be 1e-7, or .1 microvolts. Since data is stored
         in microvolts, the data will be multiplied by the inverse of this
         factor, and all decimals will be cut off after this. So, this number
         controls the amount of round-trip resolution you want.
+        This can be either a single float for all channels or an array with
+        nchan elements.
     scale_data : bool
         Boolean indicating if the data is in volts and should be scaled to
         `resolution` (True), or if the data is already in the previously
@@ -75,12 +77,14 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         if events.shape[1] != 2:
             raise ValueError(ev_err)
 
-    if len(data) != len(ch_names):
+    nchan = len(ch_names)
+
+    if len(data) != nchan:
         raise ValueError("Number of channels in data ({}) does "
                          "not match number of channel names ({})"
                          .format(len(data), len(ch_names)))
 
-    if len(set(ch_names)) != len(ch_names):
+    if len(set(ch_names)) != nchan:
         raise ValueError("Channel names must be unique,"
                          " found a repeated name.")
 
@@ -88,14 +92,19 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         raise ValueError("sfreq must be one of (float | int)")
     sfreq = float(sfreq)
 
-    if not isinstance(resolution, (int, float)):
-        raise ValueError("Resolution should be a (small) float")
+    resolution = np.atleast_1d(resolution)
+    if not np.issubdtype(resolution.dtype, np.number):
+        raise ValueError("Resolution should be numeric, is {}".format(resolution.dtype))
+
+    if resolution.shape != (1,) and resolution.shape != (nchan,):
+        raise ValueError("Resolution should be one or n_chan floats")
 
     # Write output files
     _write_vmrk_file(vmrk_fname, eeg_fname, events)
     _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
                      ch_names, resolution=resolution)
-    _write_bveeg_file(eeg_fname, data, resolution=resolution, scale_data=True)
+    _write_bveeg_file(eeg_fname, data, resolution=resolution,
+                      scale_data=scale_data)
 
 
 def _chk_fmt(fmt):
@@ -151,6 +160,17 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events):
                   .format(ii, tformat.format(i_val), i_ix), file=fout)
 
 
+def _optimize_channel_unit(resolution):
+    """Calculate an optimal channel scaling factor and unit"""
+    exp = np.log10(resolution)
+    if exp <= -8:
+        return resolution / 1e-9, 'nV'
+    elif exp <= -2:
+        return resolution / 1e-6, 'µV'
+    else:
+        return resolution, 'V'
+
+
 def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
                      orientation='multiplexed', format='binary_float32',
                      resolution=1e-7):
@@ -191,11 +211,15 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         print(r';             <Resolution in "unit">,<"unit">,<Future extensions..', file=fout)  # noqa: E501
         print(r'; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
         print(r'; Commas in channel names are coded as "\1".', file=fout)
-        resolution_in_microv = resolution / 1e-6
-        for ii, ch in enumerate(ch_names, start=1):
-            print(r'Ch{}={},,{:0.1f},μV'
-                  .format(ii, ch, resolution_in_microv), file=fout)
 
+        nchan = len(ch_names)
+        # broadcast to nchan elements if necessary
+        resolutions = resolution * np.ones((nchan,))
+
+        for i in range(nchan):
+            resolution, unit = _optimize_channel_unit(resolutions[i])
+            print(r'Ch{}={},,{:0.1f},{}'
+                  .format(i + 1, ch_names[i], resolution, unit), file=fout)
         print(r'', file=fout)
         print(r'[Comment]', file=fout)
         print(r'', file=fout)
@@ -217,5 +241,5 @@ def _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
     # Invert the resolution so that we know how much to scale our data
     scaling_factor = 1 / resolution
     if scale_data:
-        data = data * scaling_factor
+        data = data * np.atleast_2d(scaling_factor).T
     data.astype(dtype=dtype).ravel(order='F').tofile(eeg_fname)
