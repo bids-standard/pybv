@@ -16,11 +16,11 @@ from . import __version__
 
 # ascii as future formats
 supported_formats = {
-    'binary_float32' : 'IEEE_FLOAT_32',  # noqa: E203
-    'binary_int16'   : 'INT_16',  # noqa: E203
+    'binary_float32' : ('IEEE_FLOAT_32', np.float32),  # noqa: E203
+    'binary_int16'   : ('INT_16', np.int16),  # noqa: E203
 }
 
-supported_orients = set(['multiplexed'])
+supported_orients = {'multiplexed'}
 
 
 def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
@@ -93,6 +93,28 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
     _write_bveeg_file(eeg_fname, data, resolution=resolution)
 
 
+def _chk_fmt(fmt):
+    """Check that the format string is valid, return BVEF / numpy datatypes."""
+    if fmt not in supported_formats:
+        errmsg = ('Data format {} not supported.'.format(format) +
+                  'Currently supported formats are: ' +
+                  ', '.join(supported_formats))
+        raise ValueError(errmsg)
+    return supported_formats[fmt]
+
+
+def _chk_multiplexed(orientation):
+    """Check if the passed orientation is supported and return if
+    it is multiplexed (True) or vectorized (False)"""
+    orientation = orientation.lower()
+    if orientation not in supported_orients:
+        errmsg = ('Orientation {} not supported.'.format(orientation) +
+                  'Currently supported orientations are: ' +
+                  ', '.join(supported_orients))
+        raise ValueError(errmsg)
+    return orientation == 'multiplexed'
+
+
 def _write_vmrk_file(vmrk_fname, eeg_fname, events):
     """Write BrainvVision marker file."""
     with codecs.open(vmrk_fname, 'w', encoding='utf-8') as fout:
@@ -129,18 +151,9 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
                      resolution=1e-7):
     """Write BrainvVision header file."""
     fmt = format.lower()
+    bvfmt, _ = _chk_fmt(format)
 
-    if orientation.lower() not in supported_orients:
-        errmsg = ('Orientation {} not supported.'.format(orientation) +
-                  'Currently supported orientations are: ' +
-                  ', '.join(supported_orients))
-        raise ValueError(errmsg)
-
-    if fmt not in supported_formats:
-        errmsg = ('Data format {} not supported.'.format(format) +
-                  'Currently supported formats are: ' +
-                  ', '.join(supported_formats))
-        raise ValueError(errmsg)
+    multiplexed = _chk_multiplexed(orientation)
 
     with codecs.open(vhdr_fname, 'w', encoding='utf-8') as fout:
         print(r'Brain Vision Data Exchange Header File Version 1.0', file=fout)  # noqa: E501
@@ -151,10 +164,10 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         print(r'DataFile={}'.format(op.basename(eeg_fname)), file=fout)  # noqa: E501
         print(r'MarkerFile={}'.format(op.basename(vmrk_fname)), file=fout)  # noqa: E501
 
-        if 'binary' in format.lower():
+        if fmt.startswith('binary'):
             print(r'DataFormat=BINARY', file=fout)
 
-        if 'multiplexed' == orientation.lower():
+        if multiplexed:
             print(r'; DataOrientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...', file=fout)  # noqa: E501
             print(r'DataOrientation=MULTIPLEXED', file=fout)
 
@@ -163,9 +176,9 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         print(r'SamplingInterval={}'.format(int(1e6 / sfreq)), file=fout)  # noqa: E501
         print(r'', file=fout)
 
-        if 'binary' in format.lower():
+        if fmt.startswith('binary'):
             print(r'[Binary Infos]', file=fout)
-            print(r'BinaryFormat={}'.format(supported_formats[format]), file=fout)  # noqa: E501
+            print(r'BinaryFormat={}'.format(bvfmt), file=fout)  # noqa: E501
             print(r'', file=fout)
 
         print(r'[Channel Infos]', file=fout)
@@ -188,21 +201,10 @@ def _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
     """Write BrainVision data file."""
     fmt = format.lower()
 
-    if orientation.lower() not in supported_orients:
-        errmsg = ('Orientation {} not supported.'.format(orientation) +
-                  'Currently supported orientations are: ' +
-                  ', '.join(supported_orients))
-        raise ValueError(errmsg)
+    multiplexed = _chk_multiplexed(orientation)
+    _, dtype = _chk_fmt(fmt)
 
-    if fmt not in supported_formats:
-        errmsg = ('Data format {} not supported.'.format(format) +
-                  'Currently supported formats are: ' +
-                  ', '.join(supported_formats))
-        raise ValueError(errmsg)
-
-    if fmt[:len('binary')] == 'binary':
-        dtype = np.dtype(format.lower()[len('binary') + 1:])
-    else:
+    if not fmt.startswith('binary'):
         errmsg = 'Cannot map data format {} to NumPy dtype'.format(format)
         raise ValueError(errmsg)
 
