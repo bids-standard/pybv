@@ -170,12 +170,12 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
 
         print(r'[Channel Infos]', file=fout)
         print(r'; Each entry: Ch<Channel number>=<Name>,<Reference channel name>,', file=fout)  # noqa: E501
-        print(r';             <Resolution in microvolts>,<Future extensions..', file=fout)  # noqa: E501
+        print(r';             <Resolution in "unit">,<"unit">,<Future extensions..', file=fout)  # noqa: E501
         print(r'; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
         print(r'; Commas in channel names are coded as "\1".', file=fout)
         resolution_in_microv = resolution / 1e-6
         for ii, ch in enumerate(ch_names, start=1):
-            print(r'Ch{}={},,{:0.1f}'
+            print(r'Ch{}={},,{:0.1f},μV'
                   .format(ii, ch, resolution_in_microv), file=fout)
 
         print(r'', file=fout)
