@@ -24,7 +24,7 @@ supported_orients = {'multiplexed'}
 
 
 def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
-                      events=None, resolution=1e-7):
+                      events=None, resolution=1e-7, scale_data=True):
     """Write raw data to BrainVision format.
 
     Parameters
@@ -52,6 +52,11 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         in microvolts, the data will be multiplied by the inverse of this
         factor, and all decimals will be cut off after this. So, this number
         controls the amount of round-trip resolution you want.
+    scale_data : bool
+        Boolean indicating if the data is in volts and should be scaled to
+        `resolution` (True), or if the data is already in the previously
+        specified target resolution and should be left as-is (False).
+        This is mostly useful if you have int16 data with a custom resolution.
     """
     # Create output file names/paths
     if not op.isdir(folder_out):
@@ -90,7 +95,7 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
     _write_vmrk_file(vmrk_fname, eeg_fname, events)
     _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
                      ch_names, resolution=resolution)
-    _write_bveeg_file(eeg_fname, data, resolution=resolution)
+    _write_bveeg_file(eeg_fname, data, resolution=resolution, scale_data=True)
 
 
 def _chk_fmt(fmt):
@@ -197,7 +202,8 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
 
 
 def _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
-                      format='binary_float32', resolution=1e-7):
+                      format='binary_float32', resolution=1e-7,
+                      scale_data=True):
     """Write BrainVision data file."""
     fmt = format.lower()
 
@@ -210,5 +216,6 @@ def _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
 
     # Invert the resolution so that we know how much to scale our data
     scaling_factor = 1 / resolution
-    data = data * scaling_factor
+    if scale_data:
+        data = data * scaling_factor
     data.astype(dtype=dtype).ravel(order='F').tofile(eeg_fname)
