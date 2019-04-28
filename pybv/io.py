@@ -160,7 +160,7 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events):
 
 
 def _optimize_channel_unit(resolution):
-    """Calculate an optimal channel scaling factor and unit"""
+    """Calculate an optimal channel scaling factor and unit."""
     exp = np.log10(resolution)
     if exp <= -8:
         return resolution / 1e-9, 'nV'

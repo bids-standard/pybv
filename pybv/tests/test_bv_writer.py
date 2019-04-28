@@ -109,8 +109,7 @@ def test_bv_writer_oi_cycle():
 
 
 def test_scale_data():
-    """Test that scale_data=False keeps the data untouched"""
-
+    """Test that scale_data=False keeps the data untouched."""
     tmpdir = _mktmpdir()
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, scale_data=False)
     data_written = np.fromfile(tmpdir + '/' + fname + '.eeg', dtype=np.float32)
