@@ -80,7 +80,8 @@ def test_bv_writer_oi_cycle():
     tmpdir = _mktmpdir()
 
     # Write, then read the data to BV format
-    write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events)
+    write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events,
+                      resolution=np.power(10., -np.arange(10)))
     annot = mne.read_annotations(op.join(tmpdir, fname + '.vmrk'))
     raw_written = mne.io.read_raw_brainvision(op.join(tmpdir, fname + '.vhdr'),
                                               preload=True, stim_channel=False)
@@ -104,4 +105,14 @@ def test_bv_writer_oi_cycle():
     # channels
     assert ch_names == raw_written.ch_names
 
+    rmtree(tmpdir)
+
+
+def test_scale_data():
+    """Test that scale_data=False keeps the data untouched"""
+
+    tmpdir = _mktmpdir()
+    write_brainvision(data, sfreq, ch_names, fname, tmpdir, scale_data=False)
+    data_written = np.fromfile(tmpdir + '/' + fname + '.eeg', dtype=np.float32)
+    assert_allclose(data_written, data.T.flatten())
     rmtree(tmpdir)
