@@ -208,7 +208,7 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
 
         print(r'[Channel Infos]', file=fout)
         print(r'; Each entry: Ch<Channel number>=<Name>,<Reference channel name>,', file=fout)  # noqa: E501
-        print(r';             <Resolution in "unit">,<"unit">,<Future extensions..', file=fout)  # noqa: E501
+        print(r'; <Resolution in "unit">,<unit>,Future extensions…', file=fout)
         print(r'; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
         print(r'; Commas in channel names are coded as "\1".', file=fout)
 
