@@ -118,8 +118,7 @@ def _chk_fmt(fmt):
 
 
 def _chk_multiplexed(orientation):
-    """Check if the passed orientation is supported and return if
-    it is multiplexed (True) or vectorized (False)"""
+    """Validate an orientation, return if it is multiplexed or not."""
     orientation = orientation.lower()
     if orientation not in supported_orients:
         errmsg = ('Orientation {} not supported.'.format(orientation) +
