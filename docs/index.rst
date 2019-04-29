@@ -23,7 +23,7 @@ The format consists of three separate files:
 3. A binary data file (``.eeg``) containing the voltage values of the EEG
 
 Both text files are based on the
-`Microsoft Windows INI format <https://en.wikipedia.org/wiki/INI_file)>`_
+`Microsoft Windows INI format <https://en.wikipedia.org/wiki/INI_file>`_
 consisting of:
 
 - sections marked as ``[square brackets]``
