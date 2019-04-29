@@ -163,7 +163,7 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events):
 def _optimize_channel_unit(resolution):
     """Calculate an optimal channel scaling factor and unit."""
     exp = np.log10(resolution)
-    if exp <= -8:
+    if exp <= -7:
         return resolution / 1e-9, 'nV'
     elif exp <= -2:
         return resolution / 1e-6, 'µV'
@@ -218,7 +218,7 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
 
         for i in range(nchan):
             resolution, unit = _optimize_channel_unit(resolutions[i])
-            print(r'Ch{}={},,{:0.1f},{}'
+            print(r'Ch{}={},,{:0.3f},{}'
                   .format(i + 1, ch_names[i], resolution, unit), file=fout)
         print(r'', file=fout)
         print(r'[Comment]', file=fout)
