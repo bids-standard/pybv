@@ -25,7 +25,8 @@ supported_orients = {'multiplexed'}
 
 
 def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
-                      events=None, resolution=1e-7, scale_data=True):
+                      events=None, resolution=1e-7, scale_data=True,
+                      fmt='binary_float32'):
     """Write raw data to BrainVision format.
 
     Parameters
@@ -60,6 +61,9 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         `resolution` (True), or if the data is already in the previously
         specified target resolution and should be left as-is (False).
         This is mostly useful if you have int16 data with a custom resolution.
+    fmt : str
+        Binary format the data should be written as. Valid choices are
+        'binary_float32' (default) and 'binary_int16'.
     """
     # Create output file names/paths
     if not op.isdir(folder_out):
@@ -100,12 +104,15 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
     if resolution.shape != (1,) and resolution.shape != (nchan,):
         raise ValueError("Resolution should be one or n_chan floats")
 
+    _chk_fmt(fmt)
+
     # Write output files
     _write_vmrk_file(vmrk_fname, eeg_fname, events)
     _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
-                     ch_names, resolution=resolution)
-    _write_bveeg_file(eeg_fname, data, resolution=resolution,
-                      scale_data=scale_data)
+                     ch_names, orientation='multiplexed', format=fmt,
+                     resolution=resolution)
+    _write_bveeg_file(eeg_fname, data, orientation='multiplexed', format=fmt,
+                      resolution=resolution, scale_data=scale_data)
 
 
 def _chk_fmt(fmt):
