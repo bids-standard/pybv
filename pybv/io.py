@@ -238,7 +238,8 @@ def _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
     """Write BrainVision data file."""
     fmt = format.lower()
 
-    multiplexed = _chk_multiplexed(orientation)
+    # check the orientation
+    _chk_multiplexed(orientation)
     _, dtype = _chk_fmt(fmt)
 
     if not fmt.startswith('binary'):
