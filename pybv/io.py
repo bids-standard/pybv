@@ -99,7 +99,7 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
 
     resolution = np.atleast_1d(resolution)
     if not np.issubdtype(resolution.dtype, np.number):
-        raise ValueError("Resolution should be numeric, is {}".format(resolution.dtype))
+        raise ValueError("Resolution should be numeric, is {}".format(resolution.dtype))  # noqa: E501
 
     if resolution.shape != (1,) and resolution.shape != (nchan,):
         raise ValueError("Resolution should be one or n_chan floats")
