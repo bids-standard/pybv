@@ -104,3 +104,10 @@ Here's an example of the MNE code required to read in BrainVision data:
 
    # Reconstruct the original events from our Raw object
    events, event_ids = mne.events_from_annotations(raw)
+
+
+.. toctree::
+   :hidden:
+   :glob:
+
+   *

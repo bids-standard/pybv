@@ -163,3 +163,13 @@ texinfo_documents = [
      author, 'pybv', 'I/O for the BrainVision data format.',
      'Miscellaneous'),
 ]
+
+# Sidebar settings
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html'
+    ]
+}
