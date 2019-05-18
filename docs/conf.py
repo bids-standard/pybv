@@ -18,6 +18,9 @@ extensions = [
    'sphinx.ext.viewcode',
    ]
 
+# Generate the autosummary
+autosummary_generate = True
+
 # General information about the project.
 project = 'pybv'
 copyright = '2018-2019, pybv developers'
