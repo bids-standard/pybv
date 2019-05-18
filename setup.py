@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-
+"""Setup pybv."""
 # Authors: Philip Alday <phillip.alday@unisa.edu.au>
 #          Chris Holdgraf <choldgraf@berkeley.edu>
 #          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
@@ -45,8 +45,8 @@ if __name__ == "__main__":
           url=URL,
           version=VERSION,
           download_url=DOWNLOAD_URL,
-          long_description=open('README.md').read(),
-          long_description_content_type='text/markdown',
+          long_description=open('README.rst').read(),
+          long_description_content_type='text/x-rst',
           zip_safe=True,  # the package can run out of an .egg file
           classifiers=['Intended Audience :: Science/Research',
                        'Intended Audience :: Developers',

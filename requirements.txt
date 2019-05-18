@@ -3,4 +3,5 @@ mne
 pytest
 pytest-cov
 coverage
+flake8
 scipy

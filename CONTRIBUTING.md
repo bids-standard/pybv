@@ -51,9 +51,11 @@ html`. The HTML pages will be in `_build/html`.
 1. go to your python environment for `pybv`
 1. run `pip install -U setuptools wheel twine`
 1. update the `__version__` variable in `__init__.py`
-    - remove the `-dev` suffix
-    - bump up the `major.minor.patch` version according to
-      [semantic versioning](https://semver.org/)
+    - remove the `.devN` suffix
+    - if the version preceding the `.devN` suffix is not the version to be
+      released, update the version as well according to
+      [semantic versioning](https://semver.org/) with its `major.minor.patch`
+      style.
 1. commit the change and git push to master (or make a pull request)
 1. run `pip install -e .` and then `python setup.py sdist bdist_wheel`
 1. run `twine upload dist/*` to upload to pypi
@@ -64,5 +66,9 @@ html`. The HTML pages will be in `_build/html`.
 Then the release is done and `master` has to be prepared for development of
 the next release:
 
-1. append `-dev` to the `__version__` variable in `__init__.py`
-1. commit the change and git push to master (or make a pull request)
+1. update the `__version__` variable in `__init__.py`
+    - bump up the `major.minor.patch` version according to
+      [semantic versioning](https://semver.org/) so that the version will be
+      the version that is planned to be released next (e.g., `1.3.0`)
+    - append `.dev0` to the version (e.g., `1.3.0.dev0`)
+    - commit the change and git push to master (or make a pull request)

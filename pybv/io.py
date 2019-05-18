@@ -99,7 +99,7 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
 
     resolution = np.atleast_1d(resolution)
     if not np.issubdtype(resolution.dtype, np.number):
-        raise ValueError("Resolution should be numeric, is {}".format(resolution.dtype))
+        raise ValueError("Resolution should be numeric, is {}".format(resolution.dtype))  # noqa: E501
 
     if resolution.shape != (1,) and resolution.shape != (nchan,):
         raise ValueError("Resolution should be one or n_chan floats")
@@ -238,7 +238,8 @@ def _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
     """Write BrainVision data file."""
     fmt = format.lower()
 
-    multiplexed = _chk_multiplexed(orientation)
+    # check the orientation
+    _chk_multiplexed(orientation)
     _, dtype = _chk_fmt(fmt)
 
     if not fmt.startswith('binary'):
