@@ -8,6 +8,6 @@
 #
 # License: BSD (3-clause)
 
-__version__ = '0.0.2-dev'
+__version__ = '0.1.0-dev'
 
 from .io import (write_brainvision, )  # noqa: F401
