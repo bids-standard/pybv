@@ -1,3 +1,5 @@
+
+
 .. image:: https://circleci.com/gh/bids-standard/pybv.svg?style=svg
    :target: https://circleci.com/gh/bids-standard/pybv
    :alt: CircleCI
@@ -115,7 +117,7 @@ Here is an example of the MNE code required to read in BrainVision data:
     events, event_ids = mne.events_from_annotations(raw)
 
 Acknowledgements
-----------------
+================
 
 This package was originally adapted from the
 `Philistine package <https://gitlab.com/palday/philistine>`_ by
