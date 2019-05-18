@@ -80,7 +80,7 @@ collection of BrainVision files on disk.
 Reading BrainVision files
 -------------------------
 
-Currently, BrainVision recommends using
+Currently, pybv recommends using
 `MNE-Python <https://martinos.org/mne/stable/index.html>`_
 for reading BrainVision files written with ``pybv``. This results in a
 nearly-round-trip conversion of the data (up to the numerical precision you
