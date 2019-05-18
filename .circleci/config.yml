@@ -29,7 +29,8 @@ jobs:
           name: Running tests and coverage + uploading it
           command: |
             source activate testenv
-            pytest --cov
+            pytest --cov=./ --cov-report=xml
+            flake8 .
             bash <(curl -s https://codecov.io/bash)
 
   build_docs:
