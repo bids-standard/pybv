@@ -30,6 +30,9 @@ release = version
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+# Define master doc
+master_doc = 'index'
+
 # Options for HTML output
 html_theme = "alabaster"
 html_theme_options = {"fixed_sidebar": True}
