@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-
+"""Setup pybv."""
 # Authors: Philip Alday <phillip.alday@unisa.edu.au>
 #          Chris Holdgraf <choldgraf@berkeley.edu>
 #          Stefan Appelhoff <stefan.appelhoff@mailbox.org>

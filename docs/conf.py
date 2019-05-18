@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""Configure docs."""
 #
 # pybv documentation build configuration file, created by
 # sphinx-quickstart on Mon Apr 30 13:18:29 2018.
@@ -57,7 +58,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'pybv'
-copyright = '2018, pybv developers'
+copyright = '2018-2019, pybv developers'
 author = 'pybv developers'
 
 # The version info for the project you're documenting, acts as replacement for
