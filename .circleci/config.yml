@@ -11,7 +11,7 @@ jobs:
       # restore pip cache to speed up installations
       - restore_cache:
           keys:
-            - pip-cache-0-{{ checksum "./requirements.txt" }}
+            - pip-tests-cache-0-{{ checksum "./requirements.txt" }}
 
       # Using conda manager for python environment and packages
       - run:
@@ -34,7 +34,7 @@ jobs:
 
       # Save cache
       - save_cache:
-          key: pip-cache-0-{{ checksum "./requirements.txt" }}
+          key: pip-tests-cache-0-{{ checksum "./requirements.txt" }}
           paths:
             - ~/.cache/pip
 
@@ -57,7 +57,7 @@ jobs:
       # restore pip cache to speed up installations
       - restore_cache:
           keys:
-            - pip-cache-0-{{ checksum "./requirements.txt" }}
+            - pip-docs-cache-0-{{ checksum "./requirements.txt" }}
 
       # Using conda manager for python environment and packages
       - run:
@@ -81,7 +81,7 @@ jobs:
 
       # Save cache
       - save_cache:
-          key: pip-cache-0-{{ checksum "./requirements.txt" }}
+          key: pip-docs-cache-0-{{ checksum "./requirements.txt" }}
           paths:
             - ~/.cache/pip
 
