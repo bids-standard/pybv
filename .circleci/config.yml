@@ -1,12 +1,18 @@
 version: 2
 jobs:
-  tests:
+  run_tests:
     # This is the base environment that Circle will use
     docker:
       - image: circleci/python:3.6-stretch
     steps:
       - run: sudo apt-get update
       - checkout
+
+      # restore pip cache to speed up installations
+      - restore_cache:
+          keys:
+            - pip-cache-0-{{ checksum "./requirements.txt" }}
+
       # Using conda manager for python environment and packages
       - run:
           name: Install miniconda
@@ -15,6 +21,7 @@ jobs:
             chmod +x ~/miniconda.sh;
             ~/miniconda.sh -b -p ~/miniconda;
             echo "export PATH=~/miniconda/bin:$PATH" >> $BASH_ENV;
+
       # Setup the python environment
       - run:
           name: Setup Python environment
@@ -24,6 +31,13 @@ jobs:
             source activate testenv
             pip install -r requirements.txt
             python setup.py develop
+
+      # Save cache
+      - save_cache:
+          key: pip-cache-0-{{ checksum "./requirements.txt" }}
+          paths:
+            - ~/.cache/pip
+
       # Run tests and upload coverage
       - run:
           name: Running tests and coverage + uploading it
@@ -39,6 +53,12 @@ jobs:
     steps:
       - run: sudo apt-get update
       - checkout
+
+      # restore pip cache to speed up installations
+      - restore_cache:
+          keys:
+            - pip-cache-0-{{ checksum "./requirements.txt" }}
+
       # Using conda manager for python environment and packages
       - run:
           name: Install miniconda
@@ -47,6 +67,7 @@ jobs:
             chmod +x ~/miniconda.sh;
             ~/miniconda.sh -b -p ~/miniconda;
             echo "export PATH=~/miniconda/bin:$PATH" >> $BASH_ENV;
+
       # Setup the python environment
       - run:
           name: Setup Python environment
@@ -57,6 +78,13 @@ jobs:
             pip install -r requirements.txt
             pip install -r docs/requirements.txt
             python setup.py develop
+
+      # Save cache
+      - save_cache:
+          key: pip-cache-0-{{ checksum "./requirements.txt" }}
+          paths:
+            - ~/.cache/pip
+
       # Build the docs
       - run:
           name: Build docs to store
@@ -64,6 +92,7 @@ jobs:
             source activate testenv
             cd docs
             make html
+
       # Tell Circle to store the documentation output in a folder that we can access later
       - store_artifacts:
           path: docs/_build/html/
@@ -74,5 +103,5 @@ workflows:
   version: 2
   default:
     jobs:
-      - tests
+      - run_tests
       - build_docs
