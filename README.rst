@@ -37,7 +37,7 @@ The format consists of three separate files:
 
 1. A text header file (``.vhdr``) containing meta data
 2. A text marker file (``.vmrk``) containing information about events in the
-  data
+   data
 3. A binary data file (``.eeg``) containing the voltage values of the EEG
 
 Both text files are based on the
