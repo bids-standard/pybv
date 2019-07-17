@@ -49,8 +49,9 @@ consisting of:
 - key-value pairs marked as ``key=value``
 
 A documentation for core BrainVision file format is provided by Brain Products.
-You can view the specification
-`here <https://www.brainproducts.com/productdetails.php?id=21&tab=5>`_.
+You can `view the specification <https://www.brainproducts.com/productdetails.php?id=21&tab=5>`_
+as hosted by Brain Products.
+
 
 Installation
 ============
