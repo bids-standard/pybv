@@ -16,6 +16,7 @@ extensions = [
    'sphinx.ext.napoleon',
    'sphinx.ext.autosummary',
    'sphinx.ext.viewcode',
+   'sphinx.ext.intersphinx',
    ]
 
 # Generate the autosummary
@@ -39,3 +40,20 @@ master_doc = 'index'
 # Options for HTML output
 html_theme = "alabaster"
 html_theme_options = {"fixed_sidebar": True}
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+    ]
+}
+
+# When functions from other packages are mentioned, link to them
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'mne': ('http://mne-tools.github.io/stable/', None),
+    'numpy': ('https://www.numpy.org/devdocs', None),
+    'scipy': ('https://scipy.github.io/devdocs', None),
+    'matplotlib': ('https://matplotlib.org', None),
+}
