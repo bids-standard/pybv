@@ -1,6 +1,16 @@
+:orphan:
+
+.. _changelog:
+
 =========
 Changelog
 =========
+
+Here we list a changelog of pybv.
+
+.. contents:: Contents
+   :local:
+   :depth: 2
 
 current
 =======
