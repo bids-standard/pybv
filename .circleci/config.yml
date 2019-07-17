@@ -104,6 +104,6 @@ workflows:
   default:
     jobs:
       - run_tests
-      - build_docs
+      - build_docs:
           requires:
             - run_tests
