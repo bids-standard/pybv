@@ -104,8 +104,7 @@ Here is an example of the MNE code required to read in BrainVision data:
     import mne
 
     # Import the BrainVision data into an MNE Raw object
-    raw = mne.io.read_raw_brainvision('tmp/test.vhdr', preload=True,
-                                      stim_channel=False)
+    raw = mne.io.read_raw_brainvision('tmp/test.vhdr', preload=True)
 
     # Read in the event information as MNE annotations
     annot = mne.read_annotations('tmp/test.vmrk')
