@@ -1,5 +1,3 @@
-
-
 .. image:: https://circleci.com/gh/bids-standard/pybv.svg?style=svg
    :target: https://circleci.com/gh/bids-standard/pybv
    :alt: CircleCI
@@ -7,6 +5,9 @@
 .. image:: https://codecov.io/gh/bids-standard/pybv/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/bids-standard/pybv
    :alt: codecov
+
+.. image:: https://badge.fury.io/py/pybv.svg
+   :target: https://badge.fury.io/py/pybv
 
 .. image:: https://pepy.tech/badge/pybv
    :target: https://pepy.tech/project/pybv
