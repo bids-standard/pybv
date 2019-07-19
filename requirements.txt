@@ -1,5 +1,5 @@
 numpy
-mne==0.17
+mne>0.17
 pytest
 pytest-cov
 coverage

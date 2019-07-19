@@ -82,8 +82,8 @@ def test_bv_writer_oi_cycle():
     # Write, then read the data to BV format
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events,
                       resolution=np.power(10., -np.arange(10)))
-    raw_written = mne.io.read_raw_brainvision(op.join(tmpdir, fname + '.vhdr'),
-                                              preload=True, stim_channel=False)
+    vhdr_fname = op.join(tmpdir, fname + '.vhdr')
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
     # Delete the first annotation because it's just marking a new segment
     raw_written.annotations.delete(0)
     # Convert our annotations to events
