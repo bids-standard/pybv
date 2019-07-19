@@ -160,6 +160,7 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events):
         # This is a string staring with "S" and followed by an integer of
         # minimum length 3, padded with "space" if the integer is < length 3.
         # For example "S  1", "S 23", "S345"
+        # XXX: see https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677  # noqa: E501
         twidth = int(np.ceil(np.log10(np.max(events[:, 1]))))
         twidth = twidth if twidth > 3 else 3
         tformat = 'S{:>' + str(twidth) + '}'
