@@ -8,6 +8,7 @@
 
 .. image:: https://badge.fury.io/py/pybv.svg
    :target: https://badge.fury.io/py/pybv
+   :alt: pypi
 
 .. image:: https://pepy.tech/badge/pybv
    :target: https://pepy.tech/project/pybv
