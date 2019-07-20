@@ -39,7 +39,12 @@ master_doc = 'index'
 
 # Options for HTML output
 html_theme = "alabaster"
-html_theme_options = {"fixed_sidebar": True}
+html_theme_options = {"description": "A lightweight I/O utility for the BrainVision data format.",  # noqa: E501
+                      "fixed_sidebar": True,
+                      "github_button": True,
+                      "github_repo": "pybv",
+                      "github_user": "bids-standard",
+                      }
 html_sidebars = {
     '**': [
         'about.html',
