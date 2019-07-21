@@ -13,7 +13,7 @@ import os
 import os.path as op
 import numpy as np
 
-from . import __version__
+from pybv import __version__
 
 # ascii as future formats
 supported_formats = {
@@ -26,7 +26,7 @@ supported_orients = {'multiplexed'}
 
 def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
                       events=None, resolution=1e-7, scale_data=True,
-                      fmt='binary_float32'):
+                      fmt='binary_float32', meas_date=None):
     """Write raw data to BrainVision format.
 
     Parameters
@@ -45,9 +45,9 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         The folder where output files will be saved.
     events : ndarray, shape (n_events, 2)
         Events to write in the marker file. This array has two columns.
-        The first column is the index of each event (corresponding to the
-        "time" dimension of the data array). The second column is a number
-        associated with the "type" of event.
+        The first column is the zero-based index of each event (corresponding
+        to the "time" dimension of the data array). The second column is a
+        number associated with the "type" of event.
     resolution : float | ndarray
         The resolution **in volts** in which you'd like the data to be stored.
         By default, this will be 1e-7, or .1 microvolts. Since data is stored
@@ -64,6 +64,10 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
     fmt : str
         Binary format the data should be written as. Valid choices are
         'binary_float32' (default) and 'binary_int16'.
+    meas_date : str | None
+        The measurement date of the data specified as a string in the format:
+        "YYYYMMDDhhmmssuuuuuu". "u" stands for microseconds. If None, defaults
+        to '00000000000000000000'.
     """
     # Create output file names/paths
     if not op.isdir(folder_out):
@@ -106,8 +110,18 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
 
     _chk_fmt(fmt)
 
+    # measurement date
+    if not isinstance(meas_date, (str, type(None))):
+        raise ValueError('`meas_date` must be of type str or None but is of '
+                         'type "{}"'.format(type(meas_dates)))
+    elif meas_date is None:
+        meas_date = '00000000000000000000'
+    elif not (meas_date.isdigit() and len(meas_date) == 20):
+        raise ValueError('`meas_date` must be None, or a string in the format '
+                         '"YYYYMMDDhhmmssuuuuuu".')
+
     # Write output files
-    _write_vmrk_file(vmrk_fname, eeg_fname, events)
+    _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date)
     _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
                      ch_names, orientation='multiplexed', format=fmt,
                      resolution=resolution)
@@ -136,7 +150,7 @@ def _chk_multiplexed(orientation):
     return orientation == 'multiplexed'
 
 
-def _write_vmrk_file(vmrk_fname, eeg_fname, events):
+def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
     """Write BrainvVision marker file."""
     with codecs.open(vmrk_fname, 'w', encoding='utf-8') as fout:
         print(r'Brain Vision Data Exchange Marker File, Version 1.0', file=fout)  # noqa: E501
@@ -149,9 +163,10 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events):
         print(r'[Marker Infos]', file=fout)
         print(r'; Each entry: Mk<Marker number>=<Type>,<Description>,<Position in data points>,', file=fout)  # noqa: E501
         print(r';             <Size in data points>, <Channel number (0 = marker is related to all channels)>', file=fout)  # noqa: E501
+        print(r';             <Date (YYYYMMDDhhmmssuuuuuu)>', file=fout)
         print(r'; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
         print(r'; Commas in type or description text are coded as "\1".', file=fout)  # noqa: E501
-        print(r'Mk1=New Segment,,1,1,0,0', file=fout)
+        print(r'Mk1=New Segment,,0,1,0,{}'.format(meas_date), file=fout)
 
         if events is None or len(events) == 0:
             return
@@ -165,11 +180,12 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events):
         twidth = twidth if twidth > 3 else 3
         tformat = 'S{:>' + str(twidth) + '}'
 
-        for ii, irow in enumerate(range(len(events)), start=2):
+        for marker_number, irow in enumerate(range(len(events)), start=2):
             i_ix = events[irow, 0]
             i_val = events[irow, 1]
             print(r'Mk{}=Stimulus,{},{},1,0'
-                  .format(ii, tformat.format(i_val), i_ix), file=fout)
+                  .format(marker_number, tformat.format(i_val), i_ix),
+                  file=fout)
 
 
 def _optimize_channel_unit(resolution):
