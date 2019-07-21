@@ -166,7 +166,7 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
         print(r';             <Date (YYYYMMDDhhmmssuuuuuu)>', file=fout)
         print(r'; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
         print(r'; Commas in type or description text are coded as "\1".', file=fout)  # noqa: E501
-        print(r'Mk1=New Segment,,0,1,0,{}'.format(meas_date), file=fout)
+        print(r'Mk1=New Segment,,1,1,0,{}'.format(meas_date), file=fout)
 
         if events is None or len(events) == 0:
             return
