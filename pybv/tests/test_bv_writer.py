@@ -11,6 +11,7 @@ import os
 import os.path as op
 from shutil import rmtree
 from tempfile import mkdtemp
+from time import gmtime
 
 import pytest
 
@@ -75,13 +76,31 @@ def test_bv_bad_format():
     rmtree(tmpdir)
 
 
+@pytest.mark.parametrize("meas_date,match",
+                         [(1, '`meas_date` must be of type str or None but'),
+                          ('', '`meas_date` must be None, or a string'),
+                          ('1973', '`meas_date` must be None, or a string')])
+def test_bad_meas_date(meas_date, match):
+    """Test that bad measurement dates raise errors."""
+    tmpdir = _mktmpdir()
+    with pytest.raises(ValueError, match=match):
+        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+                          meas_date=meas_date)
+
+    rmtree(tmpdir)
+
+
 def test_bv_writer_oi_cycle():
     """Test that a write-read cycle produces identical data."""
     tmpdir = _mktmpdir()
 
+    # Some sensible measurement date
+    meas_date = '20000101120000000000'
+
     # Write, then read the data to BV format
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events,
-                      resolution=np.power(10., -np.arange(10)))
+                      resolution=np.power(10., -np.arange(10)),
+                      meas_date=meas_date)
     vhdr_fname = op.join(tmpdir, fname + '.vhdr')
     raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
     # Delete the first annotation because it's just marking a new segment
@@ -103,6 +122,11 @@ def test_bv_writer_oi_cycle():
 
     # channels
     assert ch_names == raw_written.ch_names
+
+    # measurement date, we do not test microsecs
+    unix_seconds = raw_written.info['meas_date'][0]
+    time_str = ('{:04}{:02}{:02}{:02}{:02}{:02}'.format(*gmtime(unix_seconds)))
+    assert meas_date[:-6] == time_str
 
     rmtree(tmpdir)
 

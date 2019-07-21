@@ -113,7 +113,7 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
     # measurement date
     if not isinstance(meas_date, (str, type(None))):
         raise ValueError('`meas_date` must be of type str or None but is of '
-                         'type "{}"'.format(type(meas_dates)))
+                         'type "{}"'.format(type(meas_date)))
     elif meas_date is None:
         meas_date = '00000000000000000000'
     elif not (meas_date.isdigit() and len(meas_date) == 20):
