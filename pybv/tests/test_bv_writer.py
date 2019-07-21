@@ -111,7 +111,7 @@ def test_bv_writer_oi_cycle():
     # sfreq
     assert sfreq == raw_written.info['sfreq']
 
-    # Event timing should be within one index of originals
+    # Event timing should be exactly the same
     assert_array_equal(events[:, 0], events_written[:, 0])
     assert_array_equal(events[:, 1], events_written[:, 2])
     # Should be 2 unique event types
