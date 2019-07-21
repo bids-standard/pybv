@@ -17,6 +17,7 @@ current
 
 Changelog
 ~~~~~~~~~
+Add measurement date parameter to public API by `Stefan Appelhoff`_ (`#29 <https://github.com/bids-standard/pybv/pull/29>`_)
 Add binary format parameter to public API by `Tristan Stenner`_ (`#22 <https://github.com/bids-standard/pybv/pull/22>`_)
 
 Bug
