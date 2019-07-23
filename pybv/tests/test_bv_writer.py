@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """BrainVision Writer tests."""
 
-# Authors: Philip Alday <phillip.alday@unisa.edu.au>
+# Authors: Phillip Alday <phillip.alday@unisa.edu.au>
 #          Chris Holdgraf <choldgraf@berkeley.edu>
 #          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
 #

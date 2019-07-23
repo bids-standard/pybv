@@ -29,8 +29,8 @@ for use with electrophysiology datasets stored in the
 
 The documentation can be found under the following links:
 
-- for the `stable release <https://pybv.readthedocs.io/en/stable/>`_
-- for the `latest (development) version <https://pybv.readthedocs.io/en/latest/>`_
+- for the `stable release <https://pybv.rtfd.io/en/stable/>`_
+- for the `latest (development) version <https://pybv.rtfd.io/en/latest/>`_
 
 About the BrainVision data format
 =================================

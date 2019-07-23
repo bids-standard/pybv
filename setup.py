@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 """Setup pybv."""
-# Authors: Philip Alday <phillip.alday@unisa.edu.au>
+# Authors: Phillip Alday <phillip.alday@unisa.edu.au>
 #          Chris Holdgraf <choldgraf@berkeley.edu>
 #          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
 #
@@ -26,7 +26,7 @@ DISTNAME = 'pybv'
 DESCRIPTION = descr
 MAINTAINER = 'Stefan Appelhoff'
 MAINTAINER_EMAIL = 'stefan.appelhoff@mailbox.org'
-URL = 'https://github.com/bids-standard/pybv'
+URL = 'https://pybv.readthedocs.io'
 LICENSE = 'BSD (3-clause)'
 DOWNLOAD_URL = 'https://github.com/bids-standard/pybv'
 VERSION = version
