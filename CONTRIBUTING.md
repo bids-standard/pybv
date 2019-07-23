@@ -69,13 +69,14 @@ html`. The HTML pages will be in `_build/html`.
      `pip install --index-url https://test.pypi.org/simple/ pybv`
   1. if everything is OK, proceed
 1. run `twine upload dist/*` to upload to pypi
-1. make an annotated tag `git tag -a -m "v1.2.3"` v1.2.3 upstream/master (This
+1. make an annotated tag `git tag -a -m "v1.2.3" v1.2.3 upstream/master` (This
    assumes that you have a git remote configured with the name "upstream" and
    pointing to https://github.com/bids-standard/pybv). Note also that the
    version from `__init__.py` is preprended with a `v`: `1.2.3` --> `v1.2.3`
-1. `git push v1.2.3 upstream`
+1. `git push --follow-tags upstream`
 1. Make a [release on GitHub](https://help.github.com/en/articles/creating-releases),
-   using the git tag from the previous step.
+   using the git tag from the previous step (e.g., `v1.2.3`). Fill the tag name
+   into all fields of the release.
 
 Then the release is done and `master` has to be prepared for development of
 the next release:
