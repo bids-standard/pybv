@@ -11,6 +11,8 @@
 import codecs
 import os
 import os.path as op
+import datetime
+
 import numpy as np
 
 from pybv import __version__
@@ -64,8 +66,9 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
     fmt : str
         Binary format the data should be written as. Valid choices are
         'binary_float32' (default) and 'binary_int16'.
-    meas_date : str | None
-        The measurement date of the data specified as a string in the format:
+    meas_date : datetime.datetime | str | None
+        The measurement date of the data specified as a datetime.datetime
+        object. Alternatively, can be a string in the format:
         "YYYYMMDDhhmmssuuuuuu". "u" stands for microseconds. If None, defaults
         to '00000000000000000000'.
     """
@@ -111,13 +114,17 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
     _chk_fmt(fmt)
 
     # measurement date
-    if not isinstance(meas_date, (str, type(None))):
-        raise ValueError('`meas_date` must be of type str or None but is of '
-                         'type "{}"'.format(type(meas_date)))
+    if not isinstance(meas_date, (str, datetime.datetime, type(None))):
+        raise ValueError('`meas_date` must be of type str, datetime.datetime, '
+                         'or None but is of type '
+                         '"{}"'.format(type(meas_date)))
     elif meas_date is None:
         meas_date = '00000000000000000000'
+    elif isinstance(meas_date, datetime.datetime):
+        meas_date = meas_date.strftime('%Y%m%d%H%M%S%f')
     elif not (meas_date.isdigit() and len(meas_date) == 20):
-        raise ValueError('`meas_date` must be None, or a string in the format '
+        raise ValueError('Got a str for `meas_date`, but it was not formatted '
+                         'as expected. Please supply a str in the format: '
                          '"YYYYMMDDhhmmssuuuuuu".')
 
     # Write output files
