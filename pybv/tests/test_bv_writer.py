@@ -12,6 +12,7 @@ import os.path as op
 from shutil import rmtree
 from tempfile import mkdtemp
 from time import gmtime
+from datetime import datetime
 
 import pytest
 
@@ -77,9 +78,9 @@ def test_bv_bad_format():
 
 
 @pytest.mark.parametrize("meas_date,match",
-                         [(1, '`meas_date` must be of type str or None but'),
-                          ('', '`meas_date` must be None, or a string'),
-                          ('1973', '`meas_date` must be None, or a string')])
+                         [(1, '`meas_date` must be of type str, datetime'),
+                          ('', 'Got a str for `meas_date`, but it was'),
+                          ('1973', 'Got a str for `meas_date`, but it was')])
 def test_bad_meas_date(meas_date, match):
     """Test that bad measurement dates raise errors."""
     tmpdir = _mktmpdir()
@@ -90,12 +91,12 @@ def test_bad_meas_date(meas_date, match):
     rmtree(tmpdir)
 
 
-def test_bv_writer_oi_cycle():
+@pytest.mark.parametrize("meas_date",
+                         [('20000101120000000000'),
+                          (datetime(2000, 1, 1, 12, 0, 0, 0))])
+def test_bv_writer_oi_cycle(meas_date):
     """Test that a write-read cycle produces identical data."""
     tmpdir = _mktmpdir()
-
-    # Some sensible measurement date
-    meas_date = '20000101120000000000'
 
     # Write, then read the data to BV format
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events,
@@ -126,7 +127,7 @@ def test_bv_writer_oi_cycle():
     # measurement date, we do not test microsecs
     unix_seconds = raw_written.info['meas_date'][0]
     time_str = ('{:04}{:02}{:02}{:02}{:02}{:02}'.format(*gmtime(unix_seconds)))
-    assert meas_date[:-6] == time_str
+    assert time_str == '20000101120000'  # 1st of Jan, 2000 at 12:00 and 0 secs
 
     rmtree(tmpdir)
 
