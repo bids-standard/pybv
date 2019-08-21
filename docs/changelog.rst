@@ -15,6 +15,14 @@ Here we list a changelog of pybv.
 Current
 =======
 
+Changelog
+~~~~~~~~~
+- Add option to disable writing a meas_date event (which is also the new default) by `Clemens Brunner`_ (`#32 <https://github.com/bids-standard/pybv/pull/32>`_)
+
+Authors
+~~~~~~~
+- `Clemens Brunner`_
+
 0.1.0
 =====
 
@@ -65,3 +73,4 @@ Authors
 .. _Stefan Appelhoff: http://stefanappelhoff.com/
 .. _Tristan Stenner: https://github.com/tstenner
 .. _Phillip Alday: https://palday.bitbucket.io/
+.. _Clemens Brunner: https://cbrnr.github.io/
