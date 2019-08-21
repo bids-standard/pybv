@@ -45,11 +45,12 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         (.vhdr, .vmrk, .eeg) and all will share this base name.
     folder_out : str
         The folder where output files will be saved.
-    events : ndarray, shape (n_events, 2)
-        Events to write in the marker file. This array has two columns.
-        The first column is the zero-based index of each event (corresponding
-        to the "time" dimension of the data array). The second column is a
-        number associated with the "type" of event.
+    events : ndarray, shape (n_events, 2) or (n_events, 3)
+        Events to write in the marker file. This array has either two or three
+        columns. The first column is always the zero-based index of each event
+        (corresponding to the "time" dimension of the data array). The second
+        column is a number associated with the "type" of event. The (optional)
+        third column specifies the length of each event (default 1 sample).
     resolution : float | ndarray
         The resolution **in volts** in which you'd like the data to be stored.
         By default, this will be 1e-7, or .1 microvolts. Since data is stored
@@ -81,13 +82,14 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
     eeg_fname = op.join(folder_out, fname_base + '.eeg')
 
     # Input checks
-    ev_err = "events must be an (n_events x 2) ndarray or None'"
+    ev_err = ("events must be an ndarray of shape (n_events, 2) or "
+              "(n_events, 3) or None")
     if not isinstance(events, (np.ndarray, type(None))):
         raise ValueError(ev_err)
     if isinstance(events, np.ndarray):
         if events.ndim != 2:
             raise ValueError(ev_err)
-        if events.shape[1] != 2:
+        if events.shape[1] not in (2, 3):
             raise ValueError(ev_err)
 
     nchan = len(ch_names)
@@ -180,20 +182,24 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
         if events is None or len(events) == 0:
             return
 
+        if events.shape[1] == 2:  # add third column with event durations of 1
+            events = np.column_stack([events, np.ones(len(events))])
+
         # Handle events: We write all of them as "Stimulus" events for now.
         # This is a string staring with "S" and followed by an integer of
         # minimum length 3, padded with "space" if the integer is < length 3.
         # For example "S  1", "S 23", "S345"
         # XXX: see https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677  # noqa: E501
         twidth = int(np.ceil(np.log10(np.max(events[:, 1]))))
-        twidth = twidth if twidth > 3 else 3
+        twidth = max(3, twidth)
         tformat = 'S{:>' + str(twidth) + '}'
 
         for marker_number, irow in enumerate(range(len(events)), start=1 if meas_date is None else 2):  # noqa: E501
             i_ix = events[irow, 0] + 1  # BrainVision uses 1-based indexing
             i_val = events[irow, 1]
-            print(r'Mk{}=Stimulus,{},{},1,0'
-                  .format(marker_number, tformat.format(i_val), i_ix),
+            i_dur = events[irow, 2]
+            print(r'Mk{}=Stimulus,{},{},{},0'
+                  .format(marker_number, tformat.format(i_val), i_ix, i_dur),
                   file=fout)
 
 
