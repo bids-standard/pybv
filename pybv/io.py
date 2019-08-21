@@ -121,6 +121,8 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
                          '"{}"'.format(type(meas_date)))
     elif isinstance(meas_date, datetime.datetime):
         meas_date = meas_date.strftime('%Y%m%d%H%M%S%f')
+    elif meas_date is None:
+        pass
     elif not (meas_date.isdigit() and len(meas_date) == 20):
         raise ValueError('Got a str for `meas_date`, but it was not formatted '
                          'as expected. Please supply a str in the format: '
