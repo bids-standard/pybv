@@ -21,7 +21,7 @@ Changelog
 
 Authors
 ~~~~~~~
-- `Clemens Brunner`_
+
 
 0.1.0
 =====
