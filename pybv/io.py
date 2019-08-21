@@ -67,10 +67,11 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         Binary format the data should be written as. Valid choices are
         'binary_float32' (default) and 'binary_int16'.
     meas_date : datetime.datetime | str | None
-        The measurement date of the data specified as a datetime.datetime
-        object. Alternatively, can be a string in the format:
-        "YYYYMMDDhhmmssuuuuuu". "u" stands for microseconds. If None, defaults
-        to '00000000000000000000'.
+        The measurement date specified as a datetime.datetime object.
+        Alternatively, can be a string in the format 'YYYYMMDDhhmmssuuuuuu'
+        ('u' stands for microseconds). Note that setting a measurement date
+        implies that one additional event is created in the .vmrk file. To
+        prevent this, set this parameter to None (default).
     """
     # Create output file names/paths
     if not op.isdir(folder_out):
@@ -118,8 +119,6 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         raise ValueError('`meas_date` must be of type str, datetime.datetime, '
                          'or None but is of type '
                          '"{}"'.format(type(meas_date)))
-    elif meas_date is None:
-        meas_date = '00000000000000000000'
     elif isinstance(meas_date, datetime.datetime):
         meas_date = meas_date.strftime('%Y%m%d%H%M%S%f')
     elif not (meas_date.isdigit() and len(meas_date) == 20):
@@ -173,7 +172,8 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
         print(r';             <Date (YYYYMMDDhhmmssuuuuuu)>', file=fout)
         print(r'; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
         print(r'; Commas in type or description text are coded as "\1".', file=fout)  # noqa: E501
-        print(r'Mk1=New Segment,,1,1,0,{}'.format(meas_date), file=fout)
+        if meas_date is not None:
+            print(r'Mk1=New Segment,,1,1,0,{}'.format(meas_date), file=fout)
 
         if events is None or len(events) == 0:
             return
