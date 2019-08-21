@@ -19,7 +19,6 @@ Changelog
 ~~~~~~~~~
 - Add option to disable writing a meas_date event (which is also the new default) by `Clemens Brunner`_ (`#32 <https://github.com/bids-standard/pybv/pull/32>`_)
 
-Authors
 
 
 0.1.0
