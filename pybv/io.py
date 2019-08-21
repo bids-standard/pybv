@@ -189,7 +189,7 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
         twidth = twidth if twidth > 3 else 3
         tformat = 'S{:>' + str(twidth) + '}'
 
-        for marker_number, irow in enumerate(range(len(events)), start=2):
+        for marker_number, irow in enumerate(range(len(events)), start=1 if meas_date is None else 2):  # noqa: E501
             i_ix = events[irow, 0] + 1  # BrainVision uses 1-based indexing
             i_val = events[irow, 1]
             print(r'Mk{}=Stimulus,{},{},1,0'
