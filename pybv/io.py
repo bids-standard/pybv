@@ -183,7 +183,7 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
             return
 
         if events.shape[1] == 2:  # add third column with event durations of 1
-            events = np.column_stack([events, np.ones(len(events))])
+            events = np.column_stack([events, np.ones(len(events), dtype=int)])
 
         # Handle events: We write all of them as "Stimulus" events for now.
         # This is a string staring with "S" and followed by an integer of
