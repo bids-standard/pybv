@@ -12,14 +12,17 @@ Here we list a changelog of pybv.
    :local:
    :depth: 2
 
-Current
-=======
+0.2.0
+=====
 
 Changelog
 ~~~~~~~~~
 - Add option to disable writing a meas_date event (which is also the new default) by `Clemens Brunner`_ (`#32 <https://github.com/bids-standard/pybv/pull/32>`_)
 - Support event durations by passing an (N, 3) array to the events parameter (the third column contains the event durations) by `Clemens Brunner`_ (`#33 <https://github.com/bids-standard/pybv/pull/33>`_)
 
+Authors
+~~~~~~~
+- `Clemens Brunner`_
 
 0.1.0
 =====
