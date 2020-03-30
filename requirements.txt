@@ -1,7 +1,2 @@
-numpy
+numpy>=1.11.3
 mne>0.17
-pytest
-pytest-cov
-coverage
-flake8
-scipy
