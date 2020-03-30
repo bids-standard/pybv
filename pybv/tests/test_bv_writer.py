@@ -11,8 +11,7 @@ import os
 import os.path as op
 from shutil import rmtree
 from tempfile import mkdtemp
-from time import gmtime
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 
@@ -125,9 +124,8 @@ def test_bv_writer_oi_cycle(meas_date):
     assert ch_names == raw_written.ch_names
 
     # measurement date, we do not test microsecs
-    unix_seconds = raw_written.info['meas_date'][0]
-    time_str = ('{:04}{:02}{:02}{:02}{:02}{:02}'.format(*gmtime(unix_seconds)))
-    assert time_str == '20000101120000'  # 1st of Jan, 2000 at 12:00 and 0 secs
+    assert raw_written.info['meas_date'] == datetime(2000, 1, 1, 12, 0, 0, 0,
+                                                     tzinfo=timezone.utc)
 
     rmtree(tmpdir)
 
