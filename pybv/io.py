@@ -28,15 +28,15 @@ supported_orients = {'multiplexed'}
 
 
 def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
-                      events=None, resolution=1e-7, scale_data=True,
-                      fmt='binary_float32', meas_date=None, unit='µV'):
+                      events=None, resolution=1e-7, unit='µV', scale_data=True,
+                      fmt='binary_float32', meas_date=None):
     """Write raw data to BrainVision format.
 
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
-        The raw data to export. Data is assumed to be in
-        **volts**. The data will be stored in **microvolts**.
+        The raw data to export. Data is assumed to be in **volts** and will be
+        stored as specified in ``unit``.
     sfreq : int | float
         The sampling frequency of the data
     ch_names : list of strings, shape (n_channels,)
@@ -54,12 +54,13 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         third column specifies the length of each event (default 1 sample).
     resolution : float | ndarray
         The resolution **in volts** in which you'd like the data to be stored.
-        By default, this will be 1e-7, or .1 microvolts. Since data is stored
-        in microvolts, the data will be multiplied by the inverse of this
-        factor, and all decimals will be cut off after this. So, this number
-        controls the amount of round-trip resolution you want.
-        This can be either a single float for all channels or an array with
-        nchan elements.
+        By default, this will be 1e-7, or .1 microvolts. This number controls
+        the amount of round-trip resolution. This can be either a single float
+        for all channels or an array with nchan elements.
+    unit : str
+        The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
+        equivallently 'uV') , 'nV' or 'auto'. If 'auto', a suitable unit based
+        on the selected resolution is chosen automatically.
     scale_data : bool
         Boolean indicating if the data is in volts and should be scaled to
         `resolution` (True), or if the data is already in the previously
@@ -74,10 +75,6 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         ('u' stands for microseconds). Note that setting a measurement date
         implies that one additional event is created in the .vmrk file. To
         prevent this, set this parameter to None (default).
-    unit : str
-        The unit of the exported data. This can be one of 'V', 'mV', 'uV',
-        'µV', 'nV' or 'auto'. If 'auto', a suitable unit based on the selected
-        resolution is chosen automatically.
     """
     # Create output file names/paths
     if not op.isdir(folder_out):
