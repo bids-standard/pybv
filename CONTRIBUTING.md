@@ -12,21 +12,19 @@ installation as shown below.
 
 ##### Install the development version
 
-First make a fork of the repository under your USERNAME Github account. Then
-follow these steps:
+First make a fork of the repository under your `USERNAME` GitHub account. Then,
+in your Python environment follow these steps:
 
-    $ pip uninstall pybv
     $ git clone https://github.com/USERNAME/pybv
     $ cd pybv
+    $ pip install -r requirements.txt
+    $ pip install -r requirements-dev.txt
     $ pip install -e .
 
 ##### Running tests and coverage
 
-To run the tests using `pytest`, you need to install the following:
-
-    $ pip install pytest pytest-cov coverage
-
-Then you can run tests by simply calling `pytest` from the project root.
+If you have followed the steps to get the development version, you can run
+tests by simply calling `pytest` from the project root.
 
 For coverage, from the root call:
 
@@ -37,13 +35,10 @@ which will save an HTML report in `htmlcov/` that you can view in your browser.
 
 ##### Building the documentation
 
-The documentation can be built using sphinx. For that, please additionally
-install the following:
-
-    $ pip install sphinx alabaster
-
-Then from the command line navigate to the `/docs` directory and call `make
-html`. The HTML pages will be in `_build/html`.
+The documentation can be built using sphinx. Again, assuming that you followed
+the steps to get the development version, you can from the command line
+navigate to the `/docs` directory and call `make html`. The HTML pages will
+be in `_build/html`.
 
 ##### Making a release
 (needs admin rights for GitHub and PyPi)
@@ -59,12 +54,14 @@ html`. The HTML pages will be in `_build/html`.
       style.
 1. Update `docs/changelog.rst`, renaming the "current" headline to the new
    version and adding all "Authors" for the release
+    - "Authors" are all people who committed code or in other ways contributed
+    to `pybv` **for this release** (e.g., by reviewing PRs).
 1. commit the change and git push to master (or make a pull request)
 1. remove the `build/` and `dist/` directories from the pybv root directory
 1. run `pip install -e .` and then `python setup.py sdist bdist_wheel`
-1. upload to "test-pypi":
+1. upload to [test-pypi](https://test.pypi.org/):
   1. `twine upload --repository-url https://test.pypi.org/legacy/ dist/*`
-  1. inspect it on "test-pypi"
+  1. inspect it on [test-pypi](https://test.pypi.org/)
   1. test installing it via
      `pip install --index-url https://test.pypi.org/simple/ pybv`
   1. if everything is OK, proceed
