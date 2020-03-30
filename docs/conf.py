@@ -6,17 +6,19 @@ See: https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
 import os
 import sys
+from datetime import date
+
 import pybv
+
 curdir = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(curdir, '..', 'pybv')))
 
 # see: https://sphinx.readthedocs.io/en/1.3/extensions.html
 extensions = [
-   'sphinx.ext.autodoc',
-   'sphinx.ext.napoleon',
    'sphinx.ext.autosummary',
    'sphinx.ext.viewcode',
    'sphinx.ext.intersphinx',
+   'numpydoc'
    ]
 
 # Generate the autosummary
@@ -24,7 +26,7 @@ autosummary_generate = True
 
 # General information about the project.
 project = 'pybv'
-copyright = '2018-2019, pybv developers'
+copyright = '2018-{}, pybv developers'.format(date.today().year)
 author = 'pybv developers'
 version = pybv.__version__
 release = version
@@ -59,6 +61,4 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'mne': ('http://mne-tools.github.io/stable/', None),
     'numpy': ('https://www.numpy.org/devdocs', None),
-    'scipy': ('https://scipy.github.io/devdocs', None),
-    'matplotlib': ('https://matplotlib.org', None),
 }

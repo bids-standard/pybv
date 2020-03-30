@@ -74,7 +74,7 @@ the following: ``pip install -U pybv``
 Contributing
 ============
 The development of ``pybv`` is taking place on
-`Github <https://github.com/bids-standard/pybv>`_.
+`GitHub <https://github.com/bids-standard/pybv>`_.
 
 For more information, please see
 `CONTRIBUTING.md <https://github.com/bids-standard/pybv/blob/master/CONTRIBUTING.md>`_
