@@ -29,7 +29,7 @@ supported_orients = {'multiplexed'}
 
 def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
                       events=None, resolution=1e-7, scale_data=True,
-                      fmt='binary_float32', meas_date=None):
+                      fmt='binary_float32', meas_date=None, unit='µV'):
     """Write raw data to BrainVision format.
 
     Parameters
@@ -74,6 +74,10 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         ('u' stands for microseconds). Note that setting a measurement date
         implies that one additional event is created in the .vmrk file. To
         prevent this, set this parameter to None (default).
+    unit : str
+        The unit of the exported data. This can be one of 'V', 'mV', 'uV',
+        'µV', 'nV' or 'auto'. If 'auto', a suitable unit based on the selected
+        resolution is chosen automatically.
     """
     # Create output file names/paths
     if not op.isdir(folder_out):
@@ -135,7 +139,7 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
     _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date)
     _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
                      ch_names, orientation='multiplexed', format=fmt,
-                     resolution=resolution)
+                     resolution=resolution, unit=unit)
     _write_bveeg_file(eeg_fname, data, orientation='multiplexed', format=fmt,
                       resolution=resolution, scale_data=scale_data)
 
@@ -204,20 +208,29 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
                   file=fout)
 
 
-def _optimize_channel_unit(resolution):
+def _optimize_channel_unit(resolution, unit):
     """Calculate an optimal channel scaling factor and unit."""
     exp = np.log10(resolution)
-    if exp <= -7:
-        return resolution / 1e-9, 'nV'
-    elif exp <= -2:
-        return resolution / 1e-6, 'µV'
-    else:
+    if unit == 'auto':
+        if exp <= -7:
+            return resolution / 1e-9, 'nV'
+        elif exp <= -2:
+            return resolution / 1e-6, 'µV'
+        else:
+            return resolution, 'V'
+    elif unit == 'V':
         return resolution, 'V'
+    elif unit == 'mV':
+        return resolution / 1e-3, 'mV'
+    elif unit in ('µV', 'uV'):
+        return resolution / 1e-6, 'µV'
+    elif unit == 'nV':
+        return resolution / 1e-9, 'nV'
 
 
 def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
                      orientation='multiplexed', format='binary_float32',
-                     resolution=1e-7):
+                     resolution=1e-7, unit='µV'):
     """Write BrainvVision header file."""
     fmt = format.lower()
     bvfmt, _ = _chk_fmt(format)
@@ -259,9 +272,10 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         nchan = len(ch_names)
         # broadcast to nchan elements if necessary
         resolutions = resolution * np.ones((nchan,))
+        units = [unit] * nchan
 
         for i in range(nchan):
-            resolution, unit = _optimize_channel_unit(resolutions[i])
+            resolution, unit = _optimize_channel_unit(resolutions[i], units[i])
             print(r'Ch{}={},,{:0.3f},{}'
                   .format(i + 1, ch_names[i], resolution, unit), file=fout)
         print(r'', file=fout)
