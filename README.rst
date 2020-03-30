@@ -95,7 +95,7 @@ collection of BrainVision files on disk.
 
     # for further parameters see our API documentation in the docs
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events,
-                      resolution=1e-6, fmt='binary_float32')
+                      resolution=1e-6, unit='µV', fmt='binary_float32')
 
 Reading BrainVision files
 -------------------------
