@@ -276,8 +276,10 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
 
         for i in range(nchan):
             resolution, unit = _optimize_channel_unit(resolutions[i], units[i])
-            print(r'Ch{}={},,{:0.3f},{}'
-                  .format(i + 1, ch_names[i], resolution, unit), file=fout)
+            s = r'Ch{}={},,{:0.{precision}f},{}'
+            print(s.format(i + 1, ch_names[i], resolution, unit,
+                           precision=max(0, int(np.log10(1 / resolution)))),
+                  file=fout)
         print(r'', file=fout)
         print(r'[Comment]', file=fout)
         print(r'', file=fout)
