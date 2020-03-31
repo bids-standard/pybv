@@ -18,7 +18,7 @@ import numpy as np
 
 from pybv import __version__
 
-# ascii as future formats
+# ASCII as future formats
 supported_formats = {
     'binary_float32' : ('IEEE_FLOAT_32', np.float32),  # noqa: E203
     'binary_int16'   : ('INT_16', np.int16),  # noqa: E203
@@ -166,11 +166,11 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
     """Write BrainvVision marker file."""
     with codecs.open(vmrk_fname, 'w', encoding='utf-8') as fout:
         print(r'Brain Vision Data Exchange Marker File, Version 1.0', file=fout)  # noqa: E501
-        print(r';Exported using pybv {}'.format(__version__), file=fout)  # noqa: E501
+        print(r';Exported using pybv {}'.format(__version__), file=fout)
         print(r'', file=fout)
         print(r'[Common Infos]', file=fout)
         print(r'Codepage=UTF-8', file=fout)
-        print(r'DataFile={}'.format(eeg_fname.split(os.sep)[-1]), file=fout)  # noqa: E501
+        print(r'DataFile={}'.format(eeg_fname.split(os.sep)[-1]), file=fout)
         print(r'', file=fout)
         print(r'[Marker Infos]', file=fout)
         print(r'; Each entry: Mk<Marker number>=<Type>,<Description>,<Position in data points>,', file=fout)  # noqa: E501
@@ -235,13 +235,13 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
     multiplexed = _chk_multiplexed(orientation)
 
     with codecs.open(vhdr_fname, 'w', encoding='utf-8') as fout:
-        print(r'Brain Vision Data Exchange Header File Version 1.0', file=fout)  # noqa: E501
-        print(r';Written using pybv {}'.format(__version__), file=fout)  # noqa: E501
+        print(r'Brain Vision Data Exchange Header File Version 1.0', file=fout)
+        print(r';Written using pybv {}'.format(__version__), file=fout)
         print(r'', file=fout)
         print(r'[Common Infos]', file=fout)
         print(r'Codepage=UTF-8', file=fout)
-        print(r'DataFile={}'.format(op.basename(eeg_fname)), file=fout)  # noqa: E501
-        print(r'MarkerFile={}'.format(op.basename(vmrk_fname)), file=fout)  # noqa: E501
+        print(r'DataFile={}'.format(op.basename(eeg_fname)), file=fout)
+        print(r'MarkerFile={}'.format(op.basename(vmrk_fname)), file=fout)
 
         if fmt.startswith('binary'):
             print(r'DataFormat=BINARY', file=fout)
@@ -250,14 +250,14 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
             print(r'; DataOrientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...', file=fout)  # noqa: E501
             print(r'DataOrientation=MULTIPLEXED', file=fout)
 
-        print(r'NumberOfChannels={}'.format(len(data)), file=fout)  # noqa: E501
+        print(r'NumberOfChannels={}'.format(len(data)), file=fout)
         print(r'; Sampling interval in microseconds', file=fout)
-        print(r'SamplingInterval={}'.format(int(1e6 / sfreq)), file=fout)  # noqa: E501
+        print(r'SamplingInterval={}'.format(int(1e6 / sfreq)), file=fout)
         print(r'', file=fout)
 
         if fmt.startswith('binary'):
             print(r'[Binary Infos]', file=fout)
-            print(r'BinaryFormat={}'.format(bvfmt), file=fout)  # noqa: E501
+            print(r'BinaryFormat={}'.format(bvfmt), file=fout)
             print(r'', file=fout)
 
         print(r'[Channel Infos]', file=fout)
