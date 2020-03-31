@@ -21,16 +21,16 @@ from numpy.testing import assert_allclose, assert_array_equal
 
 from pybv.io import write_brainvision, _write_bveeg_file, _write_vhdr_file
 
-# Create data we'll use for testing
+# create testing data
 fname = 'pybv'
 np.random.seed(1337)
 n_chans = 10
-ch_names = ['ch_{}'.format(ii) for ii in range(n_chans)]
-sfreq = 1000.
+ch_names = ['ch_{}'.format(i) for i in range(n_chans)]
+sfreq = 1000
 n_seconds = 5
-n_times = int(n_seconds * sfreq)
-event_times = np.array([1., 2., 3., 4.])
-events = np.column_stack([(event_times * sfreq).astype(int), [1, 1, 2, 2]])
+n_times = n_seconds * sfreq
+event_times = np.arange(1, 5)
+events = np.column_stack([event_times * sfreq, [1, 1, 2, 2]])
 data = np.random.randn(n_chans, n_times)
 
 
@@ -43,24 +43,23 @@ def test_bv_writer_events():
     """Test that all event options work without throwing an error."""
     tmpdir = _mktmpdir()
 
-    # Events should be none or ndarray
+    # events should be none or ndarray
     with pytest.raises(ValueError):
         write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=[])
 
-    # Correct arguments should work
+    # correct arguments should work
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events)
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=None)
     rmtree(tmpdir)
 
 
 def test_bv_bad_format():
-    """Test that bad formats cause an error."""
+    """Test that bad formats throw an error."""
     tmpdir = _mktmpdir()
 
-    vhdr_fname = os.path.join(tmpdir, fname+".vhdr")
-    vmrk_fname = os.path.join(tmpdir, fname+".vmrk")
-    eeg_fname = os.path.join(tmpdir, fname+".eeg")
-    # events = np.array([[10, 0, 31]])
+    vhdr_fname = os.path.join(tmpdir, fname + ".vhdr")
+    vmrk_fname = os.path.join(tmpdir, fname + ".vmrk")
+    eeg_fname = os.path.join(tmpdir, fname + ".eeg")
 
     with pytest.raises(ValueError):
         _write_vhdr_file(vhdr_fname, vmrk_fname,
@@ -86,44 +85,41 @@ def test_bad_meas_date(meas_date, match):
     with pytest.raises(ValueError, match=match):
         write_brainvision(data, sfreq, ch_names, fname, tmpdir,
                           meas_date=meas_date)
-
     rmtree(tmpdir)
 
 
 @pytest.mark.parametrize("meas_date",
                          [('20000101120000000000'),
                           (datetime(2000, 1, 1, 12, 0, 0, 0))])
-def test_bv_writer_oi_cycle(meas_date):
-    """Test that a write-read cycle produces identical data."""
+def test_write_read_cycle(meas_date):
+    """Test that a write/read cycle produces identical data."""
     tmpdir = _mktmpdir()
 
-    # Write, then read the data to BV format
+    # write and read data to BV format
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events,
                       resolution=np.power(10., -np.arange(10)),
                       meas_date=meas_date)
     vhdr_fname = op.join(tmpdir, fname + '.vhdr')
     raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
-    # Delete the first annotation because it's just marking a new segment
+    # delete the first annotation because it's just marking a new segment
     raw_written.annotations.delete(0)
-    # Convert our annotations to events
+    # convert our annotations to events
     events_written, event_id = mne.events_from_annotations(raw_written)
 
     # sfreq
     assert sfreq == raw_written.info['sfreq']
 
-    # Event timing should be exactly the same
+    # event timing should be exactly the same
     assert_array_equal(events[:, 0], events_written[:, 0])
     assert_array_equal(events[:, 1], events_written[:, 2])
-    # Should be 2 unique event types
-    assert len(event_id) == 2
 
-    # data round-trip.
-    assert_allclose(data, raw_written._data)
+    assert len(event_id) == 2  # there should be two unique event types
 
-    # channels
-    assert ch_names == raw_written.ch_names
+    assert_allclose(data, raw_written._data)  # data round-trip
 
-    # measurement date, we do not test microsecs
+    assert ch_names == raw_written.ch_names  # channels
+
+    # measurement dates must match
     assert raw_written.info['meas_date'] == datetime(2000, 1, 1, 12, 0, 0, 0,
                                                      tzinfo=timezone.utc)
 
@@ -149,3 +145,4 @@ def test_unit_resolution(resolution, unit):
     vhdr_fname = op.join(tmpdir, fname + '.vhdr')
     raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
     assert np.allclose(data, raw_written.get_data())
+    rmtree(tmpdir)
