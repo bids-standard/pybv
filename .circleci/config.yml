@@ -33,6 +33,14 @@ jobs:
             pip install -r requirements-dev.txt
             python setup.py develop
 
+      # XXX: install MNE `master` temporarily until MNE-Python 0.20.1 is
+      # released ... see: https://github.com/bids-standard/pybv/pull/39
+      - run:
+          name: install MNE-Python master
+          command: |
+            source activate testenv
+            pip install -U https://api.github.com/repos/mne-tools/mne-python/zipball/master
+
       # Save cache
       - save_cache:
           key: pip-tests-cache-0-{{ checksum "./requirements.txt" }}
