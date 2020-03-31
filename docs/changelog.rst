@@ -15,6 +15,10 @@ Here we list a changelog of pybv.
 Current
 =======
 
+Changelog
+~~~~~~~~~
+- Add ``unit`` parameter for exporting signals in a specific unit (V, mV, µV or uV, nV) by `Clemens Brunner`_ (`#39 <https://github.com/bids-standard/pybv/pull/39>`_)
+
 0.2.0
 =====
 
