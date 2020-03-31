@@ -57,10 +57,10 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         By default, this will be 1e-7, or 0.1 µV. This number controls the
         amount of round-trip resolution. This can be either a single float for
         all channels or an array with n_channels elements.
-    unit : str
+    unit : str | None
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
-        equivalently 'uV') , 'nV' or 'auto'. If 'auto', a suitable unit based
-        on the selected resolution is chosen automatically.
+        equivalently 'uV') , 'nV' or None. If None, a suitable unit based on
+        the selected resolution is chosen automatically.
     scale_data : bool
         Boolean indicating if the data is in volts and should be scaled to
         `resolution` (True), or if the data is already in the previously
@@ -208,7 +208,7 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
 def _optimize_channel_unit(resolution, unit):
     """Calculate an optimal channel scaling factor and unit."""
     exp = np.log10(resolution)
-    if unit == 'auto':
+    if unit is None:
         if exp <= -7:
             return resolution / 1e-9, 'nV'
         elif exp <= -2:
