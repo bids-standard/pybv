@@ -136,7 +136,7 @@ def test_scale_data():
 
 
 @pytest.mark.parametrize("resolution", np.logspace(-3, -9, 7))
-@pytest.mark.parametrize("unit", ["V", "mV", "uV", "µV", "nV"])
+@pytest.mark.parametrize("unit", ["V", "mV", "uV", "µV", "nV", None])
 def test_unit_resolution(resolution, unit):
     """Test different combinations of units and resolutions."""
     tmpdir = _mktmpdir()
