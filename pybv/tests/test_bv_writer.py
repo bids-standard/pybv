@@ -137,3 +137,15 @@ def test_scale_data():
     data_written = np.fromfile(tmpdir + '/' + fname + '.eeg', dtype=np.float32)
     assert_allclose(data_written, data.T.flatten())
     rmtree(tmpdir)
+
+
+@pytest.mark.parametrize("resolution", np.logspace(-3, -9, 7))
+@pytest.mark.parametrize("unit", ["V", "mV", "uV", "µV", "nV"])
+def test_unit_resolution(resolution, unit):
+    """Test different combinations of units and resolutions."""
+    tmpdir = _mktmpdir()
+    write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+                      resolution=resolution, unit=unit)
+    vhdr_fname = op.join(tmpdir, fname + '.vhdr')
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
+    assert np.allclose(data, raw_written.get_data())
