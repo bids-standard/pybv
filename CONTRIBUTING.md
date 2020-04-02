@@ -56,7 +56,8 @@ be in `_build/html`.
    version and adding all "Authors" for the release
     - "Authors" are all people who committed code or in other ways contributed
     to `pybv` **for this release** (e.g., by reviewing PRs).
-1. commit the change and git push to master (or make a pull request)
+1. Commit the change and git push to master (or make a pull request). Include
+   "REL" in your commit message.
 1. remove the `build/` and `dist/` directories from the pybv root directory
 1. run `pip install -e .` and then `python setup.py sdist bdist_wheel`
 1. upload to [test-pypi](https://test.pypi.org/):

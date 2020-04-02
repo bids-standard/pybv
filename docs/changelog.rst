@@ -12,12 +12,22 @@ Here we list a changelog of pybv.
    :local:
    :depth: 1
 
-Current
-=======
+0.3.0
+=====
 
 Changelog
 ~~~~~~~~~
 - Add ``unit`` parameter for exporting signals in a specific unit (V, mV, µV or uV, nV) by `Clemens Brunner`_ (`#39 <https://github.com/bids-standard/pybv/pull/39>`_)
+
+API
+~~~
+- The order of parameters in :func:`pybv.write_brainvision` has changed, by `Clemens Brunner`_ (`#39 <https://github.com/bids-standard/pybv/pull/39>`_)
+
+Authors
+~~~~~~~
+- `Clemens Brunner`_
+- `Stefan Appelhoff`_
+- `Tristan Stenner`_
 
 0.2.0
 =====
