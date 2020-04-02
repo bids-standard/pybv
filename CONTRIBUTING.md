@@ -84,5 +84,5 @@ the next release:
       [semantic versioning](https://semver.org/) so that the version will be
       the version that is planned to be released next (e.g., `1.3.0`)
     - append `.dev0` to the version (e.g., `1.3.0.dev0`)
-    - commit the change and git push to master (or make a pull request)
 1. add a "current" headline to `docs/changelog.rst`
+1. commit the changes and git push to master (or make a pull request)
