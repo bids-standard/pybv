@@ -10,7 +10,7 @@ Here we list a changelog of pybv.
 
 .. contents:: Contents
    :local:
-   :depth: 2
+   :depth: 1
 
 Current
 =======
@@ -30,6 +30,7 @@ Changelog
 Authors
 ~~~~~~~
 - `Clemens Brunner`_
+- `Stefan Appelhoff`_
 
 0.1.0
 =====
