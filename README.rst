@@ -122,12 +122,6 @@ Here is an example of the MNE code required to read in BrainVision data:
     # Import the BrainVision data into an MNE Raw object
     raw = mne.io.read_raw_brainvision('tmp/test.vhdr', preload=True)
 
-    # Read in the event information as MNE annotations
-    annot = mne.read_annotations('tmp/test.vmrk')
-
-    # Add the annotations to our raw object so we can use them with the data
-    raw.set_annotations(annot)
-
     # Reconstruct the original events from our Raw object
     events, event_ids = mne.events_from_annotations(raw)
 
