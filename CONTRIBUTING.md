@@ -26,13 +26,6 @@ in your Python environment follow these steps:
 If you have followed the steps to get the development version, you can run
 tests by simply calling `pytest` from the project root.
 
-For coverage, from the root call:
-
-    $ coverage run --source pybv -m pytest
-
-and then `coverage report` to see the report, or alternatively `coverage html`,
-which will save an HTML report in `htmlcov/` that you can view in your browser.
-
 ##### Building the documentation
 
 The documentation can be built using sphinx. Again, assuming that you followed
