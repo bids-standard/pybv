@@ -1,4 +1,4 @@
-.. image:: https://circleci.com/gh/bids-standard/pybv.svg?style=svg
+.. image:: https://circleci.com/gh/bids-standard/pybv.svg?style=shield
    :target: https://circleci.com/gh/bids-standard/pybv
    :alt: CircleCI
 
@@ -8,11 +8,11 @@
 
 .. image:: https://badge.fury.io/py/pybv.svg
    :target: https://badge.fury.io/py/pybv
-   :alt: pypi
+   :alt: pypi version
 
-.. image:: https://pepy.tech/badge/pybv
-   :target: https://pepy.tech/project/pybv
-   :alt: Downloads
+.. image:: https://img.shields.io/conda/vn/conda-forge/pybv.svg
+   :target: https://anaconda.org/conda-forge/pybv
+   :alt: conda version
 
 .. image:: https://readthedocs.org/projects/pybv/badge/?version=stable
    :target: https://pybv.readthedocs.io/en/stable/?badge=stable
@@ -63,16 +63,24 @@ as hosted by Brain Products.
 
 Installation
 ============
+
 ``pybv``'s only dependency is ``numpy``. However, we currently recommend that
 you install MNE-Python for reading BrainVision data. See their instructions
 `here <https://www.martinos.org/mne/stable/install_mne_python.html>`_.
 
 After you have a working installation of MNE-Python (or only ``numpy`` if you
 don't want to read data and only write it), you can install ``pybv`` through
-the following: ``pip install -U pybv``
+the following:
+
+- ``pip install --upgrade pybv``
+
+or if you use `conda <https://docs.conda.io/en/latest/miniconda.html>`_:
+
+- ``conda install --channel conda-forge pybv``
 
 Contributing
 ============
+
 The development of ``pybv`` is taking place on
 `GitHub <https://github.com/bids-standard/pybv>`_.
 
@@ -100,11 +108,10 @@ collection of BrainVision files on disk.
 Reading BrainVision files
 -------------------------
 
-Currently, pybv recommends using
-`MNE-Python <https://martinos.org/mne/stable/index.html>`_
-for reading BrainVision files written with ``pybv``. This results in a
-nearly-round-trip conversion of the data (up to the numerical precision you
-specify in the ``resolution`` parameter).
+Currently, ``pybv`` recommends using `MNE-Python <https://mne.tools>`_
+for reading BrainVision files.
+This results in a nearly-round-trip conversion of the data (up to the numerical
+precision you specify in the ``resolution`` parameter).
 
 Here is an example of the MNE code required to read in BrainVision data:
 
