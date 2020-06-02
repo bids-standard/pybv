@@ -44,12 +44,37 @@ def test_bv_writer_events():
     tmpdir = _mktmpdir()
 
     # events should be none or ndarray
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='events must be an ndarray of shape'):
         write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=[])
+
+    with pytest.raises(ValueError, match='events must be an ndarray of shape'):
+        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+                          events=rng.randn(10, 20, 30))
+
+    with pytest.raises(ValueError, match='events must be an ndarray of shape'):
+        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+                          events=rng.randn(10, 4))
 
     # correct arguments should work
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events)
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=None)
+    rmtree(tmpdir)
+
+
+def test_bv_writer_inputs():
+    """Test channels, sfreq, and resolution."""
+    tmpdir = _mktmpdir()
+    with pytest.raises(ValueError, match='Number of channels in data'):
+        write_brainvision(data[1:, :], sfreq, ch_names, fname, tmpdir)
+    with pytest.raises(ValueError, match='Channel names must be unique'):
+        write_brainvision(data[0:2, :], sfreq, ['b', 'b'], fname, tmpdir)
+    with pytest.raises(ValueError, match='sfreq must be one of '):
+        write_brainvision(data, '100', ch_names, fname, tmpdir)
+    with pytest.raises(ValueError, match='Resolution should be numeric, is'):
+        write_brainvision(data, sfreq, ch_names, fname, tmpdir, resolution='y')
+    with pytest.raises(ValueError, match='Resolution should be one or n_chan'):
+        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+                          resolution=np.arange(n_chans-1))
     rmtree(tmpdir)
 
 
@@ -61,15 +86,15 @@ def test_bv_bad_format():
     vmrk_fname = os.path.join(tmpdir, fname + ".vmrk")
     eeg_fname = os.path.join(tmpdir, fname + ".eeg")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='Orientation bad not supported'):
         _write_vhdr_file(vhdr_fname, vmrk_fname,
                          eeg_fname, data, sfreq, ch_names, orientation='bad')
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='Data format bad not supported'):
         _write_vhdr_file(vhdr_fname, vmrk_fname,
                          eeg_fname, data, sfreq, ch_names, format='bad')
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='Orientation bad not supported'):
         _write_bveeg_file(eeg_fname, data, orientation='bad')
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='Data format bad not supported'):
         _write_bveeg_file(eeg_fname, data, format='bad')
 
     rmtree(tmpdir)
@@ -94,6 +119,9 @@ def test_bad_meas_date(meas_date, match):
 def test_write_read_cycle(meas_date):
     """Test that a write/read cycle produces identical data."""
     tmpdir = _mktmpdir()
+
+    # check that we create a folder that does not yet exist
+    tmpdir = op.join(tmpdir, 'newfolder')
 
     # write and read data to BV format
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events,
@@ -135,7 +163,7 @@ def test_scale_data():
     rmtree(tmpdir)
 
 
-@pytest.mark.parametrize("resolution", np.logspace(-3, -9, 7))
+@pytest.mark.parametrize("resolution", np.logspace(-1, -9, 9))
 @pytest.mark.parametrize("unit", ["V", "mV", "uV", "µV", "nV", None])
 def test_unit_resolution(resolution, unit):
     """Test different combinations of units and resolutions."""

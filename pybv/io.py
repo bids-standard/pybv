@@ -38,20 +38,22 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         The raw data to export. Data is assumed to be in **volts** and will be
         stored as specified by `unit`.
     sfreq : int | float
-        The sampling frequency of the data
+        The sampling frequency of the data.
     ch_names : list of strings, shape (n_channels,)
-        The name of each channel
+        The name of each channel.
     fname_base : str
         The base name for the output files. Three files will be created
         (.vhdr, .vmrk, .eeg) and all will share this base name.
     folder_out : str
-        The folder where output files will be saved.
-    events : ndarray, shape (n_events, 2) or (n_events, 3)
+        The folder where output files will be saved. Will be created if it
+        does not exist yet.
+    events : ndarray, shape (n_events, 2) or (n_events, 3) | None
         Events to write in the marker file. This array has either two or three
         columns. The first column is always the zero-based index of each event
         (corresponding to the "time" dimension of the data array). The second
         column is a number associated with the "type" of event. The (optional)
         third column specifies the length of each event (default 1 sample).
+        Defaults to None (not writing any events).
     resolution : float | ndarray
         The resolution **in volts** in which you'd like the data to be stored.
         By default, this will be 1e-7, or 0.1 µV. This number controls the
@@ -144,7 +146,7 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
 def _chk_fmt(fmt):
     """Check that the format string is valid, return BVEF / numpy datatypes."""
     if fmt not in supported_formats:
-        errmsg = ('Data format {} not supported.'.format(format) +
+        errmsg = ('Data format {} not supported.'.format(fmt) +
                   'Currently supported formats are: ' +
                   ', '.join(supported_formats))
         raise ValueError(errmsg)
@@ -291,10 +293,6 @@ def _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
     # check the orientation
     _chk_multiplexed(orientation)
     _, dtype = _chk_fmt(fmt)
-
-    if not fmt.startswith('binary'):
-        errmsg = 'Cannot map data format {} to NumPy dtype'.format(format)
-        raise ValueError(errmsg)
 
     # Invert the resolution so that we know how much to scale our data
     scaling_factor = 1 / resolution
