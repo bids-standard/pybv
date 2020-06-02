@@ -11,8 +11,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: [3.7]
+        platform: [ubuntu-18.04, ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.8]
 
     runs-on: ${{ matrix.platform }}
 
@@ -32,13 +32,19 @@ jobs:
         pip install -e .
 
     - name: install MNE-Python master
+      if: "matrix.platform == 'ubuntu-18.04'"
       run: |
         pip install -U https://api.github.com/repos/mne-tools/mne-python/zipball/master
 
+    - name: Check formatting
+      if: "matrix.platform == 'ubuntu-18.04'"
+      run: |
+        flake8 --docstring-convention numpy .
+        pycodestyle pybv
+
     - name: Test with pytest
       run: |
-        pytest --cov=./pybv --cov-report=xml
-        flake8 .
+        pytest --cov=./pybv --cov-report=xml --verbose
 
     - name: Build docs
       run: |
@@ -47,12 +53,14 @@ jobs:
         make html
 
     - name: Upload artifacts
+      if: "matrix.platform == 'ubuntu-18.04'"
       uses: actions/upload-artifact@v1
       with:
         name: docs-artifact
         path: docs/_build/html
 
     - name: Upload coverage report
+      if: "matrix.platform == 'ubuntu-18.04'"
       uses: codecov/codecov-action@v1
       with:
         file: ./coverage.xml

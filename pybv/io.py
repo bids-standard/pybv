@@ -10,9 +10,9 @@
 # License: BSD (3-clause)
 
 import codecs
+import datetime
 import os
 import os.path as op
-import datetime
 
 import numpy as np
 
@@ -20,8 +20,8 @@ from pybv import __version__
 
 # ASCII as future formats
 supported_formats = {
-    'binary_float32' : ('IEEE_FLOAT_32', np.float32),  # noqa: E203
-    'binary_int16'   : ('INT_16', np.int16),  # noqa: E203
+    'binary_float32': ('IEEE_FLOAT_32', np.float32),
+    'binary_int16': ('INT_16', np.int16),
 }
 
 supported_orients = {'multiplexed'}
