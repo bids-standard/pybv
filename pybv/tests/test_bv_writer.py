@@ -23,7 +23,7 @@ from pybv.io import write_brainvision, _write_bveeg_file, _write_vhdr_file
 
 # create testing data
 fname = 'pybv'
-np.random.seed(1337)
+rng = np.random.RandomState(1337)
 n_chans = 10
 ch_names = ['ch_{}'.format(i) for i in range(n_chans)]
 sfreq = 1000
@@ -31,7 +31,7 @@ n_seconds = 5
 n_times = n_seconds * sfreq
 event_times = np.arange(1, 5)
 events = np.column_stack([event_times * sfreq, [1, 1, 2, 2]])
-data = np.random.randn(n_chans, n_times)
+data = rng.randn(n_chans, n_times)
 
 
 def _mktmpdir():
