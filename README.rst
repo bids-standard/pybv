@@ -1,6 +1,6 @@
-.. image:: https://circleci.com/gh/bids-standard/pybv.svg?style=shield
-   :target: https://circleci.com/gh/bids-standard/pybv
-   :alt: CircleCI
+.. image:: https://github.com/bids-standard/pybv/workflows/Python%20tests/badge.svg
+   :target: https://github.com/bids-standard/pybv/actions?query=workflow%3A%22Python+tests%22
+   :alt: GitHub Actions Python tests
 
 .. image:: https://codecov.io/gh/bids-standard/pybv/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/bids-standard/pybv
