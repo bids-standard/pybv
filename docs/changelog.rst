@@ -15,14 +15,20 @@ Here we list a changelog of pybv.
 Current
 =======
 
-- no entries yet
+Changelog
+~~~~~~~~~
+- Passing a "greek small letter mu" instead of a "micro sign" as a ``unit`` is now permitted, because :func:`pybv.write_brainvision` will convert from one to the other, by `Stefan Appelhoff`_ (`#47 <https://github.com/bids-standard/pybv/pull/47>`_)
+
+Authors
+~~~~~~~
+- `Stefan Appelhoff`_
 
 0.3.0
 =====
 
 Changelog
 ~~~~~~~~~
-- Add ``unit`` parameter for exporting signals in a specific unit (V, mV, µV or uV, nV) by `Clemens Brunner`_ (`#39 <https://github.com/bids-standard/pybv/pull/39>`_)
+- Add ``unit`` parameter for exporting signals in a specific unit (V, mV, µV or uV, nV), by `Clemens Brunner`_ (`#39 <https://github.com/bids-standard/pybv/pull/39>`_)
 
 API
 ~~~
@@ -39,8 +45,8 @@ Authors
 
 Changelog
 ~~~~~~~~~
-- Add option to disable writing a meas_date event (which is also the new default) by `Clemens Brunner`_ (`#32 <https://github.com/bids-standard/pybv/pull/32>`_)
-- Support event durations by passing an (N, 3) array to the events parameter (the third column contains the event durations) by `Clemens Brunner`_ (`#33 <https://github.com/bids-standard/pybv/pull/33>`_)
+- Add option to disable writing a meas_date event (which is also the new default), by `Clemens Brunner`_ (`#32 <https://github.com/bids-standard/pybv/pull/32>`_)
+- Support event durations by passing an (N, 3) array to the events parameter (the third column contains the event durations), by `Clemens Brunner`_ (`#33 <https://github.com/bids-standard/pybv/pull/33>`_)
 
 Authors
 ~~~~~~~
@@ -53,7 +59,7 @@ Authors
 Changelog
 ~~~~~~~~~
 - Add measurement date parameter to public API, by `Stefan Appelhoff`_ (`#29 <https://github.com/bids-standard/pybv/pull/29>`_)
-- Add binary format parameter to public API by `Tristan Stenner`_ (`#22 <https://github.com/bids-standard/pybv/pull/22>`_)
+- Add binary format parameter to public API, by `Tristan Stenner`_ (`#22 <https://github.com/bids-standard/pybv/pull/22>`_)
 
 Bug
 ~~~
@@ -71,7 +77,7 @@ Authors
 
 Changelog
 ~~~~~~~~~
-- Support channel-specific scaling factors by `Tristan Stenner`_ (`#17 <https://github.com/bids-standard/pybv/pull/17>`_)
+- Support channel-specific scaling factors, by `Tristan Stenner`_ (`#17 <https://github.com/bids-standard/pybv/pull/17>`_)
 
 Authors
 ~~~~~~~
@@ -84,7 +90,7 @@ Authors
 
 Changelog
 ~~~~~~~~~
-- Initial import from philistine package by `Phillip Alday`_ and removing dependency on MNE-Python, by `Chris Holdgraf`_ and `Stefan Appelhoff`_
+- Initial import from philistine package by `Phillip Alday`_ and removing dependency on MNE-Python, by `Chris Holdgraf`_, and `Stefan Appelhoff`_
 
 Authors
 ~~~~~~~
