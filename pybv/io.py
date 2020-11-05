@@ -11,9 +11,9 @@
 
 import codecs
 import datetime
-import logging
 import os
 import os.path as op
+import warnings
 
 import numpy as np
 
@@ -126,7 +126,7 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
     if unit == 'μV':
         # this is greek mu: μ
         # https://www.compart.com/de/unicode/U+03BC
-        logging.warning(
+        warnings.warn(
             f"Encountered small greek letter mu: 'μ' in unit: {unit} ... "
             f"converting to micro sign: 'µ': {unit.replace('μ', 'µ')}"
         )
