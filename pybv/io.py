@@ -11,6 +11,7 @@
 
 import codecs
 import datetime
+import logging
 import os
 import os.path as op
 
@@ -19,12 +20,14 @@ import numpy as np
 from pybv import __version__
 
 # ASCII as future formats
-supported_formats = {
+SUPPORTED_FORMATS = {
     'binary_float32': ('IEEE_FLOAT_32', np.float32),
     'binary_int16': ('INT_16', np.int16),
 }
 
-supported_orients = {'multiplexed'}
+SUPPORTED_ORIENTS = {'multiplexed'}
+
+SUPPORTED_UNITS = ['V', 'mV', 'µV', 'uV', 'nV']
 
 
 def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
@@ -120,6 +123,15 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
 
     _chk_fmt(fmt)
 
+    if unit == 'μV':
+        # this is greek mu: μ
+        # https://www.compart.com/de/unicode/U+03BC
+        logging.warning(
+            f"Encountered small greek letter mu: 'μ' in unit: {unit} ... "
+            f"converting to micro sign: 'µ': {unit.replace('μ', 'µ')}"
+        )
+        unit = 'µV'
+
     # measurement date
     if not isinstance(meas_date, (str, datetime.datetime, type(None))):
         raise ValueError('`meas_date` must be of type str, datetime.datetime, '
@@ -145,21 +157,21 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
 
 def _chk_fmt(fmt):
     """Check that the format string is valid, return BVEF / numpy datatypes."""
-    if fmt not in supported_formats:
+    if fmt not in SUPPORTED_FORMATS:
         errmsg = ('Data format {} not supported.'.format(fmt) +
                   'Currently supported formats are: ' +
-                  ', '.join(supported_formats))
+                  ', '.join(SUPPORTED_FORMATS))
         raise ValueError(errmsg)
-    return supported_formats[fmt]
+    return SUPPORTED_FORMATS[fmt]
 
 
 def _chk_multiplexed(orientation):
     """Validate an orientation, return if it is multiplexed or not."""
     orientation = orientation.lower()
-    if orientation not in supported_orients:
+    if orientation not in SUPPORTED_ORIENTS:
         errmsg = ('Orientation {} not supported.'.format(orientation) +
                   'Currently supported orientations are: ' +
-                  ', '.join(supported_orients))
+                  ', '.join(SUPPORTED_ORIENTS))
         raise ValueError(errmsg)
     return orientation == 'multiplexed'
 
@@ -225,6 +237,12 @@ def _optimize_channel_unit(resolution, unit):
         return resolution / 1e-6, 'µV'
     elif unit == 'nV':
         return resolution / 1e-9, 'nV'
+    else:
+        raise ValueError(
+            f'Encountered unsupported unit: {unit}'
+            '\nUse either "None" for `unit`, or one of the units: '
+            f'{SUPPORTED_UNITS}'
+            )
 
 
 def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
