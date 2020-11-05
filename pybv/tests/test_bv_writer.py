@@ -123,10 +123,19 @@ def test_write_read_cycle(meas_date):
     # check that we create a folder that does not yet exist
     tmpdir = op.join(tmpdir, 'newfolder')
 
+    # First fail writing due to wrong unit
+    unsupported_unit = "rV"
+    with pytest.raises(ValueError, match='Encountered unsupported unit'):
+        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+                          unit=unsupported_unit)
+
     # write and read data to BV format
-    write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events,
-                      resolution=np.power(10., -np.arange(10)),
-                      meas_date=meas_date)
+    # ensure that greek small letter mu gets converted to micro sign
+    with pytest.warns(UserWarning):
+        write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events,
+                          resolution=np.power(10., -np.arange(10)),
+                          unit='μV',
+                          meas_date=meas_date)
     vhdr_fname = op.join(tmpdir, fname + '.vhdr')
     raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
     # delete the first annotation because it's just marking a new segment
