@@ -22,9 +22,10 @@
 pybv
 ====
 
-``pybv`` is a lightweight exporter to the BrainVision data format. It is meant
-for use with electrophysiology datasets stored in the
-`Brain Imaging Data Structure <https://bids.neuroimaging.io>`_.
+``pybv`` is a lightweight exporter to the BrainVision data format.
+
+The BrainVision data format is a recommended data format
+for use in the `Brain Imaging Data Structure <https://bids.neuroimaging.io>`_.
 
 
 The documentation can be found under the following links:
@@ -64,9 +65,11 @@ as hosted by Brain Products.
 Installation
 ============
 
+``pybv`` runs on Python version 3.6 or higher.
+
 ``pybv``'s only dependency is ``numpy``. However, we currently recommend that
 you install MNE-Python for reading BrainVision data. See their instructions
-`here <https://www.martinos.org/mne/stable/install_mne_python.html>`_.
+`here <https://mne.tools/stable/install/index.html>`_.
 
 After you have a working installation of MNE-Python (or only ``numpy`` if you
 don't want to read data and only write it), you can install ``pybv`` through
