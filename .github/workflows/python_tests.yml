@@ -5,6 +5,12 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  create:
+    branches: [master]
+    tags: ['**']
+  schedule:
+    - cron: "0 4 1 * *"
+
 
 jobs:
   build:
@@ -13,6 +19,10 @@ jobs:
       matrix:
         platform: [ubuntu-18.04, ubuntu-latest, macos-latest, windows-latest]
         python-version: [3.8]
+
+    env:
+      TZ: Europe/Berlin
+      FORCE_COLOR: true
 
     runs-on: ${{ matrix.platform }}
 
@@ -35,6 +45,14 @@ jobs:
       if: "matrix.platform == 'ubuntu-18.04'"
       run: |
         pip install -U https://api.github.com/repos/mne-tools/mne-python/zipball/master
+
+    - name: Display versions and environment information
+      run: |
+        echo $TZ
+        date
+        python --version
+        which python
+        mne sys_info
 
     - name: Check formatting
       if: "matrix.platform == 'ubuntu-18.04'"
