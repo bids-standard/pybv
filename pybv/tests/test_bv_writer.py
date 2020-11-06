@@ -113,6 +113,25 @@ def test_bad_meas_date(meas_date, match):
     rmtree(tmpdir)
 
 
+def test_comma_in_ch_name():
+    """Test that writing channel names with commas works."""
+    tmpdir = _mktmpdir()
+
+    # make tricky ch_names
+    ch_names_tricky = [ch + ',trick' for ch in ch_names]
+
+    # write and read data to BV format
+    write_brainvision(data, sfreq, ch_names_tricky, fname, tmpdir)
+    vhdr_fname = op.join(tmpdir, fname + '.vhdr')
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
+
+    assert ch_names_tricky == raw_written.ch_names  # channels
+
+    assert_allclose(data, raw_written._data)  # data round-trip
+
+    rmtree(tmpdir)
+
+
 @pytest.mark.parametrize("meas_date",
                          [('20000101120000000000'),
                           (datetime(2000, 1, 1, 12, 0, 0, 0))])
