@@ -156,7 +156,7 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
 
 
 def _chk_fmt(fmt):
-    """Check that the format string is valid, return BVEF / numpy datatypes."""
+    """Check that the format string is valid, return (BV, numpy) datatypes."""
     if fmt not in SUPPORTED_FORMATS:
         errmsg = ('Data format {} not supported.'.format(fmt) +
                   'Currently supported formats are: ' +
@@ -167,7 +167,6 @@ def _chk_fmt(fmt):
 
 def _chk_multiplexed(orientation):
     """Validate an orientation, return if it is multiplexed or not."""
-    orientation = orientation.lower()
     if orientation not in SUPPORTED_ORIENTS:
         errmsg = ('Orientation {} not supported.'.format(orientation) +
                   'Currently supported orientations are: ' +
@@ -246,28 +245,26 @@ def _optimize_channel_unit(resolution, unit):
 
 
 def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
-                     orientation='multiplexed', format='binary_float32',
-                     resolution=1e-7, unit='µV'):
+                     orientation, format, resolution, unit):
     """Write BrainvVision header file."""
-    fmt = format.lower()
     bvfmt, _ = _chk_fmt(format)
 
     multiplexed = _chk_multiplexed(orientation)
 
     with codecs.open(vhdr_fname, 'w', encoding='utf-8') as fout:
         print(r'Brain Vision Data Exchange Header File Version 1.0', file=fout)
-        print(r';Written using pybv {}'.format(__version__), file=fout)
+        print(r'; Written using pybv {}'.format(__version__), file=fout)
         print(r'', file=fout)
         print(r'[Common Infos]', file=fout)
         print(r'Codepage=UTF-8', file=fout)
         print(r'DataFile={}'.format(op.basename(eeg_fname)), file=fout)
         print(r'MarkerFile={}'.format(op.basename(vmrk_fname)), file=fout)
 
-        if fmt.startswith('binary'):
+        if format.startswith('binary'):
             print(r'DataFormat=BINARY', file=fout)
 
         if multiplexed:
-            print(r'; DataOrientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...', file=fout)  # noqa: E501
+            print(r'; Data orientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...', file=fout)  # noqa: E501
             print(r'DataOrientation=MULTIPLEXED', file=fout)
 
         print(r'NumberOfChannels={}'.format(len(data)), file=fout)
@@ -275,14 +272,14 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         print(r'SamplingInterval={}'.format(int(1e6 / sfreq)), file=fout)
         print(r'', file=fout)
 
-        if fmt.startswith('binary'):
+        if format.startswith('binary'):
             print(r'[Binary Infos]', file=fout)
             print(r'BinaryFormat={}'.format(bvfmt), file=fout)
             print(r'', file=fout)
 
         print(r'[Channel Infos]', file=fout)
         print(r'; Each entry: Ch<Channel number>=<Name>,<Reference channel name>,', file=fout)  # noqa: E501
-        print(r'; <Resolution in "unit">,<unit>,Future extensions…', file=fout)
+        print(r'; <Resolution in "Unit">,<Unit>, Future extensions..', file=fout)  # noqa: E501
         print(r'; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
         print(r'; Commas in channel names are coded as "\1".', file=fout)
 
@@ -302,15 +299,12 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         print(r'', file=fout)
 
 
-def _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
-                      format='binary_float32', resolution=1e-7,
-                      scale_data=True):
+def _write_bveeg_file(eeg_fname, data, orientation, format, resolution,
+                      scale_data):
     """Write BrainVision data file."""
-    fmt = format.lower()
-
-    # check the orientation
+    # check the orientation and format
     _chk_multiplexed(orientation)
-    _, dtype = _chk_fmt(fmt)
+    _, dtype = _chk_fmt(format)
 
     # Invert the resolution so that we know how much to scale our data
     scaling_factor = 1 / resolution
