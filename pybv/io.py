@@ -56,6 +56,8 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
         (corresponding to the "time" dimension of the data array). The second
         column is a number associated with the "type" of event. The (optional)
         third column specifies the length of each event (default 1 sample).
+        Currently all events are written as type "Stimulus" and must be
+        numeric.
         Defaults to None (not writing any events).
     resolution : float | ndarray
         The resolution **in volts** in which you'd like the data to be stored.
@@ -90,13 +92,17 @@ def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
 
     # Input checks
     ev_err = ("events must be an ndarray of shape (n_events, 2) or "
-              "(n_events, 3) or None")
+              "(n_events, 3) containing numeric values, or None")
     if not isinstance(events, (np.ndarray, type(None))):
         raise ValueError(ev_err)
     if isinstance(events, np.ndarray):
         if events.ndim != 2:
             raise ValueError(ev_err)
         if events.shape[1] not in (2, 3):
+            raise ValueError(ev_err)
+        try:
+            events.astype(float)
+        except ValueError:
             raise ValueError(ev_err)
 
     nchan = len(ch_names)
@@ -210,6 +216,8 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
         twidth = max(3, twidth)
         tformat = 'S{:>' + str(twidth) + '}'
 
+        # Currently all events are written as type "Stimulus"
+        # Currently all event descriptions must be numeric
         for marker_number, irow in enumerate(range(len(events)), start=1 if meas_date is None else 2):  # noqa: E501
             i_ix = events[irow, 0] + 1  # BrainVision uses 1-based indexing
             i_val = events[irow, 1]
