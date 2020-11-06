@@ -53,6 +53,11 @@ def test_bv_writer_events():
         write_brainvision(data, sfreq, ch_names, fname, tmpdir,
                           events=rng.randn(10, 4))
 
+    with pytest.raises(ValueError, match='events must be an ndarray of shape'):
+        fake_events = np.array([i for i in "abcdefghi"]).reshape(3, -1)
+        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+                          events=fake_events)
+
     # correct arguments should work
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events)
     write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=None)
