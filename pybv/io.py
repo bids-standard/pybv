@@ -292,9 +292,10 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         units = [unit] * nchan
 
         for i in range(nchan):
+            _ch_name = ch_names[i].replace(',', r'\1')
             resolution, unit = _optimize_channel_unit(resolutions[i], units[i])
             s = r'Ch{}={},,{:0.{precision}f},{}'
-            print(s.format(i + 1, ch_names[i], resolution, unit,
+            print(s.format(i + 1, _ch_name, resolution, unit,
                            precision=max(0, int(np.log10(1 / resolution)))),
                   file=fout)
         print(r'', file=fout)
