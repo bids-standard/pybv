@@ -57,6 +57,7 @@ jobs:
     - name: Check formatting
       if: "matrix.platform == 'ubuntu-18.04'"
       run: |
+        isort pybv
         flake8 --docstring-convention numpy .
         pycodestyle pybv
 

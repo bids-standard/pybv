@@ -12,8 +12,8 @@
 import codecs
 import datetime
 import os
-import os.path as op
 import warnings
+from os import path as op
 
 import numpy as np
 
