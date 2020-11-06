@@ -16,6 +16,7 @@ from datetime import datetime, timezone
 import pytest
 
 import mne
+from mne.utils import requires_version
 import numpy as np
 from numpy.testing import assert_allclose, assert_array_equal
 
@@ -118,6 +119,7 @@ def test_bad_meas_date(meas_date, match):
     rmtree(tmpdir)
 
 
+@requires_version("mne", min_version="0.22")
 @pytest.mark.parametrize("ch_names_tricky",
                          [[ch + ' f o o' for ch in ch_names],
                           [ch + ' f%o$o' for ch in ch_names],
