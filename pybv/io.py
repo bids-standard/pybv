@@ -240,7 +240,7 @@ def _optimize_channel_unit(resolution, unit):
     else:
         raise ValueError(
             f'Encountered unsupported unit: {unit}'
-            '\nUse either "None" for `unit`, or one of the units: '
+            '\nUse either "None" for `unit`, or one of the following: '
             f'{SUPPORTED_UNITS}'
             )
 
