@@ -6,18 +6,15 @@
 #          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
 #
 # License: BSD (3-clause)
-
+from datetime import datetime, timezone
 import os
-import os.path as op
 from shutil import rmtree
 from tempfile import mkdtemp
-from datetime import datetime, timezone
-
-import pytest
 
 import mne
 import numpy as np
 from numpy.testing import assert_allclose, assert_array_equal
+import pytest
 
 from pybv.io import write_brainvision, _write_bveeg_file, _write_vhdr_file
 
@@ -87,15 +84,19 @@ def test_bv_bad_format():
     eeg_fname = os.path.join(tmpdir, fname + ".eeg")
 
     with pytest.raises(ValueError, match='Orientation bad not supported'):
-        _write_vhdr_file(vhdr_fname, vmrk_fname,
-                         eeg_fname, data, sfreq, ch_names, orientation='bad')
+        _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
+                         ch_names, orientation='bad',
+                         format="binary_float32", resolution=1e-6, unit="V")
     with pytest.raises(ValueError, match='Data format bad not supported'):
-        _write_vhdr_file(vhdr_fname, vmrk_fname,
-                         eeg_fname, data, sfreq, ch_names, format='bad')
+        _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
+                         ch_names, orientation='multiplexed',
+                         format="bad", resolution=1e-6, unit="V")
     with pytest.raises(ValueError, match='Orientation bad not supported'):
-        _write_bveeg_file(eeg_fname, data, orientation='bad')
+        _write_bveeg_file(eeg_fname, data, orientation='bad',
+                          format="bad", resolution=1e-6, scale_data=True)
     with pytest.raises(ValueError, match='Data format bad not supported'):
-        _write_bveeg_file(eeg_fname, data, format='bad')
+        _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
+                          format="bad", resolution=1e-6, scale_data=True)
 
     rmtree(tmpdir)
 
@@ -120,9 +121,6 @@ def test_write_read_cycle(meas_date):
     """Test that a write/read cycle produces identical data."""
     tmpdir = _mktmpdir()
 
-    # check that we create a folder that does not yet exist
-    tmpdir = op.join(tmpdir, 'newfolder')
-
     # First fail writing due to wrong unit
     unsupported_unit = "rV"
     with pytest.raises(ValueError, match='Encountered unsupported unit'):
@@ -136,7 +134,7 @@ def test_write_read_cycle(meas_date):
                           resolution=np.power(10., -np.arange(10)),
                           unit='μV',
                           meas_date=meas_date)
-    vhdr_fname = op.join(tmpdir, fname + '.vhdr')
+    vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
     raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
     # delete the first annotation because it's just marking a new segment
     raw_written.annotations.delete(0)
@@ -154,7 +152,7 @@ def test_write_read_cycle(meas_date):
 
     assert_allclose(data, raw_written._data)  # data round-trip
 
-    assert ch_names == raw_written.ch_names  # channels
+    assert_array_equal(ch_names, raw_written.ch_names)  # channels
 
     # measurement dates must match
     assert raw_written.info['meas_date'] == datetime(2000, 1, 1, 12, 0, 0, 0,
@@ -178,8 +176,15 @@ def test_unit_resolution(resolution, unit):
     """Test different combinations of units and resolutions."""
     tmpdir = _mktmpdir()
     write_brainvision(data, sfreq, ch_names, fname, tmpdir,
-                      resolution=resolution, unit=unit)
-    vhdr_fname = op.join(tmpdir, fname + '.vhdr')
+                      resolution=resolution, unit=unit, scale_data=True)
+    vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
     raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
-    assert np.allclose(data, raw_written.get_data())
+    assert_allclose(data, raw_written.get_data())
+
+    # Check that the correct units were written in the BV file
+    orig_units = [u for key, u in raw_written._orig_units.items()]
+    assert len(set(orig_units)) == 1
+    if unit is not None:
+        assert orig_units[0] == unit.replace("u", "µ")
+
     rmtree(tmpdir)
