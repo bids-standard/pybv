@@ -19,6 +19,10 @@ Changelog
 ~~~~~~~~~
 - Passing a "greek small letter mu" instead of a "micro sign" as a ``unit`` is now permitted, because :func:`pybv.write_brainvision` will convert from one to the other, by `Stefan Appelhoff`_ (`#47 <https://github.com/bids-standard/pybv/pull/47>`_)
 
+Bug
+~~~
+- ``pybv`` now properly substitutes commas in channel names with ``\1`` before writing to file, and passing non-numeric events now raises a ValueError, by `Stefan Appelhoff`_ (`#53 <https://github.com/bids-standard/pybv/pull/53>`_)
+
 Authors
 ~~~~~~~
 - `Stefan Appelhoff`_
