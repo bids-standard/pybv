@@ -131,7 +131,7 @@ def test_write_read_cycle(meas_date):
 
     # write and read data to BV format
     # ensure that greek small letter mu gets converted to micro sign
-    with pytest.warns(UserWarning):
+    with pytest.warns(UserWarning, match="Encountered small greek letter mu"):
         write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events,
                           resolution=np.power(10., -np.arange(10)),
                           unit='μV',
