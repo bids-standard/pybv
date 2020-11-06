@@ -115,12 +115,15 @@ def test_bad_meas_date(meas_date, match):
     rmtree(tmpdir)
 
 
-def test_comma_in_ch_name():
-    """Test that writing channel names with commas works."""
+@pytest.mark.parametrize("ch_names_tricky",
+                         [[ch + ' f o o' for ch in ch_names],
+                          [ch + ' f%o$o' for ch in ch_names],
+                          [ch + ',foo' for ch in ch_names],
+                          ]
+                         )
+def test_comma_in_ch_name(ch_names_tricky):
+    """Test that writing channel names with special characters works."""
     tmpdir = _mktmpdir()
-
-    # make tricky ch_names
-    ch_names_tricky = [ch + ',trick' for ch in ch_names]
 
     # write and read data to BV format
     write_brainvision(data, sfreq, ch_names_tricky, fname, tmpdir)
