@@ -6,17 +6,18 @@
 #          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
 #
 # License: BSD (3-clause)
-from datetime import datetime, timezone
+
 import os
+from datetime import datetime, timezone
 from shutil import rmtree
 from tempfile import mkdtemp
 
 import mne
 import numpy as np
-from numpy.testing import assert_allclose, assert_array_equal
 import pytest
+from numpy.testing import assert_allclose, assert_array_equal
 
-from pybv.io import write_brainvision, _write_bveeg_file, _write_vhdr_file
+from pybv.io import _write_bveeg_file, _write_vhdr_file, write_brainvision
 
 # create testing data
 fname = 'pybv'

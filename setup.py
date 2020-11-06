@@ -1,5 +1,6 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 """Setup pybv."""
+
 # Authors: Phillip Alday <phillip.alday@unisa.edu.au>
 #          Chris Holdgraf <choldgraf@berkeley.edu>
 #          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
@@ -7,7 +8,8 @@
 # License: BSD (3-clause)
 
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 # get the version
 version = None
