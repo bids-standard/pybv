@@ -126,6 +126,9 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     if resolution.shape != (1,) and resolution.shape != (nchan,):
         raise ValueError("Resolution should be one or n_chan floats")
 
+    if np.any(resolution <= 0):
+        raise ValueError("Resolution should be > 0")
+
     _chk_fmt(fmt)
 
     if unit == 'μV':

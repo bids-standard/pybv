@@ -94,6 +94,9 @@ def test_bv_writer_inputs():
     with pytest.raises(ValueError, match='Resolution should be numeric, is'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir, resolution='y')
+    with pytest.raises(ValueError, match='Resolution should be > 0'):
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=tmpdir, resolution=0)
     with pytest.raises(ValueError, match='Resolution should be one or n_chan'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
