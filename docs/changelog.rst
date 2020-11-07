@@ -17,16 +17,19 @@ Current
 
 Changelog
 ~~~~~~~~~
-- Passing a "greek small letter mu" instead of a "micro sign" as a ``unit`` is now permitted, because :func:`pybv.write_brainvision` will convert from one to the other, by `Stefan Appelhoff`_ (`#47 <https://github.com/bids-standard/pybv/pull/47>`_)
+- Passing a "greek small letter mu" to the ``unit`` parameter in :func:`pybv.write_brainvision` instead of a "micro sign" is now permitted, because the one will be automatically convert to the other, by `Stefan Appelhoff`_ (`#47 <https://github.com/bids-standard/pybv/pull/47>`_)
 
 Bug
 ~~~
-- ``pybv`` now properly substitutes commas in channel names with ``\1`` before writing to file, and passing non-numeric events now raises a ValueError, by `Stefan Appelhoff`_ (`#53 <https://github.com/bids-standard/pybv/pull/53>`_)
+- Fix bug where :func:`pybv.write_brainvision` did not properly deal with commas in channel names and non-numeric events, by `Stefan Appelhoff`_ (`#53 <https://github.com/bids-standard/pybv/pull/53>`_)
 - :func:`pybv.write_brainvision` now properly handles sampling frequencies that are not multiples of 10 (even floats), by `Clemens Brunner`_ (`#59 <https://github.com/bids-standard/pybv/pull/59>`_)
+- Fix bug where :func:`pybv.write_brainvision` would write a different resolution to the ``vhdr`` file than specified with the ``resolution`` parameter. Note that this did *not* affect the roundtrip accuracy of the written data, because of internal scaling of the data, by `Stefan Appelhoff`_ (`#58 <https://github.com/bids-standard/pybv/pull/58>`_)
 
 API
 ~~~
 - :func:`pybv.write_brainvision` now accepts keyword arguments only. Positional arguments are no longer allowed, by `Stefan Appelhoff`_ (`#57 <https://github.com/bids-standard/pybv/pull/57>`_)
+- In :func:`pybv.write_brainvision`, the ``scale_data`` parameter was removed from :func:`pybv.write_brainvision`, by `Stefan Appelhoff`_ (`#58 <https://github.com/bids-standard/pybv/pull/58>`_)
+- In :func:`pybv.write_brainvision`, the ``unit`` parameter no longer accepts an argument ``None`` to automatically determined a unit based on the ``resolution``, by `Stefan Appelhoff`_ (`#58 <https://github.com/bids-standard/pybv/pull/58>`_)
 
 Authors
 ~~~~~~~
