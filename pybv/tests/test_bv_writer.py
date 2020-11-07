@@ -63,6 +63,11 @@ def test_bv_writer_events():
                           fname_base=fname, folder_out=tmpdir,
                           events=fake_events)
 
+    # keyword only arguments
+    msg = 'write_brainvision\(\) takes 0 positional arguments'  # noqa: W605
+    with pytest.raises(TypeError, match=msg):
+        write_brainvision(data, sfreq, ch_names, fname, folder_out=tmpdir)
+
     # correct arguments should work
     write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                       fname_base=fname, folder_out=tmpdir, events=events)
