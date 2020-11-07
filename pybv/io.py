@@ -28,7 +28,7 @@ SUPPORTED_FORMATS = {
 
 SUPPORTED_ORIENTS = {'multiplexed'}
 
-SUPPORTED_UNITS = ['V', 'mV', 'µV', 'uV', 'nV']
+SUPPORTED_UNITS = {'V': 1e0, 'mV': 1e3, 'µV': 1e6, 'uV': 1e6, 'nV': 1e9}
 
 
 def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
@@ -229,18 +229,13 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
 
 def _scale_data_to_unit(data, unit):
     """Scale `data` in Volts to `data` in `unit`."""
-    if unit == 'V':
-        return data
-    elif unit == 'mV':
-        return data * 1e3
-    elif unit in ('µV', 'uV'):
-        return data * 1e6
-    elif unit == 'nV':
-        return data * 1e9
-    else:
-        raise ValueError(
-            f'Encountered unsupported unit: {unit}'
-            f'\nUse one of the following: {SUPPORTED_UNITS}')
+    scale = SUPPORTED_UNITS.get(unit, None)
+    if not isinstance(scale, float):
+        msg = (f'Encountered unsupported unit: {unit}'
+               f'\nUse one of the following: {set(SUPPORTED_UNITS.keys())}')
+        raise ValueError(msg)
+
+    return data * scale
 
 
 def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
