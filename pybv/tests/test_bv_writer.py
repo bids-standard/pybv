@@ -139,7 +139,7 @@ def test_bad_meas_date(meas_date, match):
     rmtree(tmpdir)
 
 
-@requires_version("mne", min_version="0.22")
+@requires_version("mne", min_version="0.23")
 @pytest.mark.parametrize("ch_names_tricky",
                          [[ch + ' f o o' for ch in ch_names],
                           [ch + ',foo' for ch in ch_names],
