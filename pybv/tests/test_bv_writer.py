@@ -118,10 +118,10 @@ def test_bv_bad_format():
                          resolution=1e-6, unit="V")
     with pytest.raises(ValueError, match='Orientation bad not supported'):
         _write_bveeg_file(eeg_fname, data=data, orientation='bad',
-                          format="bad", resolution=1e-6, scale_data=True)
+                          format="bad", resolution=1e-6, unit="µV")
     with pytest.raises(ValueError, match='Data format bad not supported'):
         _write_bveeg_file(eeg_fname, data=data, orientation='multiplexed',
-                          format="bad", resolution=1e-6, scale_data=True)
+                          format="bad", resolution=1e-6, unit="µV")
 
     rmtree(tmpdir)
 
@@ -213,24 +213,17 @@ def test_write_read_cycle(meas_date):
     rmtree(tmpdir)
 
 
-def test_scale_data():
-    """Test that scale_data=False keeps the data untouched."""
-    tmpdir = _mktmpdir()
-    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      fname_base=fname, folder_out=tmpdir, scale_data=False)
-    data_written = np.fromfile(tmpdir + '/' + fname + '.eeg', dtype=np.float32)
-    assert_allclose(data_written, data.T.flatten())
-    rmtree(tmpdir)
-
-
+# XXX: test also binary_int16 here
+@pytest.mark.parametrize("format", ["binary_float32"])
 @pytest.mark.parametrize("resolution", np.logspace(-1, -9, 9))
-@pytest.mark.parametrize("unit", ["V", "mV", "uV", "µV", "nV", None])
-def test_unit_resolution(resolution, unit):
+@pytest.mark.parametrize("unit", ["V", "mV", "uV", "µV", "nV"])
+def test_unit_resolution(format, resolution, unit):
     """Test different combinations of units and resolutions."""
     tmpdir = _mktmpdir()
     write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                       fname_base=fname, folder_out=tmpdir,
-                      resolution=resolution, unit=unit, scale_data=True)
+                      resolution=resolution, unit=unit,
+                      fmt=format)
     vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
