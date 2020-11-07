@@ -31,14 +31,14 @@ SUPPORTED_UNITS = ['V', 'mV', 'µV', 'uV', 'nV']
 
 
 def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
-                      events=None, resolution=1e-7, unit='µV', scale_data=True,
+                      events=None, resolution=0.1, unit='µV',
                       fmt='binary_float32', meas_date=None):
     """Write raw data to BrainVision format.
 
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
-        The raw data to export. Data is assumed to be in **volts** and will be
+        The raw data to export. Data is assumed to be in **Volts** and will be
         stored as specified by `unit`.
     sfreq : int | float
         The sampling frequency of the data.
@@ -59,20 +59,18 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         Currently all events are written as type "Stimulus" and must be
         numeric.
         Defaults to None (not writing any events).
-    resolution : float | ndarray
-        The resolution **in volts** in which you'd like the data to be stored.
-        By default, this will be 1e-7, or 0.1 µV. This number controls the
-        amount of round-trip resolution. This can be either a single float for
-        all channels or an array with n_channels elements.
-    unit : str | None
+    resolution : float | ndarray, shape(nchannels,)
+        The resolution in `unit` in which you'd like the data to be stored.
+        If float, the same resolution is applied to all channels.
+        If ndarray with n_channels elements, each channel is scaled with
+        its own corresponding resolution from the ndarray.
+        Note that if `fmt` is 'binary_int16', it is recommended to set
+        `resolution` to '0.1' (default) and `unit` to 'µV' (default).
+        For `fmt` 'binary_float32', the resolution should usually be kept
+        at its default value.
+    unit : str
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
-        equivalently 'uV') , 'nV' or None. If None, a suitable unit based on
-        the selected resolution is chosen automatically.
-    scale_data : bool
-        Boolean indicating if the data is in volts and should be scaled to
-        `resolution` (True), or if the data is already in the previously
-        specified target resolution and should be left as-is (False).
-        This is mostly useful if you have int16 data with a custom resolution.
+        equivalently 'uV') , or 'nV'. Defaults to 'µV'.
     fmt : str
         Binary format the data should be written as. Valid choices are
         'binary_float32' (default) and 'binary_int16'.
@@ -155,7 +153,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
                      ch_names, orientation='multiplexed', format=fmt,
                      resolution=resolution, unit=unit)
     _write_bveeg_file(eeg_fname, data, orientation='multiplexed', format=fmt,
-                      resolution=resolution, scale_data=scale_data)
+                      resolution=resolution, unit=unit)
 
 
 def _chk_fmt(fmt):
@@ -220,30 +218,20 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
                   f'{i_dur},0', file=fout)
 
 
-def _optimize_channel_unit(resolution, unit):
-    """Calculate an optimal channel scaling factor and unit."""
-    exp = np.log10(resolution)
-    if unit is None:
-        if exp <= -7:
-            return resolution / 1e-9, 'nV'
-        elif exp <= -2:
-            return resolution / 1e-6, 'µV'
-        else:
-            return resolution, 'V'
-    elif unit == 'V':
-        return resolution, 'V'
+def _scale_data_to_unit(data, unit):
+    """Scale `data` in Volts to `data` in `unit`."""
+    if unit == 'V':
+        return data
     elif unit == 'mV':
-        return resolution / 1e-3, 'mV'
+        return data * 1e3
     elif unit in ('µV', 'uV'):
-        return resolution / 1e-6, 'µV'
+        return data * 1e6
     elif unit == 'nV':
-        return resolution / 1e-9, 'nV'
+        return data * 1e9
     else:
         raise ValueError(
             f'Encountered unsupported unit: {unit}'
-            '\nUse either "None" for `unit`, or one of the following: '
-            f'{SUPPORTED_UNITS}'
-            )
+            '\nUse one of the following: {SUPPORTED_UNITS}')
 
 
 def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
@@ -301,15 +289,18 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         print('', file=fout)
 
 
-def _write_bveeg_file(eeg_fname, data, orientation, format, resolution,
-                      scale_data):
+def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, unit):
     """Write BrainVision data file."""
     # check the orientation and format
     _chk_multiplexed(orientation)
     _, dtype = _chk_fmt(format)
 
+    # convert the data to the desired unit
+    data = _scale_data_to_unit(data, unit)
+
     # Invert the resolution so that we know how much to scale our data
     scaling_factor = 1 / resolution
-    if scale_data:
-        data = data * np.atleast_2d(scaling_factor).T
+    data = data * np.atleast_2d(scaling_factor).T
+
+    # Save to binary
     data.astype(dtype=dtype).ravel(order='F').tofile(eeg_fname)
