@@ -23,6 +23,10 @@ Bug
 ~~~
 - ``pybv`` now properly substitutes commas in channel names with ``\1`` before writing to file, and passing non-numeric events now raises a ValueError, by `Stefan Appelhoff`_ (`#53 <https://github.com/bids-standard/pybv/pull/53>`_)
 
+API
+~~~
+- :func:`pybv.write_brainvision` now accepts keyword arguments only. Positional arguments are no longer allowed, by `Stefan Appelhoff`_ (`#57 <https://github.com/bids-standard/pybv/pull/57>`_)
+
 Authors
 ~~~~~~~
 - `Stefan Appelhoff`_
