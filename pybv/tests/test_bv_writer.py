@@ -21,7 +21,9 @@ import pytest
 from mne.utils import requires_version
 from numpy.testing import assert_allclose, assert_array_equal
 
-from pybv.io import _write_bveeg_file, _write_vhdr_file, write_brainvision, _check_data_in_range, _scale_data_to_unit, _chk_fmt, SUPPORTED_UNITS, SUPPORTED_FORMATS
+from pybv.io import (SUPPORTED_FORMATS, SUPPORTED_UNITS, _check_data_in_range,
+                     _chk_fmt, _scale_data_to_unit, _write_bveeg_file,
+                     _write_vhdr_file, write_brainvision)
 
 # create testing data
 fname = 'pybv'
