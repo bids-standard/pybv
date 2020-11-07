@@ -34,6 +34,8 @@ API
 
 Authors
 ~~~~~~~
+- `Clemens Brunner`_
+- `Richard Höchenberger`_
 - `Stefan Appelhoff`_
 
 0.3.0
@@ -117,3 +119,4 @@ Authors
 .. _Tristan Stenner: https://github.com/tstenner
 .. _Phillip Alday: https://palday.bitbucket.io/
 .. _Clemens Brunner: https://cbrnr.github.io/
+.. _Richard Höchenberger: https://hoechenberger.net/
