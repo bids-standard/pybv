@@ -6,6 +6,7 @@
 #          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
 #          Tristan Stenner <stenner@med-psych.uni-kiel.de>
 #          Clemens Brunner <clemens.brunner@gmail.com>
+#          Richard Höchenberger <richard.hoechenberger@gmail.com>
 #
 # License: BSD (3-clause)
 

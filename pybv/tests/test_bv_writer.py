@@ -4,7 +4,9 @@
 # Authors: Phillip Alday <phillip.alday@unisa.edu.au>
 #          Chris Holdgraf <choldgraf@berkeley.edu>
 #          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
+#          Tristan Stenner <stenner@med-psych.uni-kiel.de>
 #          Clemens Brunner <clemens.brunner@gmail.com>
+#          Richard Höchenberger <richard.hoechenberger@gmail.com>
 #
 # License: BSD (3-clause)
 
@@ -14,9 +16,9 @@ from shutil import rmtree
 from tempfile import mkdtemp
 
 import mne
-from mne.utils import requires_version
 import numpy as np
 import pytest
+from mne.utils import requires_version
 from numpy.testing import assert_allclose, assert_array_equal
 
 from pybv.io import _write_bveeg_file, _write_vhdr_file, write_brainvision
@@ -244,7 +246,7 @@ def test_sampling_frequencies(sfreq):
     tmpdir = _mktmpdir()
     # sampling frequency gets written as sampling interval
     write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      fname_base=fname, folder_out=tmpdir, scale_data=False)
+                      fname_base=fname, folder_out=tmpdir)
     vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
