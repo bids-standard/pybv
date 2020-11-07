@@ -298,6 +298,18 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         print('', file=fout)
 
 
+def _check_data_in_range(data, dtype):
+    """Check that data can be represented in dtype."""
+    check_funcs = {np.int16: np.iinfo, np.float32: np.finfo}
+    fun = check_funcs.get(dtype, None)
+    if fun is None:
+        msg = f"Unsupported format encountered: {dtype}"
+        raise ValueError(msg)
+    if data.min() <= fun(dtype).min or data.max() >= fun(dtype).max:
+        return False
+    return True
+
+
 def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, unit):
     """Write BrainVision data file."""
     # check the orientation and format
@@ -311,5 +323,18 @@ def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, unit):
     scaling_factor = 1 / resolution
     data = data * np.atleast_2d(scaling_factor).T
 
+    # Convert the data to required format
+    if not _check_data_in_range(data, dtype):
+        mod = " ('{resolution}')"
+        if isinstance(resolution, np.ndarray):
+            # if we have individual resolutions, do not print them all
+            mod = "s"
+        msg = (f"`data` can not be represented in '{format}' given "
+               f"the desired resolution{mod} and unit ('{unit}').")
+        if format == "binary_int16":
+            msg += "\nPlease consider writing using 'binary_float32' format."
+        raise ValueError(msg)
+    data = data.astype(dtype=dtype)
+
     # Save to binary
-    data.astype(dtype=dtype).ravel(order='F').tofile(eeg_fname)
+    data.ravel(order='F').tofile(eeg_fname)
