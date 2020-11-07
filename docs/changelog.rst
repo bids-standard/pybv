@@ -17,7 +17,7 @@ Current
 
 Changelog
 ~~~~~~~~~
-- Passing a "greek small letter mu" to the ``unit`` parameter in :func:`pybv.write_brainvision` instead of a "micro sign" is now permitted, because the one will be automatically convert to the other, by `Stefan Appelhoff`_ (`#47 <https://github.com/bids-standard/pybv/pull/47>`_)
+- Passing a "greek small letter mu" to the ``unit`` parameter in :func:`pybv.write_brainvision` instead of a "micro sign" is now permitted, because the former will be automatically convert to the latter, by `Stefan Appelhoff`_ (`#47 <https://github.com/bids-standard/pybv/pull/47>`_)
 
 Bug
 ~~~
@@ -29,7 +29,7 @@ API
 ~~~
 - :func:`pybv.write_brainvision` now accepts keyword arguments only. Positional arguments are no longer allowed, by `Stefan Appelhoff`_ (`#57 <https://github.com/bids-standard/pybv/pull/57>`_)
 - In :func:`pybv.write_brainvision`, the ``scale_data`` parameter was removed from :func:`pybv.write_brainvision`, by `Stefan Appelhoff`_ (`#58 <https://github.com/bids-standard/pybv/pull/58>`_)
-- In :func:`pybv.write_brainvision`, the ``unit`` parameter no longer accepts an argument ``None`` to automatically determined a unit based on the ``resolution``, by `Stefan Appelhoff`_ (`#58 <https://github.com/bids-standard/pybv/pull/58>`_)
+- In :func:`pybv.write_brainvision`, the ``unit`` parameter no longer accepts an argument ``None`` to automatically determine a unit based on the ``resolution``, by `Stefan Appelhoff`_ (`#58 <https://github.com/bids-standard/pybv/pull/58>`_)
 
 Authors
 ~~~~~~~
