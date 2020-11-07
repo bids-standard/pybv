@@ -21,7 +21,7 @@ import pytest
 from mne.utils import requires_version
 from numpy.testing import assert_allclose, assert_array_equal
 
-from pybv.io import _write_bveeg_file, _write_vhdr_file, write_brainvision
+from pybv.io import _write_bveeg_file, _write_vhdr_file, write_brainvision, _check_data_in_range, _scale_data_to_unit, _chk_fmt, SUPPORTED_UNITS, SUPPORTED_FORMATS
 
 # create testing data
 fname = 'pybv'
@@ -33,7 +33,8 @@ n_seconds = 5
 n_times = n_seconds * sfreq
 event_times = np.arange(1, 5)
 events = np.column_stack([event_times * sfreq, [1, 1, 2, 2]])
-data = rng.randn(n_chans, n_times)
+# scale random data to reasonable EEG signal magnitude in V
+data = rng.randn(n_chans, n_times) * 10 * 1e-6
 
 
 def _mktmpdir():
@@ -218,31 +219,54 @@ def test_write_read_cycle(meas_date):
     rmtree(tmpdir)
 
 
-# XXX: test also binary_int16 here
 resolutions = np.logspace(0, -9, 10)
 resolutions = np.hstack((resolutions, [np.pi, 0.5, 0.27e-6, 13]))
 
 
-@pytest.mark.parametrize("format", ["binary_float32"])
+@pytest.mark.parametrize("format", SUPPORTED_FORMATS.keys())
 @pytest.mark.parametrize("resolution", resolutions)
-@pytest.mark.parametrize("unit", ["V", "mV", "uV", "µV", "nV"])
-def test_unit_resolution(format, resolution, unit):
-    """Test different combinations of units and resolutions."""
+@pytest.mark.parametrize("unit", SUPPORTED_UNITS)
+def test_format_resolution_unit(format, resolution, unit):
+    """Test different combinations of formats, resolutions, and units."""
     tmpdir = _mktmpdir()
-    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      fname_base=fname, folder_out=tmpdir,
-                      resolution=resolution, unit=unit,
-                      fmt=format)
+
+    # Check whether this test will be numerically possible
+    tmpdata = _scale_data_to_unit(data.copy(), unit)
+    tmpdata = tmpdata * np.atleast_2d((1 / resolution)).T
+    _, dtype = _chk_fmt(format)
+    data_will_fit = _check_data_in_range(tmpdata, dtype)
+
+    kwargs = dict(data=data, sfreq=sfreq, ch_names=ch_names,
+                  fname_base=fname, folder_out=tmpdir,
+                  resolution=resolution, unit=unit,
+                  fmt=format)
+
+    if not data_will_fit:
+        # End this test early
+        match = f"can not be represented in '{format}' given"
+        with pytest.raises(ValueError, match=match):
+            write_brainvision(**kwargs)
+        return
+
+    write_brainvision(**kwargs)
     vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
-    assert_allclose(data, raw_written.get_data())
 
     # Check that the correct units were written in the BV file
     orig_units = [u for key, u in raw_written._orig_units.items()]
     assert len(set(orig_units)) == 1
     if unit is not None:
         assert orig_units[0] == unit.replace("u", "µ")
+
+    # Check round trip of data: in binary_int16 format, the tolerance
+    # is given by the lowest resolution
+    if format == "binary_int16":
+        absolute_tolerance = np.atleast_2d(resolution).min()
+    else:
+        absolute_tolerance = 0
+
+    assert_allclose(data, raw_written.get_data(), atol=absolute_tolerance)
 
     rmtree(tmpdir)
 
