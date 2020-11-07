@@ -256,3 +256,4 @@ def test_sampling_frequencies(sfreq):
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
     assert_allclose(sfreq, raw_written.info['sfreq'])
+    rmtree(tmpdir)    
