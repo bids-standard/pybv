@@ -4,6 +4,7 @@
 # Authors: Phillip Alday <phillip.alday@unisa.edu.au>
 #          Chris Holdgraf <choldgraf@berkeley.edu>
 #          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
+#          Clemens Brunner <clemens.brunner@gmail.com>
 #
 # License: BSD (3-clause)
 
@@ -24,7 +25,7 @@ from pybv.io import _write_bveeg_file, _write_vhdr_file, write_brainvision
 fname = 'pybv'
 rng = np.random.RandomState(1337)
 n_chans = 10
-ch_names = ['ch_{}'.format(i) for i in range(n_chans)]
+ch_names = [f'ch_{i}' for i in range(n_chans)]
 sfreq = 1000
 n_seconds = 5
 n_times = n_seconds * sfreq
@@ -183,8 +184,7 @@ def test_write_read_cycle(meas_date):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir, events=events,
                           resolution=np.power(10., -np.arange(10)),
-                          unit='μV',
-                          meas_date=meas_date)
+                          unit='μV', meas_date=meas_date)
     vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)

@@ -108,13 +108,11 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     nchan = len(ch_names)
 
     if len(data) != nchan:
-        raise ValueError("Number of channels in data ({}) does "
-                         "not match number of channel names ({})"
-                         .format(len(data), len(ch_names)))
+        raise ValueError(f"Number of channels in data ({len(data)}) does not "
+                         f"match number of channel names ({len(ch_names)})")
 
     if len(set(ch_names)) != nchan:
-        raise ValueError("Channel names must be unique,"
-                         " found a repeated name.")
+        raise ValueError("Channel names must be unique, found duplicate name.")
 
     if not isinstance(sfreq, (int, float)):
         raise ValueError("sfreq must be one of (float | int)")
@@ -122,7 +120,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     resolution = np.atleast_1d(resolution)
     if not np.issubdtype(resolution.dtype, np.number):
-        raise ValueError("Resolution should be numeric, is {}".format(resolution.dtype))  # noqa: E501
+        raise ValueError("Resolution should be numeric, is {resolution.dtype}")
 
     if resolution.shape != (1,) and resolution.shape != (nchan,):
         raise ValueError("Resolution should be one or n_chan floats")
@@ -140,9 +138,8 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     # measurement date
     if not isinstance(meas_date, (str, datetime.datetime, type(None))):
-        raise ValueError('`meas_date` must be of type str, datetime.datetime, '
-                         'or None but is of type '
-                         '"{}"'.format(type(meas_date)))
+        raise ValueError(f'`meas_date` must be of type str, datetime.datetime,'
+                         f' or None but is of type "{type(meas_date)}"')
     elif isinstance(meas_date, datetime.datetime):
         meas_date = meas_date.strftime('%Y%m%d%H%M%S%f')
     elif meas_date is None:
@@ -164,9 +161,8 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 def _chk_fmt(fmt):
     """Check that the format string is valid, return (BV, numpy) datatypes."""
     if fmt not in SUPPORTED_FORMATS:
-        errmsg = ('Data format {} not supported.'.format(fmt) +
-                  'Currently supported formats are: ' +
-                  ', '.join(SUPPORTED_FORMATS))
+        errmsg = (f'Data format {fmt} not supported. Currently supported '
+                  f'formats are: {", ".join(SUPPORTED_FORMATS)}')
         raise ValueError(errmsg)
     return SUPPORTED_FORMATS[fmt]
 
@@ -174,9 +170,8 @@ def _chk_fmt(fmt):
 def _chk_multiplexed(orientation):
     """Validate an orientation, return if it is multiplexed or not."""
     if orientation not in SUPPORTED_ORIENTS:
-        errmsg = ('Orientation {} not supported.'.format(orientation) +
-                  'Currently supported orientations are: ' +
-                  ', '.join(SUPPORTED_ORIENTS))
+        errmsg = (f'Orientation {orientation} not supported. Currently '
+                  f'supported orientations are: {", ".join(SUPPORTED_ORIENTS)}')  # noqa: E501
         raise ValueError(errmsg)
     return orientation == 'multiplexed'
 
@@ -184,21 +179,21 @@ def _chk_multiplexed(orientation):
 def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
     """Write BrainvVision marker file."""
     with codecs.open(vmrk_fname, 'w', encoding='utf-8') as fout:
-        print(r'Brain Vision Data Exchange Marker File, Version 1.0', file=fout)  # noqa: E501
-        print(r';Exported using pybv {}'.format(__version__), file=fout)
-        print(r'', file=fout)
-        print(r'[Common Infos]', file=fout)
-        print(r'Codepage=UTF-8', file=fout)
-        print(r'DataFile={}'.format(eeg_fname.split(os.sep)[-1]), file=fout)
-        print(r'', file=fout)
-        print(r'[Marker Infos]', file=fout)
-        print(r'; Each entry: Mk<Marker number>=<Type>,<Description>,<Position in data points>,', file=fout)  # noqa: E501
-        print(r';             <Size in data points>, <Channel number (0 = marker is related to all channels)>', file=fout)  # noqa: E501
-        print(r';             <Date (YYYYMMDDhhmmssuuuuuu)>', file=fout)
-        print(r'; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
+        print('Brain Vision Data Exchange Marker File, Version 1.0', file=fout)
+        print(f';Exported using pybv {__version__}', file=fout)
+        print('', file=fout)
+        print('[Common Infos]', file=fout)
+        print('Codepage=UTF-8', file=fout)
+        print(f'DataFile={eeg_fname.split(os.sep)[-1]}', file=fout)
+        print('', file=fout)
+        print('[Marker Infos]', file=fout)
+        print('; Each entry: Mk<Marker number>=<Type>,<Description>,<Position in data points>,', file=fout)  # noqa: E501
+        print(';             <Size in data points>, <Channel number (0 = marker is related to all channels)>', file=fout)  # noqa: E501
+        print(';             <Date (YYYYMMDDhhmmssuuuuuu)>', file=fout)
+        print('; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
         print(r'; Commas in type or description text are coded as "\1".', file=fout)  # noqa: E501
         if meas_date is not None:
-            print(r'Mk1=New Segment,,1,1,0,{}'.format(meas_date), file=fout)
+            print(f'Mk1=New Segment,,1,1,0,{meas_date}', file=fout)
 
         if events is None or len(events) == 0:
             return
@@ -221,9 +216,8 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
             i_ix = events[irow, 0] + 1  # BrainVision uses 1-based indexing
             i_val = events[irow, 1]
             i_dur = events[irow, 2]
-            print(r'Mk{}=Stimulus,{},{},{},0'
-                  .format(marker_number, tformat.format(i_val), i_ix, i_dur),
-                  file=fout)
+            print(f'Mk{marker_number}=Stimulus,{tformat.format(i_val)},{i_ix},'
+                  f'{i_dur},0', file=fout)
 
 
 def _optimize_channel_unit(resolution, unit):
@@ -260,20 +254,20 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
     multiplexed = _chk_multiplexed(orientation)
 
     with codecs.open(vhdr_fname, 'w', encoding='utf-8') as fout:
-        print(r'Brain Vision Data Exchange Header File Version 1.0', file=fout)
-        print(r'; Written using pybv {}'.format(__version__), file=fout)
-        print(r'', file=fout)
-        print(r'[Common Infos]', file=fout)
-        print(r'Codepage=UTF-8', file=fout)
-        print(r'DataFile={}'.format(op.basename(eeg_fname)), file=fout)
-        print(r'MarkerFile={}'.format(op.basename(vmrk_fname)), file=fout)
+        print('Brain Vision Data Exchange Header File Version 1.0', file=fout)
+        print(f'; Written using pybv {__version__}', file=fout)
+        print('', file=fout)
+        print('[Common Infos]', file=fout)
+        print('Codepage=UTF-8', file=fout)
+        print(f'DataFile={op.basename(eeg_fname)}', file=fout)
+        print(f'MarkerFile={op.basename(vmrk_fname)}', file=fout)
 
         if format.startswith('binary'):
-            print(r'DataFormat=BINARY', file=fout)
+            print('DataFormat=BINARY', file=fout)
 
         if multiplexed:
-            print(r'; Data orientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...', file=fout)  # noqa: E501
-            print(r'DataOrientation=MULTIPLEXED', file=fout)
+            print('; Data orientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...', file=fout)  # noqa: E501
+            print('DataOrientation=MULTIPLEXED', file=fout)
 
         print(f'NumberOfChannels={len(data)}', file=fout)
         print('; Sampling interval in microseconds', file=fout)
@@ -281,14 +275,14 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         print('', file=fout)
 
         if format.startswith('binary'):
-            print(r'[Binary Infos]', file=fout)
-            print(r'BinaryFormat={}'.format(bvfmt), file=fout)
-            print(r'', file=fout)
+            print('[Binary Infos]', file=fout)
+            print(f'BinaryFormat={bvfmt}', file=fout)
+            print('', file=fout)
 
-        print(r'[Channel Infos]', file=fout)
-        print(r'; Each entry: Ch<Channel number>=<Name>,<Reference channel name>,', file=fout)  # noqa: E501
-        print(r'; <Resolution in "Unit">,<Unit>, Future extensions..', file=fout)  # noqa: E501
-        print(r'; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
+        print('[Channel Infos]', file=fout)
+        print('; Each entry: Ch<Channel number>=<Name>,<Reference channel name>,', file=fout)  # noqa: E501
+        print('; <Resolution in "Unit">,<Unit>, Future extensions..', file=fout)  # noqa: E501
+        print('; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
         print(r'; Commas in channel names are coded as "\1".', file=fout)
 
         nchan = len(ch_names)
@@ -299,13 +293,12 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         for i in range(nchan):
             _ch_name = ch_names[i].replace(',', r'\1')
             resolution, unit = _optimize_channel_unit(resolutions[i], units[i])
-            s = r'Ch{}={},,{:0.{precision}f},{}'
-            print(s.format(i + 1, _ch_name, resolution, unit,
-                           precision=max(0, int(np.log10(1 / resolution)))),
+            precision = max(0, int(np.log10(1 / resolution)))
+            print(f'Ch{i + 1}={_ch_name},,{resolution:0.{precision}f},{unit}',
                   file=fout)
-        print(r'', file=fout)
-        print(r'[Comment]', file=fout)
-        print(r'', file=fout)
+        print('', file=fout)
+        print('[Comment]', file=fout)
+        print('', file=fout)
 
 
 def _write_bveeg_file(eeg_fname, data, orientation, format, resolution,
