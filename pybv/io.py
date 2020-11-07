@@ -30,7 +30,7 @@ SUPPORTED_ORIENTS = {'multiplexed'}
 SUPPORTED_UNITS = ['V', 'mV', 'µV', 'uV', 'nV']
 
 
-def write_brainvision(data, sfreq, ch_names, fname_base, folder_out,
+def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
                       events=None, resolution=1e-7, unit='µV', scale_data=True,
                       fmt='binary_float32', meas_date=None):
     """Write raw data to BrainVision format.

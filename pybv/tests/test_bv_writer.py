@@ -44,40 +44,40 @@ def test_bv_writer_events():
 
     # events should be none or ndarray
     with pytest.raises(ValueError, match='events must be an ndarray of shape'):
-        write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=[])
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir, events=[])
 
     with pytest.raises(ValueError, match='events must be an ndarray of shape'):
-        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir,
                           events=rng.randn(10, 20, 30))
 
     with pytest.raises(ValueError, match='events must be an ndarray of shape'):
-        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir,
                           events=rng.randn(10, 4))
 
     with pytest.raises(ValueError, match='events must be an ndarray of shape'):
         fake_events = np.array([i for i in "abcdefghi"]).reshape(3, -1)
-        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir,
                           events=fake_events)
 
     # correct arguments should work
-    write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events)
-    write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=None)
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir, events=events)
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir, events=None)
     rmtree(tmpdir)
 
 
 def test_bv_writer_inputs():
-    """Test channels, sfreq, and resolution."""
+    """Test channels, sfreq=sfreq, and resolution."""
     tmpdir = _mktmpdir()
     with pytest.raises(ValueError, match='Number of channels in data'):
-        write_brainvision(data[1:, :], sfreq, ch_names, fname, tmpdir)
+        write_brainvision(data=data[1:, :], sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir)
     with pytest.raises(ValueError, match='Channel names must be unique'):
-        write_brainvision(data[0:2, :], sfreq, ['b', 'b'], fname, tmpdir)
+        write_brainvision(data=data[0:2, :], sfreq=sfreq, ch_names=['b', 'b'], fname_base=fname, folder_out=tmpdir)
     with pytest.raises(ValueError, match='sfreq must be one of '):
-        write_brainvision(data, '100', ch_names, fname, tmpdir)
+        write_brainvision(data=data, sfreq='100', ch_names=ch_names, fname_base=fname, folder_out=tmpdir)
     with pytest.raises(ValueError, match='Resolution should be numeric, is'):
-        write_brainvision(data, sfreq, ch_names, fname, tmpdir, resolution='y')
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir, resolution='y')
     with pytest.raises(ValueError, match='Resolution should be one or n_chan'):
-        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir,
                           resolution=np.arange(n_chans-1))
     rmtree(tmpdir)
 
@@ -91,18 +91,18 @@ def test_bv_bad_format():
     eeg_fname = os.path.join(tmpdir, fname + ".eeg")
 
     with pytest.raises(ValueError, match='Orientation bad not supported'):
-        _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
-                         ch_names, orientation='bad',
+        _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data=data, sfreq=sfreq,
+                         ch_names=ch_names, orientation='bad',
                          format="binary_float32", resolution=1e-6, unit="V")
     with pytest.raises(ValueError, match='Data format bad not supported'):
-        _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
-                         ch_names, orientation='multiplexed',
+        _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data=data, sfreq=sfreq,
+                         ch_names=ch_names, orientation='multiplexed',
                          format="bad", resolution=1e-6, unit="V")
     with pytest.raises(ValueError, match='Orientation bad not supported'):
-        _write_bveeg_file(eeg_fname, data, orientation='bad',
+        _write_bveeg_file(eeg_fname, data=data, orientation='bad',
                           format="bad", resolution=1e-6, scale_data=True)
     with pytest.raises(ValueError, match='Data format bad not supported'):
-        _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
+        _write_bveeg_file(eeg_fname, data=data, orientation='multiplexed',
                           format="bad", resolution=1e-6, scale_data=True)
 
     rmtree(tmpdir)
@@ -116,7 +116,7 @@ def test_bad_meas_date(meas_date, match):
     """Test that bad measurement dates raise errors."""
     tmpdir = _mktmpdir()
     with pytest.raises(ValueError, match=match):
-        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir,
                           meas_date=meas_date)
     rmtree(tmpdir)
 
@@ -132,9 +132,9 @@ def test_comma_in_ch_name(ch_names_tricky):
     tmpdir = _mktmpdir()
 
     # write and read data to BV format
-    write_brainvision(data, sfreq, ch_names_tricky, fname, tmpdir)
-    vhdr_fname = op.join(tmpdir, fname + '.vhdr')
-    raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names_tricky, fname_base=fname, folder_out=tmpdir)
+    vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname, preload=True)
 
     assert ch_names_tricky == raw_written.ch_names  # channels
 
@@ -153,18 +153,18 @@ def test_write_read_cycle(meas_date):
     # First fail writing due to wrong unit
     unsupported_unit = "rV"
     with pytest.raises(ValueError, match='Encountered unsupported unit'):
-        write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir,
                           unit=unsupported_unit)
 
     # write and read data to BV format
     # ensure that greek small letter mu gets converted to micro sign
     with pytest.warns(UserWarning, match="Encountered small greek letter mu"):
-        write_brainvision(data, sfreq, ch_names, fname, tmpdir, events=events,
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir, events=events,
                           resolution=np.power(10., -np.arange(10)),
                           unit='μV',
                           meas_date=meas_date)
     vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
-    raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname, preload=True)
     # delete the first annotation because it's just marking a new segment
     raw_written.annotations.delete(0)
     # convert our annotations to events
@@ -193,7 +193,7 @@ def test_write_read_cycle(meas_date):
 def test_scale_data():
     """Test that scale_data=False keeps the data untouched."""
     tmpdir = _mktmpdir()
-    write_brainvision(data, sfreq, ch_names, fname, tmpdir, scale_data=False)
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir, scale_data=False)
     data_written = np.fromfile(tmpdir + '/' + fname + '.eeg', dtype=np.float32)
     assert_allclose(data_written, data.T.flatten())
     rmtree(tmpdir)
@@ -204,10 +204,10 @@ def test_scale_data():
 def test_unit_resolution(resolution, unit):
     """Test different combinations of units and resolutions."""
     tmpdir = _mktmpdir()
-    write_brainvision(data, sfreq, ch_names, fname, tmpdir,
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir,
                       resolution=resolution, unit=unit, scale_data=True)
     vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
-    raw_written = mne.io.read_raw_brainvision(vhdr_fname, preload=True)
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname, preload=True)
     assert_allclose(data, raw_written.get_data())
 
     # Check that the correct units were written in the BV file
