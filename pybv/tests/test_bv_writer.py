@@ -64,7 +64,7 @@ def test_bv_writer_events():
                           events=fake_events)
 
     # keyword only arguments
-    msg = 'write_brainvision\(\) takes 0 positional arguments'  # noqa: W605
+    msg = r'write_brainvision\(\) takes 0 positional arguments'
     with pytest.raises(TypeError, match=msg):
         write_brainvision(data, sfreq, ch_names, fname, folder_out=tmpdir)
 
@@ -243,3 +243,16 @@ def test_unit_resolution(resolution, unit):
         assert orig_units[0] == unit.replace("u", "µ")
 
     rmtree(tmpdir)
+
+
+@pytest.mark.parametrize("sfreq", [100, 125, 128, 500, 512, 1000, 1024, 512.1])
+def test_sampling_frequencies(sfreq):
+    """Test different sampling frequencies."""
+    tmpdir = _mktmpdir()
+    # sampling frequency gets written as sampling interval
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                      fname_base=fname, folder_out=tmpdir, scale_data=False)
+    vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
+                                              preload=True)
+    assert_allclose(sfreq, raw_written.info['sfreq'])
