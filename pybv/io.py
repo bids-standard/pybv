@@ -275,10 +275,10 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
             print(r'; Data orientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...', file=fout)  # noqa: E501
             print(r'DataOrientation=MULTIPLEXED', file=fout)
 
-        print(r'NumberOfChannels={}'.format(len(data)), file=fout)
-        print(r'; Sampling interval in microseconds', file=fout)
-        print(r'SamplingInterval={}'.format(int(1e6 / sfreq)), file=fout)
-        print(r'', file=fout)
+        print(f'NumberOfChannels={len(data)}', file=fout)
+        print('; Sampling interval in microseconds', file=fout)
+        print(f'SamplingInterval={1e6 / sfreq}', file=fout)
+        print('', file=fout)
 
         if format.startswith('binary'):
             print(r'[Binary Infos]', file=fout)
