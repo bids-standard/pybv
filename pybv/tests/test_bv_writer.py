@@ -216,8 +216,12 @@ def test_write_read_cycle(meas_date):
 
 
 # XXX: test also binary_int16 here
+resolutions = np.logspace(0, -9, 10)
+resolutions = np.hstack((resolutions, [np.pi, 0.5, 0.27e-6, 13]))
+
+
 @pytest.mark.parametrize("format", ["binary_float32"])
-@pytest.mark.parametrize("resolution", np.logspace(-1, -9, 9))
+@pytest.mark.parametrize("resolution", resolutions)
 @pytest.mark.parametrize("unit", ["V", "mV", "uV", "µV", "nV"])
 def test_unit_resolution(format, resolution, unit):
     """Test different combinations of units and resolutions."""
