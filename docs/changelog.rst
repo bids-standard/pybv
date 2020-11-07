@@ -22,6 +22,7 @@ Changelog
 Bug
 ~~~
 - ``pybv`` now properly substitutes commas in channel names with ``\1`` before writing to file, and passing non-numeric events now raises a ValueError, by `Stefan Appelhoff`_ (`#53 <https://github.com/bids-standard/pybv/pull/53>`_)
+- :func:`pybv.write_brainvision` now properly handles sampling frequencies (even floats), by `Clemens Brunner`_ (`#59 <https://github.com/bids-standard/pybv/pull/59>`_)
 
 API
 ~~~
