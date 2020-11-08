@@ -66,11 +66,14 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         If ndarray with n_channels elements, each channel is scaled with
         its own corresponding resolution from the ndarray.
         Note that `resolution` is applied on top of the default resolution
-        that a data format (see `fmt`) has; that is, 0 floating point
-        resolution for binary_int16, and 1e-6 floating point resolution for
-        binary_float32. For example, writing binary_int16 data in µV with
-        0.1 resolution (default) will guarantee accurate writing of data for
-        all values >= 0.1 µV.
+        that a data format (see `fmt`) has. For example, the binary_int16
+        format by design has no floating point support, but when scaling the
+        data in µV for 0.1 resolution (default), accurate writing for all
+        values >= 0.1 µV will be guaranteed. In contrast, the binary_float32
+        format by design already supports floating points up to 1e-6
+        resolution, and writing data in µV with 0.1 resolution will thus
+        guarantee accurate writing vor all values >= 1e-7 µV
+        (``1e-6 * 0.1``).
     unit : str
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
         equivalently 'uV') , or 'nV'. Defaults to 'µV'.
