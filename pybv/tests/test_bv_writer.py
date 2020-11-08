@@ -36,39 +36,33 @@ events = np.column_stack([event_times * sfreq, [1, 1, 2, 2]])
 data = rng.randn(n_chans, n_times) * 10 * 1e-6
 
 
-def test_bv_writer_events(tmpdir):
+@pytest.mark.parametrize(
+    "events_errormsg",
+    [([], 'events must be an ndarray of shape'),
+     (rng.randn(10, 20, 30), 'events must be an ndarray of shape'),
+     (rng.randn(10, 4), 'events must be an ndarray of shape'),
+     (np.array([i for i in "abcd"]).reshape(2, -1), 'events must be an ndarray of shape'),  # noqa: E501
+     (events, ''),
+     (None, '')
+     ])
+def test_bv_writer_events(tmpdir, events_errormsg):
     """Test that all event options work without throwing an error."""
-    # events should be none or ndarray
-    with pytest.raises(ValueError, match='events must be an ndarray of shape'):
-        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                          fname_base=fname, folder_out=tmpdir, events=[])
+    kwargs = dict(data=data, sfreq=sfreq, ch_names=ch_names,
+                  fname_base=fname, folder_out=tmpdir)
 
-    with pytest.raises(ValueError, match='events must be an ndarray of shape'):
-        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                          fname_base=fname, folder_out=tmpdir,
-                          events=rng.randn(10, 20, 30))
+    ev, errormsg = events_errormsg
+    if errormsg:
+        with pytest.raises(ValueError, match=errormsg):
+            write_brainvision(**kwargs, events=ev)
+    else:
+        write_brainvision(**kwargs, events=ev)
 
-    with pytest.raises(ValueError, match='events must be an ndarray of shape'):
-        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                          fname_base=fname, folder_out=tmpdir,
-                          events=rng.randn(10, 4))
 
-    with pytest.raises(ValueError, match='events must be an ndarray of shape'):
-        fake_events = np.array([i for i in "abcdefghi"]).reshape(3, -1)
-        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                          fname_base=fname, folder_out=tmpdir,
-                          events=fake_events)
-
-    # keyword only arguments
+def test_kw_only_args(tmpdir):
+    """Test that keyword only arguments are allowed."""
     msg = r'write_brainvision\(\) takes 0 positional arguments'
     with pytest.raises(TypeError, match=msg):
         write_brainvision(data, sfreq, ch_names, fname, folder_out=tmpdir)
-
-    # correct arguments should work
-    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      fname_base=fname, folder_out=tmpdir, events=events)
-    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      fname_base=fname, folder_out=tmpdir, events=None)
 
 
 def test_bv_writer_inputs(tmpdir):
