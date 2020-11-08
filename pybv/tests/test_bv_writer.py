@@ -10,10 +10,7 @@
 #
 # License: BSD (3-clause)
 
-import os
 from datetime import datetime, timezone
-from shutil import rmtree
-from tempfile import mkdtemp
 
 import mne
 import numpy as np
@@ -39,15 +36,8 @@ events = np.column_stack([event_times * sfreq, [1, 1, 2, 2]])
 data = rng.randn(n_chans, n_times) * 10 * 1e-6
 
 
-def _mktmpdir():
-    """Create a temporary directory for testing writers."""
-    return mkdtemp(prefix='pybv_tmp_')
-
-
-def test_bv_writer_events():
+def test_bv_writer_events(tmpdir):
     """Test that all event options work without throwing an error."""
-    tmpdir = _mktmpdir()
-
     # events should be none or ndarray
     with pytest.raises(ValueError, match='events must be an ndarray of shape'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
@@ -79,12 +69,10 @@ def test_bv_writer_events():
                       fname_base=fname, folder_out=tmpdir, events=events)
     write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                       fname_base=fname, folder_out=tmpdir, events=None)
-    rmtree(tmpdir)
 
 
-def test_bv_writer_inputs():
+def test_bv_writer_inputs(tmpdir):
     """Test channels, sfreq=sfreq, and resolution."""
-    tmpdir = _mktmpdir()
     with pytest.raises(ValueError, match='Number of channels in data'):
         write_brainvision(data=data[1:, :], sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir)
@@ -104,16 +92,13 @@ def test_bv_writer_inputs():
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
                           resolution=np.arange(n_chans-1))
-    rmtree(tmpdir)
 
 
-def test_bv_bad_format():
+def test_bv_bad_format(tmpdir):
     """Test that bad formats throw an error."""
-    tmpdir = _mktmpdir()
-
-    vhdr_fname = os.path.join(tmpdir, fname + ".vhdr")
-    vmrk_fname = os.path.join(tmpdir, fname + ".vmrk")
-    eeg_fname = os.path.join(tmpdir, fname + ".eeg")
+    vhdr_fname = tmpdir / fname + ".vhdr"
+    vmrk_fname = tmpdir / fname + ".vmrk"
+    eeg_fname = tmpdir / fname + ".eeg"
 
     with pytest.raises(ValueError, match='Orientation bad not supported'):
         _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data=data,
@@ -131,37 +116,31 @@ def test_bv_bad_format():
         _write_bveeg_file(eeg_fname, data=data, orientation='multiplexed',
                           format="bad", resolution=1e-6, unit="µV")
 
-    rmtree(tmpdir)
-
 
 @pytest.mark.parametrize("meas_date,match",
                          [(1, '`meas_date` must be of type str, datetime'),
                           ('', 'Got a str for `meas_date`, but it was'),
                           ('1973', 'Got a str for `meas_date`, but it was')])
-def test_bad_meas_date(meas_date, match):
+def test_bad_meas_date(tmpdir, meas_date, match):
     """Test that bad measurement dates raise errors."""
-    tmpdir = _mktmpdir()
     with pytest.raises(ValueError, match=match):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
                           meas_date=meas_date)
-    rmtree(tmpdir)
 
 
-@requires_version("mne", min_version="0.23")
+@requires_version("mne", min_version="0.22")
 @pytest.mark.parametrize("ch_names_tricky",
                          [[ch + ' f o o' for ch in ch_names],
                           [ch + ',foo' for ch in ch_names],
                           ]
                          )
-def test_comma_in_ch_name(ch_names_tricky):
+def test_comma_in_ch_name(tmpdir, ch_names_tricky):
     """Test that writing channel names with special characters works."""
-    tmpdir = _mktmpdir()
-
     # write and read data to BV format
     write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names_tricky,
                       fname_base=fname, folder_out=tmpdir)
-    vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
+    vhdr_fname = tmpdir / fname + '.vhdr'
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
 
@@ -169,16 +148,12 @@ def test_comma_in_ch_name(ch_names_tricky):
 
     assert_allclose(data, raw_written._data)  # data round-trip
 
-    rmtree(tmpdir)
-
 
 @pytest.mark.parametrize("meas_date",
                          [('20000101120000000000'),
                           (datetime(2000, 1, 1, 12, 0, 0, 0))])
-def test_write_read_cycle(meas_date):
+def test_write_read_cycle(tmpdir, meas_date):
     """Test that a write/read cycle produces identical data."""
-    tmpdir = _mktmpdir()
-
     # First fail writing due to wrong unit
     unsupported_unit = "rV"
     with pytest.raises(ValueError, match='Encountered unsupported unit'):
@@ -193,7 +168,7 @@ def test_write_read_cycle(meas_date):
                           fname_base=fname, folder_out=tmpdir, events=events,
                           resolution=np.power(10., -np.arange(10)),
                           unit='μV', meas_date=meas_date)
-    vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
+    vhdr_fname = tmpdir / fname + '.vhdr'
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
     # delete the first annotation because it's just marking a new segment
@@ -218,8 +193,6 @@ def test_write_read_cycle(meas_date):
     assert raw_written.info['meas_date'] == datetime(2000, 1, 1, 12, 0, 0, 0,
                                                      tzinfo=timezone.utc)
 
-    rmtree(tmpdir)
-
 
 resolutions = np.logspace(0, -9, 10)
 resolutions = np.hstack((resolutions, [np.pi, 0.5, 0.27e-6, 13]))
@@ -228,10 +201,8 @@ resolutions = np.hstack((resolutions, [np.pi, 0.5, 0.27e-6, 13]))
 @pytest.mark.parametrize("format", SUPPORTED_FORMATS.keys())
 @pytest.mark.parametrize("resolution", resolutions)
 @pytest.mark.parametrize("unit", SUPPORTED_UNITS)
-def test_format_resolution_unit(format, resolution, unit):
+def test_format_resolution_unit(tmpdir, format, resolution, unit):
     """Test different combinations of formats, resolutions, and units."""
-    tmpdir = _mktmpdir()
-
     # Check whether this test will be numerically possible
     tmpdata = _scale_data_to_unit(data.copy(), unit)
     tmpdata = tmpdata * np.atleast_2d((1 / resolution)).T
@@ -251,7 +222,7 @@ def test_format_resolution_unit(format, resolution, unit):
         return
 
     write_brainvision(**kwargs)
-    vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
+    vhdr_fname = tmpdir / fname + '.vhdr'
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
 
@@ -270,18 +241,14 @@ def test_format_resolution_unit(format, resolution, unit):
 
     assert_allclose(data, raw_written.get_data(), atol=absolute_tolerance)
 
-    rmtree(tmpdir)
-
 
 @pytest.mark.parametrize("sfreq", [100, 125, 128, 500, 512, 1000, 1024, 512.1])
-def test_sampling_frequencies(sfreq):
+def test_sampling_frequencies(tmpdir, sfreq):
     """Test different sampling frequencies."""
-    tmpdir = _mktmpdir()
     # sampling frequency gets written as sampling interval
     write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                       fname_base=fname, folder_out=tmpdir)
-    vhdr_fname = os.path.join(tmpdir, fname + '.vhdr')
+    vhdr_fname = tmpdir / fname + '.vhdr'
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
     assert_allclose(sfreq, raw_written.info['sfreq'])
-    rmtree(tmpdir)
