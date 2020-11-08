@@ -72,7 +72,7 @@ you install MNE-Python for reading BrainVision data. See their instructions
 `here <https://mne.tools/stable/install/index.html>`_.
 
 After you have a working installation of MNE-Python (or only ``numpy`` if you
-don't want to read data and only write it), you can install ``pybv`` through
+do not want to read data and only write it), you can install ``pybv`` through
 the following:
 
 - ``pip install --upgrade pybv``
@@ -104,17 +104,16 @@ collection of BrainVision files on disk.
 
     from pybv import write_brainvision
 
-    # for further parameters see our API documentation in the docs
-    write_brainvision(data, sfreq, ch_names, fname, tmpdir, events,
-                      resolution=1e-6, unit='µV', fmt='binary_float32')
+    # for further parameters see our API documentation
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                      fname_base=fname, folder_out=tmpdir,
+                      events=events)
 
 Reading BrainVision files
 -------------------------
 
 Currently, ``pybv`` recommends using `MNE-Python <https://mne.tools>`_
 for reading BrainVision files.
-This results in a nearly-round-trip conversion of the data (up to the numerical
-precision you specify in the ``resolution`` parameter).
 
 Here is an example of the MNE code required to read in BrainVision data:
 
