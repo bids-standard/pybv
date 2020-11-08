@@ -88,8 +88,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         prevent this, set this parameter to None (default).
     """
     # Create output file names/paths
-    if not op.isdir(folder_out):
-        os.makedirs(folder_out)
+    os.makedirs(folder_out, exist_ok=True)
     vhdr_fname = op.join(folder_out, fname_base + '.vhdr')
     vmrk_fname = op.join(folder_out, fname_base + '.vmrk')
     eeg_fname = op.join(folder_out, fname_base + '.eeg')
@@ -157,12 +156,14 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
                          '"YYYYMMDDhhmmssuuuuuu".')
 
     # Write output files
+    # NOTE: call _write_bveeg_file first, so that if it raises ValueError,
+    # no files are written.
+    _write_bveeg_file(eeg_fname, data, orientation='multiplexed', format=fmt,
+                      resolution=resolution, unit=unit)
     _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date)
     _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
                      ch_names, orientation='multiplexed', format=fmt,
                      resolution=resolution, unit=unit)
-    _write_bveeg_file(eeg_fname, data, orientation='multiplexed', format=fmt,
-                      resolution=resolution, unit=unit)
 
 
 def _chk_fmt(fmt):
@@ -297,7 +298,7 @@ def _check_data_in_range(data, dtype):
     """Check that data can be represented in dtype."""
     check_funcs = {np.int16: np.iinfo, np.float32: np.finfo}
     fun = check_funcs.get(dtype, None)
-    if fun is None:
+    if fun is None:  # pragma: no cover
         msg = f"Unsupported format encountered: {dtype}"
         raise ValueError(msg)
     if data.min() <= fun(dtype).min or data.max() >= fun(dtype).max:
