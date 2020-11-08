@@ -232,8 +232,8 @@ def _scale_data_to_unit(data, unit):
     """Scale `data` in Volts to `data` in `unit`."""
     scale = SUPPORTED_UNITS.get(unit, None)
     if not isinstance(scale, float):
-        msg = (f'Encountered unsupported unit: {unit}'
-               f'\nUse one of the following: {set(SUPPORTED_UNITS.keys())}')
+        msg = (f'Encountered unsupported unit: {unit}\n'
+               f'Use one of the following: {set(SUPPORTED_UNITS.keys())}')
         raise ValueError(msg)
 
     return data * scale
@@ -295,7 +295,7 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
 
 
 def _check_data_in_range(data, dtype):
-    """Check that data can be represented in dtype."""
+    """Check that data can be represented by dtype."""
     check_funcs = {np.int16: np.iinfo, np.float32: np.finfo}
     fun = check_funcs.get(dtype, None)
     if fun is None:  # pragma: no cover
