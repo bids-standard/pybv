@@ -12,6 +12,11 @@ Here we list a changelog of pybv.
    :local:
    :depth: 1
 
+Current
+=======
+
+- Nothing yet
+
 0.4.0
 =====
 

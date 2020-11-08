@@ -6,8 +6,9 @@
 #          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
 #          Tristan Stenner <stenner@med-psych.uni-kiel.de>
 #          Clemens Brunner <clemens.brunner@gmail.com>
+#          Richard Höchenberger <richard.hoechenberger@gmail.com>
 #
 # License: BSD (3-clause)
 
-__version__ = '0.4.0'
+__version__ = '0.5.0.dev0'
 from .io import write_brainvision  # noqa: F401
