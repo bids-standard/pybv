@@ -231,7 +231,7 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
 def _scale_data_to_unit(data, unit):
     """Scale `data` in Volts to `data` in `unit`."""
     scale = SUPPORTED_UNITS.get(unit, None)
-    if not isinstance(scale, float):
+    if scale is None:
         msg = (f'Encountered unsupported unit: {unit}\n'
                f'Use one of the following: {set(SUPPORTED_UNITS.keys())}')
         raise ValueError(msg)
