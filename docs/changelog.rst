@@ -25,6 +25,7 @@ Bug
 - :func:`pybv.write_brainvision` now properly handles sampling frequencies that are not multiples of 10 (even floats), by `Clemens Brunner`_ (`#59 <https://github.com/bids-standard/pybv/pull/59>`_)
 - Fix bug where :func:`pybv.write_brainvision` would write a different resolution to the ``vhdr`` file than specified with the ``resolution`` parameter. Note that this did *not* affect the roundtrip accuracy of the written data, because of internal scaling of the data, by `Stefan Appelhoff`_ (`#58 <https://github.com/bids-standard/pybv/pull/58>`_)
 - Fix bug where values for the ``resolution`` parameter like ``0.5``, ``0.123``, ``3.143`` were not written with adequate decimal precision in :func:`pybv.write_brainvision`, by `Stefan Appelhoff`_ (`#58 <https://github.com/bids-standard/pybv/pull/58>`_)
+- Fix bug where :func:`pybv.write_brainvision` did not warn users that a particular combination of ``fmt``, ``unit``, and ``resolution`` can lead to broken data. For example high resolution µV data in int16 format. In such cases, an error is raised now, by `Stefan Appelhoff`_ (`#62 <https://github.com/bids-standard/pybv/pull/62>`_)
 
 API
 ~~~
