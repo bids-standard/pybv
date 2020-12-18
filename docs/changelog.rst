@@ -15,7 +15,10 @@ Here we list a changelog of pybv.
 Current
 =======
 
-- Nothing yet
+API
+~~~
+- :func:`pybv.write_brainvision` now accepts a list of units in the ``unit`` keyword argument, which will scale each channel separately, by `Adam Li`_ (`#47 <https://github.com/bids-standard/pybv/pull/47>`_)
+
 
 0.4.0
 =====
@@ -23,6 +26,10 @@ Current
 Changelog
 ~~~~~~~~~
 - Passing a "greek small letter mu" to the ``unit`` parameter in :func:`pybv.write_brainvision` instead of a "micro sign" is now permitted, because the former will be automatically convert to the latter, by `Stefan Appelhoff`_ (`#47 <https://github.com/bids-standard/pybv/pull/47>`_)
+
+Authors
+~~~~~~~
+- `Adam Li`_
 
 Bug
 ~~~
@@ -119,6 +126,7 @@ Authors
 - `Phillip Alday`_
 - `Stefan Appelhoff`_
 - `Tristan Stenner`_
+- `Adam Li`_
 
 .. _Chris Holdgraf: https://bids.berkeley.edu/people/chris-holdgraf
 .. _Stefan Appelhoff: http://stefanappelhoff.com/
@@ -126,3 +134,4 @@ Authors
 .. _Phillip Alday: https://palday.bitbucket.io/
 .. _Clemens Brunner: https://cbrnr.github.io/
 .. _Richard Höchenberger: https://hoechenberger.net/
+.. _Adam Li: https://adam2392.github.io/
