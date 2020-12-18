@@ -19,6 +19,9 @@ API
 ~~~
 - :func:`pybv.write_brainvision` now accepts a list of units in the ``unit`` keyword argument, which will scale each channel separately, by `Adam Li`_ (`#47 <https://github.com/bids-standard/pybv/pull/47>`_)
 
+Authors
+~~~~~~~
+- `Adam Li`_
 
 0.4.0
 =====
@@ -26,10 +29,6 @@ API
 Changelog
 ~~~~~~~~~
 - Passing a "greek small letter mu" to the ``unit`` parameter in :func:`pybv.write_brainvision` instead of a "micro sign" is now permitted, because the former will be automatically convert to the latter, by `Stefan Appelhoff`_ (`#47 <https://github.com/bids-standard/pybv/pull/47>`_)
-
-Authors
-~~~~~~~
-- `Adam Li`_
 
 Bug
 ~~~
