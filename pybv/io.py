@@ -132,8 +132,9 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     # check unit is single str or list
     if isinstance(unit, list):
         if len(unit) != nchan:
-            raise ValueError(f"Number of channels in unit ({len(unit)}) does not "
-                             f"match number of channel names ({nchan})")
+            raise ValueError(f"Number of channels in unit ({len(unit)}) "
+                             f"does not match number of channel "
+                             f"names ({nchan})")
         units = unit
     else:
         # convert unit to list, assuming all units are the same

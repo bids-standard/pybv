@@ -252,10 +252,47 @@ def test_sampling_frequencies(tmpdir, sfreq):
     assert_allclose(sfreq, raw_written.info['sfreq'])
 
 
-def test_write_multiple_units(tmpdir):
-    wrong_num_units = ['V']
+@pytest.mark.parametrize("unit", SUPPORTED_UNITS)
+def test_write_multiple_units(tmpdir, unit):
+    """Test writing data with a list of units."""
+    wrong_num_units = [unit]
     with pytest.raises(ValueError, match='Number of channels in unit'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
                           unit=wrong_num_units)
 
+    # write brain vision file
+    vhdr_fname = tmpdir / fname + '.vhdr'
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                      fname_base=fname, folder_out=tmpdir,
+                      unit=[unit] * n_chans)
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
+                                              preload=True)
+
+    # check round-trip works
+    absolute_tolerance = 0
+    assert_allclose(data, raw_written.get_data(), atol=absolute_tolerance)
+
+    # Check that the correct units were written in the BV file
+    orig_units = [u for key, u in raw_written._orig_units.items()]
+    assert len(set(orig_units)) == 1
+    assert orig_units[0] == unit.replace("u", "µ")
+
+    # now write with different units across all channels
+    other_unit = 'mV' if unit != 'mV' else 'V'
+    units = [unit] * (n_chans // 2)
+    units.extend([other_unit] * (n_chans // 2))
+
+    # write file and read back in
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                      fname_base=fname, folder_out=tmpdir,
+                      unit=units)
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
+                                              preload=True)
+
+    # Check that the correct units were written in the BV file
+    orig_units = [u for key, u in raw_written._orig_units.items()]
+    assert len(set(orig_units)) == 2
+    assert all([orig_units[idx] == unit.replace("u", "µ") for idx in range(5)])
+    assert all([orig_units[-idx] == other_unit.replace("u", "µ")
+                for idx in range(1, 6)])
