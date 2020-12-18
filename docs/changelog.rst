@@ -17,7 +17,7 @@ Current
 
 API
 ~~~
-- :func:`pybv.write_brainvision` now accepts a list of units in the ``unit`` keyword argument, which will scale each channel separately, by `Adam Li`_ (`#47 <https://github.com/bids-standard/pybv/pull/47>`_)
+- :func:`pybv.write_brainvision` now accepts a list of units in the ``unit`` keyword argument, which will scale each channel separately, by `Adam Li`_ (`#66 <https://github.com/bids-standard/pybv/pull/66>`_)
 
 
 0.4.0
