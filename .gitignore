@@ -12,3 +12,5 @@ coverage.xml
 /coverage
 htmlcov/
 .vscode/
+.venv
+.idea

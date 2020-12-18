@@ -97,18 +97,22 @@ def test_bv_bad_format(tmpdir):
     with pytest.raises(ValueError, match='Orientation bad not supported'):
         _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data=data,
                          sfreq=sfreq, ch_names=ch_names, orientation='bad',
-                         format="binary_float32", resolution=1e-6, unit="V")
+                         format="binary_float32", resolution=1e-6,
+                         units=["V"] * n_chans)
     with pytest.raises(ValueError, match='Data format bad not supported'):
         _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data=data,
                          sfreq=sfreq, ch_names=ch_names,
                          orientation='multiplexed', format="bad",
-                         resolution=1e-6, unit="V")
+                         resolution=1e-6,
+                         units=["V"] * n_chans)
     with pytest.raises(ValueError, match='Orientation bad not supported'):
         _write_bveeg_file(eeg_fname, data=data, orientation='bad',
-                          format="bad", resolution=1e-6, unit="µV")
+                          format="bad", resolution=1e-6,
+                          units=["µV"] * n_chans)
     with pytest.raises(ValueError, match='Data format bad not supported'):
         _write_bveeg_file(eeg_fname, data=data, orientation='multiplexed',
-                          format="bad", resolution=1e-6, unit="µV")
+                          format="bad", resolution=1e-6,
+                          units=["µV"] * n_chans)
 
 
 @pytest.mark.parametrize("meas_date,match",
@@ -198,7 +202,7 @@ resolutions = np.hstack((resolutions, [np.pi, 0.5, 0.27e-6, 13]))
 def test_format_resolution_unit(tmpdir, format, resolution, unit):
     """Test different combinations of formats, resolutions, and units."""
     # Check whether this test will be numerically possible
-    tmpdata = _scale_data_to_unit(data.copy(), unit)
+    tmpdata = _scale_data_to_unit(data.copy(), [unit] * n_chans)
     tmpdata = tmpdata * np.atleast_2d((1 / resolution)).T
     _, dtype = _chk_fmt(format)
     data_will_fit = _check_data_in_range(tmpdata, dtype)
@@ -246,3 +250,12 @@ def test_sampling_frequencies(tmpdir, sfreq):
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
     assert_allclose(sfreq, raw_written.info['sfreq'])
+
+
+def test_write_multiple_units(tmpdir):
+    wrong_num_units = ['V']
+    with pytest.raises(ValueError, match='Number of channels in unit'):
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=tmpdir,
+                          unit=wrong_num_units)
+
