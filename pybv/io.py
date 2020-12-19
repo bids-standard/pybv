@@ -130,16 +130,16 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     _chk_fmt(fmt)
 
     # check unit is single str or list
-    if isinstance(unit, list):
-        if len(unit) != nchan:
-            raise ValueError(f"Number of channels in unit ({len(unit)}) "
-                             f"does not match number of channel "
-                             f"names ({nchan})")
-        units = unit
-    else:
+    if isinstance(unit, str):
         # convert unit to list, assuming all units are the same
-        units = [unit] * nchan
+        unit = [unit] * nchan
+    if len(unit) != nchan:
+        raise ValueError(f"Number of channels in unit ({len(unit)}) "
+                         f"does not match number of channel "
+                         f"names ({nchan})")
+    units = unit
 
+    # check units for compatibility with greek lettering
     for idx, unit in enumerate(units):
         if unit == 'μV':
             # this is greek mu: μ
