@@ -74,7 +74,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         resolution, and writing data in µV with 0.1 resolution will thus
         guarantee accurate writing vor all values >= 1e-7 µV
         (``1e-6 * 0.1``).
-    unit : str | list of strings, shape (n_channels,)
+    unit : str | list of strings
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
         equivalently 'uV') , or 'nV'. Defaults to 'µV'. If a list is passed in,
         it specifies the unit per channel. Then it must have the same length
