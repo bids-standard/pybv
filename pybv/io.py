@@ -76,9 +76,8 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         (``1e-6 * 0.1``).
     unit : str | list of strings
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
-        equivalently 'uV') , or 'nV'. Defaults to 'µV'. If a list is passed in,
-        it specifies the unit per channel. Then it must have the same length
-        as the number of channels.
+        equivalently 'uV') , or 'nV'. Defaults to 'µV'. Can also be a
+        list of units with one unit per channel.
     fmt : str
         Binary format the data should be written as. Valid choices are
         'binary_float32' (default) and 'binary_int16'.
