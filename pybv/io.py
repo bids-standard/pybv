@@ -139,16 +139,20 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     units = unit
 
     # check units for compatibility with greek lettering
+    show_warning = False
     for idx, unit in enumerate(units):
         if unit == 'μV':
             # this is greek mu: μ
             # https://www.compart.com/de/unicode/U+03BC
-            warnings.warn(
-                f"Encountered small greek letter mu: 'μ' in unit: {unit} ... "
-                f"converting to micro sign: 'µ': {unit.replace('μ', 'µ')}"
-            )
             unit = 'µV'
             units[idx] = unit
+            show_warning = True
+    # only show the warning once if a greek letter was encountered
+    if show_warning:
+        warnings.warn(
+            f"Encountered small greek letter mu: 'μ' in unit: {unit} ... "
+            f"converting to micro sign: 'µ': {unit.replace('μ', 'µ')}"
+        )
 
     # measurement date
     if not isinstance(meas_date, (str, datetime.datetime, type(None))):
