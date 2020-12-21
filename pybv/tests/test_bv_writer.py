@@ -305,7 +305,7 @@ def test_write_unsupported_units(tmpdir):
     units[-1] = '°C'
 
     # write brain vision file
-    vhdr_fname = tmpdir / fname + '.vhdr'
+    vhdr_fname = tmpdir / (fname + '.vhdr')
     write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                       fname_base=fname, folder_out=tmpdir,
                       unit=units)
