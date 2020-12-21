@@ -77,8 +77,11 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         (``1e-6 * 0.1``).
     unit : str | list of str
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
-        equivalently 'uV') , or 'nV'. Defaults to 'µV'. Can also be a
-        list of units with one unit per channel.
+        equivalently 'uV') , or 'nV', which will then scale the data to 'V'.
+        Defaults to 'µV'. Can also be a list of units with one unit per
+        channel, where any arbitrary channel unit can be defined.
+        For example, temperature might be ``°C``, which ``pybv``
+        will simply not scale..
     fmt : str
         Binary format the data should be written as. Valid choices are
         'binary_float32' (default) and 'binary_int16'.
@@ -88,6 +91,12 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         ('u' stands for microseconds). Note that setting a measurement date
         implies that one additional event is created in the .vmrk file. To
         prevent this, set this parameter to None (default).
+
+    Notes
+    -----
+    Passing a list of arbitrary ``units`` should be double-checked. If
+    one mis-spells the supported voltage unit, then it will not get
+    scaled properly.
     """
     # Input checks
     ev_err = ("events must be an ndarray of shape (n_events, 2) or "
