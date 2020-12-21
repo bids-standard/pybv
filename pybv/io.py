@@ -15,6 +15,7 @@ import datetime
 import os
 import warnings
 from os import path as op
+from warnings import warn
 
 import numpy as np
 
@@ -255,8 +256,10 @@ def _scale_data_to_unit(data, units):
         scale = SUPPORTED_UNITS.get(unit, None)
         if scale is None:
             msg = (f'Encountered unsupported unit: {unit}\n'
-                   f'Use one of the following: {set(SUPPORTED_UNITS.keys())}')
-            raise ValueError(msg)
+                   f'We are not scaling channel {idx}. If this is a mistake, '
+                   f'use one of the following: {set(SUPPORTED_UNITS.keys())}')
+            warn(msg)
+            scale = 1  # don't scale the data at all
         scales[idx] = scale
     return data * scales
 

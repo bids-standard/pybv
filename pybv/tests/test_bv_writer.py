@@ -154,7 +154,7 @@ def test_write_read_cycle(tmpdir, meas_date):
     """Test that a write/read cycle produces identical data."""
     # First fail writing due to wrong unit
     unsupported_unit = "rV"
-    with pytest.raises(ValueError, match='Encountered unsupported unit'):
+    with pytest.warns(UserWarning, match='Encountered unsupported unit'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
                           unit=unsupported_unit)
@@ -296,3 +296,28 @@ def test_write_multiple_units(tmpdir, unit):
     assert all([orig_units[idx] == unit.replace("u", "µ") for idx in range(5)])
     assert all([orig_units[-idx] == other_unit.replace("u", "µ")
                 for idx in range(1, 6)])
+
+
+def test_write_unsupported_units(tmpdir):
+    """Test writing data with a list of possibly unsupported BV units."""
+    unit = 'V'  # supported test unit
+    units = [unit] * n_chans
+    units[-1] = '°C'
+
+    # write brain vision file
+    vhdr_fname = tmpdir / fname + '.vhdr'
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                      fname_base=fname, folder_out=tmpdir,
+                      unit=units)
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
+                                              preload=True)
+
+    # check round-trip works
+    absolute_tolerance = 0
+    assert_allclose(data, raw_written.get_data(), atol=absolute_tolerance)
+
+    # Check that the correct units were written in the BV file
+    orig_units = [u for key, u in raw_written._orig_units.items()]
+    assert len(set(orig_units)) == 2
+    assert all([orig_units[idx] == unit for idx in range(9)])
+    assert orig_units[-1] == '°C'
