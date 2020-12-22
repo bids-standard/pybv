@@ -268,7 +268,9 @@ def _scale_data_to_unit(data, units):
     scales = np.zeros((len(units), 1))
     for idx, unit in enumerate(units):
         scale = SUPPORTED_UNITS.get(unit, None)
-        if scale is None:
+        # unless the unit is 'µV', then
+        # technically it is not supported in BrainVision
+        if scale is None or unit != 'µV':
             unsupported_units.add(unit)
             scale = 1  # don't scale the data at all
         scales[idx] = scale
@@ -276,7 +278,6 @@ def _scale_data_to_unit(data, units):
     if len(unsupported_units) > 0:
         msg = (f'Encountered unsupported units: '
                f'{", ".join(unsupported_units)}\n'
-               f'We are not scaling these channels. '
                f'If this is a mistake, '
                f'use one of the following: '
                f'{", ".join(sorted(SUPPORTED_UNITS.keys()))}')
