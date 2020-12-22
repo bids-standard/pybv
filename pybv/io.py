@@ -95,7 +95,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     Notes
     -----
     Passing a list of arbitrary ``units`` should be double-checked.
-    Any unit besides µV is unsupported in the BrainVision specification.
+    Any unit besides µV is "unsupported" in the BrainVision specification.
     If one passes in other voltage units, we will scale them accordingly,
     and we will also write unsupported units such as ``°C`` as is
     without scaling.
