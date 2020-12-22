@@ -81,7 +81,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         Defaults to 'µV'. Can also be a list of units with one unit per
         channel, where any arbitrary channel unit can be defined.
         For example, temperature might be ``°C``, which ``pybv``
-        will simply not scale..
+        will not scale.
     fmt : str
         Binary format the data should be written as. Valid choices are
         'binary_float32' (default) and 'binary_int16'.
@@ -94,9 +94,11 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     Notes
     -----
-    Passing a list of arbitrary ``units`` should be double-checked. If
-    one mis-spells the supported voltage unit, then it will not get
-    scaled properly.
+    Passing a list of arbitrary ``units`` should be double-checked.
+    Any unit besides µV is unsupported in the BrainVision specification.
+    If one passes in other voltage units, we will scale them accordingly,
+    and we will also write unsupported units such as ``°C`` as is
+    without scaling.
     """
     # Input checks
     ev_err = ("events must be an ndarray of shape (n_events, 2) or "
@@ -259,18 +261,26 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
 
 def _scale_data_to_unit(data, units):
     """Scale `data` in Volts to `data` in `units`."""
+    # keep track of any unsupported units to warn user
+    unsupported_units = set()
+
     # create a vector to multiply with to play nice with numpy
     scales = np.zeros((len(units), 1))
     for idx, unit in enumerate(units):
         scale = SUPPORTED_UNITS.get(unit, None)
         if scale is None:
-            msg = (f'Encountered unsupported unit: {unit}\n'
-                   f'We are not scaling channel {idx}. If this is a mistake, '
-                   f'use one of the following: '
-                   f'{", ".join(sorted(SUPPORTED_UNITS.keys()))}')
-            warn(msg)
+            unsupported_units.add(unit)
             scale = 1  # don't scale the data at all
         scales[idx] = scale
+
+    if len(unsupported_units) > 0:
+        msg = (f'Encountered unsupported units: '
+               f'{", ".join(unsupported_units)}\n'
+               f'We are not scaling these channels. '
+               f'If this is a mistake, '
+               f'use one of the following: '
+               f'{", ".join(sorted(SUPPORTED_UNITS.keys()))}')
+        warn(msg)
     return data * scales
 
 

@@ -306,9 +306,10 @@ def test_write_unsupported_units(tmpdir):
 
     # write brain vision file
     vhdr_fname = tmpdir / (fname + '.vhdr')
-    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      fname_base=fname, folder_out=tmpdir,
-                      unit=units)
+    with pytest.warns(UserWarning, match='Encountered unsupported unit'):
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=tmpdir,
+                          unit=units)
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
 
