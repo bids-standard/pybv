@@ -266,7 +266,8 @@ def _scale_data_to_unit(data, units):
         if scale is None:
             msg = (f'Encountered unsupported unit: {unit}\n'
                    f'We are not scaling channel {idx}. If this is a mistake, '
-                   f'use one of the following: {set(SUPPORTED_UNITS.keys())}')
+                   f'use one of the following: '
+                   f'{", ".join(sorted(SUPPORTED_UNITS.keys()))}')
             warn(msg)
             scale = 1  # don't scale the data at all
         scales[idx] = scale
