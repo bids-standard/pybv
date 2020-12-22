@@ -270,8 +270,10 @@ def _scale_data_to_unit(data, units):
         scale = SUPPORTED_UNITS.get(unit, None)
         # unless the unit is 'µV', then
         # technically it is not supported in BrainVision
-        if scale is None or unit != 'µV':
+        if unit != 'µV':
             unsupported_units.add(unit)
+        # if not voltage unit at all, then don't scale
+        if scale is None:
             scale = 1  # don't scale the data at all
         scales[idx] = scale
 
