@@ -95,7 +95,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     Notes
     -----
     Passing a list of arbitrary ``units`` should be double-checked.
-    Any unit besides µV is "unsupported" in the BrainVision specification.
+    Any unit besides µV is unsupported in the BrainVision specification.
     If one passes in other voltage units, we will scale them accordingly,
     and we will also write unsupported units such as ``°C`` as is
     without scaling.
@@ -153,17 +153,19 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     # check units for compatibility with greek lettering
     show_warning = False
     for idx, unit in enumerate(units):
-        if unit == 'μV':
-            # this is greek mu: μ
-            # https://www.compart.com/de/unicode/U+03BC
-            unit = 'µV'
+        # Greek mu μ (U+03BC)
+        # https://www.compart.com/de/unicode/U+03BC
+        if unit == 'μV' or unit == 'uV':
+            unit = 'µV'  # micro symbol µ (U+00B5)
             units[idx] = unit
             show_warning = True
+
     # only show the warning once if a greek letter was encountered
     if show_warning:
         warnings.warn(
-            f"Encountered small greek letter mu: 'μ' in unit: {unit} ... "
-            f"converting to micro sign: 'µ': {unit.replace('μ', 'µ')}"
+            f"Encountered small greek letter mu: 'μ' in unit, or the "
+            f"letter u: {unit} ... "
+            f"converting to micro sign: 'µ'"
         )
 
     # measurement date
@@ -262,7 +264,12 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
 def _scale_data_to_unit(data, units):
     """Scale `data` in Volts to `data` in `units`."""
     # keep track of any unsupported units to warn user
+    # these are voltage units that we convert to microvolts
     unsupported_units = set()
+
+    # officially unsupported units that contain non-voltage
+    # related signals
+    official_unsupp_units = set()
 
     # create a vector to multiply with to play nice with numpy
     scales = np.zeros((len(units), 1))
@@ -270,16 +277,26 @@ def _scale_data_to_unit(data, units):
         scale = SUPPORTED_UNITS.get(unit, None)
         # unless the unit is 'µV', then
         # technically it is not supported in BrainVision
-        if unit != 'µV':
+        if scale is not None and unit != 'µV':
             unsupported_units.add(unit)
         # if not voltage unit at all, then don't scale
-        if scale is None:
+        elif scale is None:
+            official_unsupp_units.add(unit)
             scale = 1  # don't scale the data at all
         scales[idx] = scale
 
     if len(unsupported_units) > 0:
-        msg = (f'Encountered unsupported units: '
+        msg = (f'Encountered unsupported voltage units: '
                f'{", ".join(unsupported_units)}\n'
+               f'We will automatically scale and convert '
+               f'these to Volts. If this is a mistake, '
+               f'use one of the following: '
+               f'{", ".join(sorted(SUPPORTED_UNITS.keys()))}')
+        warn(msg)
+
+    if len(official_unsupp_units) > 0:
+        msg = (f'Encountered unsupported non-voltage units: '
+               f'{", ".join(official_unsupp_units)}\n'
                f'If this is a mistake, '
                f'use one of the following: '
                f'{", ".join(sorted(SUPPORTED_UNITS.keys()))}')

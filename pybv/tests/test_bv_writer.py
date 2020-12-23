@@ -154,7 +154,8 @@ def test_write_read_cycle(tmpdir, meas_date):
     """Test that a write/read cycle produces identical data."""
     # First fail writing due to wrong unit
     unsupported_unit = "rV"
-    with pytest.warns(UserWarning, match='Encountered unsupported unit'):
+    with pytest.warns(UserWarning, match='Encountered unsupported '
+                                         'non-voltage unit'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
                           unit=unsupported_unit)
@@ -306,7 +307,8 @@ def test_write_unsupported_units(tmpdir):
 
     # write brain vision file
     vhdr_fname = tmpdir / (fname + '.vhdr')
-    with pytest.warns(UserWarning, match='Encountered unsupported unit'):
+    with pytest.warns(UserWarning, match='Encountered unsupported '
+                                         'non-voltage unit'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
                           unit=units)
