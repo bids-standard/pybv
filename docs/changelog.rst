@@ -17,7 +17,7 @@ Current
 
 API
 ~~~
-- :func:`pybv.write_brainvision` now accepts a list of units for the ``unit`` parameter, which will scale each channel separately, by `Adam Li`_ (`#66 <https://github.com/bids-standard/pybv/pull/66>`_)
+- :func:`pybv.write_brainvision` now accepts a list of units for the ``unit`` parameter, which will scale each channel separately. In addition, support for non-Volt channels are now supported for the ``data`` parameter by passing a list of str to ``unit``. In addition, ``uV`` now also converted to ``µV``, by `Adam Li`_ (`#66 <https://github.com/bids-standard/pybv/pull/66>`_)
 
 Authors
 ~~~~~~~

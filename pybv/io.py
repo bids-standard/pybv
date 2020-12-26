@@ -40,8 +40,10 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
-        The raw data to export. Data is assumed to be in **Volts** and will be
-        stored as specified by `unit`.
+        The raw data to export. Voltage data is assumed to be in
+        **Volts** and will be stored as specified by `unit`.
+        Other unsupported non-volt units are able to be specified
+        in ``unit`` parameter.
     sfreq : int | float
         The sampling frequency of the data.
     ch_names : list of strings, shape (n_channels,)
@@ -99,6 +101,15 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     If one passes in other voltage units, we will scale them accordingly,
     and we will also write unsupported units such as ``°C`` as is
     without scaling.
+
+    Example
+    -------
+    >>> data = np.random.rand((3, 5))
+    >>> # write data with varying units
+    >>> write_brainvision(data, sfreq=1, ch_names=['A1', 'A2', 'TEMP'],
+    >>>                   folder_out='./',
+    >>>                   fname_base='test_file',
+    >>>                   unit=['µV', 'µV', '°C'])
     """
     # Input checks
     ev_err = ("events must be an ndarray of shape (n_events, 2) or "
