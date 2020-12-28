@@ -40,10 +40,9 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
-        The raw data to export. Voltage data is assumed to be in
-        **Volts** and will be stored as specified by `unit`.
-        Other unsupported non-volt units are able to be specified
-        in ``unit`` parameter.
+        The raw data to export. Voltage data is assumed to be in **Volts** and
+        will be scaled as specified by ``unit``. Non-voltage channels (as
+        specified by ``unit``) are never scaled (e.g. '°C').
     sfreq : int | float
         The sampling frequency of the data.
     ch_names : list of strings, shape (n_channels,)
