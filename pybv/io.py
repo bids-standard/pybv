@@ -175,9 +175,8 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     # only show the warning once if a greek letter was encountered
     if show_warning:
         warnings.warn(
-            f"Encountered small greek letter mu: 'μ' in unit, or the "
-            f"letter u: {unit} ... "
-            f"converting to micro sign: 'µ'"
+            f"Encountered small Greek letter mu 'μ' or 'u' in unit: {unit}. "
+            f"Converting to micro sign 'µ'."
         )
 
     # measurement date
