@@ -18,9 +18,9 @@ import pytest
 from mne.utils import requires_version
 from numpy.testing import assert_allclose, assert_array_equal
 
-from pybv.io import (SUPPORTED_FORMATS, SUPPORTED_UNITS, _check_data_in_range,
-                     _chk_fmt, _scale_data_to_unit, _write_bveeg_file,
-                     _write_vhdr_file, write_brainvision)
+from pybv.io import (SUPPORTED_FORMATS, SUPPORTED_VOLTAGE_UNITS,
+                     _check_data_in_range, _chk_fmt, _scale_data_to_unit,
+                     _write_bveeg_file, _write_vhdr_file, write_brainvision)
 
 # create testing data
 fname = 'pybv'
@@ -199,7 +199,7 @@ resolutions = np.hstack((resolutions, [np.pi, 0.5, 0.27e-6, 13]))
 
 @pytest.mark.parametrize("format", SUPPORTED_FORMATS.keys())
 @pytest.mark.parametrize("resolution", resolutions)
-@pytest.mark.parametrize("unit", SUPPORTED_UNITS)
+@pytest.mark.parametrize("unit", SUPPORTED_VOLTAGE_UNITS)
 def test_format_resolution_unit(tmpdir, format, resolution, unit):
     """Test different combinations of formats, resolutions, and units."""
     # Check whether this test will be numerically possible
@@ -253,7 +253,7 @@ def test_sampling_frequencies(tmpdir, sfreq):
     assert_allclose(sfreq, raw_written.info['sfreq'])
 
 
-@pytest.mark.parametrize("unit", SUPPORTED_UNITS)
+@pytest.mark.parametrize("unit", SUPPORTED_VOLTAGE_UNITS)
 def test_write_multiple_units(tmpdir, unit):
     """Test writing data with a list of units."""
     wrong_num_units = [unit]

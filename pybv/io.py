@@ -29,7 +29,9 @@ SUPPORTED_FORMATS = {
 
 SUPPORTED_ORIENTS = {'multiplexed'}
 
-SUPPORTED_UNITS = {'V': 1e0, 'mV': 1e3, 'µV': 1e6, 'uV': 1e6, 'nV': 1e9}
+SUPPORTED_VOLTAGE_UNITS = {
+    'V': 1e0, 'mV': 1e3, 'µV': 1e6, 'uV': 1e6, 'nV': 1e9
+}
 
 
 def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
@@ -78,8 +80,8 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         (``1e-6 * 0.1``).
     unit : str | list of str
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
-        equivalently 'uV') , or 'nV', which will scale the data (assumed to be
-        in 'V') accordingly. Defaults to 'µV'. Can also be a list of units with
+        equivalently 'uV') , or 'nV', which will scale the data accordingly.
+        Defaults to 'µV'. Can also be a list of units with
         one unit per channel. Non-voltage channels are stored as is, for
         example temperature might be available in ``°C``, which ``pybv`` will
         not scale.
@@ -96,10 +98,10 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     Notes
     -----
     EEG/MEG data is assumed to be in V, and we will scale these data to µV by
-    default. Any unit besides µV is unsupported in the BrainVision
+    default. Any unit besides µV is officially unsupported in the BrainVision
     specification. However, if one specifies other voltage units such as 'mV'
-    or 'nV', we will still scale the signals accordingly in the exported file. ,
-    We will also write channels with unsupported units such as ``°C`` as is
+    or 'nV', we will still scale the signals accordingly in the exported file.
+    We will also write channels with non-voltage units such as ``°C`` as is
     (without scaling). For maximum compatibility, all signals should be written
     as µV.
 
@@ -276,41 +278,42 @@ def _scale_data_to_unit(data, units):
     """Scale `data` in Volts to `data` in `units`."""
     # keep track of any unsupported units to warn user
     # these are voltage units that we convert to microvolts
-    unsupported_units = set()
+    voltage_units = set()
 
     # officially unsupported units that contain non-voltage
     # related signals
-    official_unsupp_units = set()
+    non_voltage_units = set()
 
     # create a vector to multiply with to play nice with numpy
     scales = np.zeros((len(units), 1))
     for idx, unit in enumerate(units):
-        scale = SUPPORTED_UNITS.get(unit, None)
+        scale = SUPPORTED_VOLTAGE_UNITS.get(unit, None)
         # unless the unit is 'µV', then
         # technically it is not supported in BrainVision
         if scale is not None and unit != 'µV':
-            unsupported_units.add(unit)
+            voltage_units.add(unit)
         # if not voltage unit at all, then don't scale
         elif scale is None:
-            official_unsupp_units.add(unit)
+            non_voltage_units.add(unit)
             scale = 1  # don't scale the data at all
         scales[idx] = scale
 
-    if len(unsupported_units) > 0:
+    if len(voltage_units) > 0:
         msg = (f'Encountered unsupported voltage units: '
-               f'{", ".join(unsupported_units)}\n'
+               f'{", ".join(voltage_units)}\n'
                f'We will automatically scale and convert '
-               f'these to Volts. If this is a mistake, '
-               f'use one of the following: '
-               f'{", ".join(sorted(SUPPORTED_UNITS.keys()))}')
-        warn(msg)
-
-    if len(official_unsupp_units) > 0:
-        msg = (f'Encountered unsupported non-voltage units: '
-               f'{", ".join(official_unsupp_units)}\n'
+               f'these to the voltage units specified (e.g. mV). '
                f'If this is a mistake, '
                f'use one of the following: '
-               f'{", ".join(sorted(SUPPORTED_UNITS.keys()))}')
+               f'{", ".join(sorted(SUPPORTED_VOLTAGE_UNITS.keys()))}')
+        warn(msg)
+
+    if len(non_voltage_units) > 0:
+        msg = (f'Encountered unsupported non-voltage units: '
+               f'{", ".join(non_voltage_units)}\n'
+               f'If this is a mistake, '
+               f'use one of the following: '
+               f'{", ".join(sorted(SUPPORTED_VOLTAGE_UNITS.keys()))}')
         warn(msg)
     return data * scales
 
