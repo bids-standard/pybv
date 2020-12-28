@@ -78,11 +78,11 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         (``1e-6 * 0.1``).
     unit : str | list of str
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
-        equivalently 'uV') , or 'nV', which will then scale the data to 'V'.
-        Defaults to 'µV'. Can also be a list of units with one unit per
-        channel, where any arbitrary channel unit can be defined.
-        For example, temperature might be ``°C``, which ``pybv``
-        will not scale.
+        equivalently 'uV') , or 'nV', which will scale the data (assumed to be
+        in 'V') accordingly. Defaults to 'µV'. Can also be a list of units with
+        one unit per channel. Non-voltage channels are stored as is, for
+        example temperature might be available in ``°C``, which ``pybv`` will
+        not scale.
     fmt : str
         Binary format the data should be written as. Valid choices are
         'binary_float32' (default) and 'binary_int16'.
