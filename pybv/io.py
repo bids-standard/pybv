@@ -95,11 +95,13 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     Notes
     -----
-    Passing a list of arbitrary ``units`` should be double-checked.
-    Any unit besides µV is unsupported in the BrainVision specification.
-    If one passes in other voltage units, we will scale them accordingly,
-    and we will also write unsupported units such as ``°C`` as is
-    without scaling.
+    EEG/MEG data is assumed to be in V, and we will scale these data to µV by
+    default. Any unit besides µV is unsupported in the BrainVision
+    specification. However, if one specifies other voltage units such as 'mV'
+    or 'nV', we will still scale the signals accordingly in the exported file. ,
+    We will also write channels with unsupported units such as ``°C`` as is
+    (without scaling). For maximum compatibility, all signals should be written
+    as µV.
 
     Example
     -------
