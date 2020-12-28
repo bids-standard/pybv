@@ -97,13 +97,13 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     Notes
     -----
-    EEG/MEG data is assumed to be in V, and we will scale these data to µV by
-    default. Any unit besides µV is officially unsupported in the BrainVision
-    specification. However, if one specifies other voltage units such as 'mV'
-    or 'nV', we will still scale the signals accordingly in the exported file.
-    We will also write channels with non-voltage units such as ``°C`` as is
-    (without scaling). For maximum compatibility, all signals should be written
-    as µV.
+    iEEG/EEG/MEG data is assumed to be in V, and we will scale these data
+    to µV by default. Any unit besides µV is officially unsupported in the
+    BrainVision specification. However, if one specifies other voltage units
+    such as 'mV' or 'nV', we will still scale the signals accordingly
+    in the exported file. We will also write channels with non-voltage units
+    such as ``°C`` as is (without scaling). For maximum compatibility,
+    all signals should be written as µV.
 
     Example
     -------
