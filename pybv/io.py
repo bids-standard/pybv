@@ -112,7 +112,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     >>> write_brainvision(data, sfreq=1, ch_names=['A1', 'A2', 'TEMP'],
     >>>                   folder_out='./',
     >>>                   fname_base='test_file',
-    >>>                   unit=['µV', 'µV', '°C'])
+    >>>                   unit=['µV', 'mV', '°C'])
     """
     # Input checks
     ev_err = ("events must be an ndarray of shape (n_events, 2) or "
