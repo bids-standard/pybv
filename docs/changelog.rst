@@ -15,7 +15,18 @@ Here we list a changelog of pybv.
 Current
 =======
 
-- Nothing yet
+Changelog
+~~~~~~~~
+- :func:`pybv.write_brainvision` adds support for channels with non-Volt units, by `Adam Li`_ (`#66 <https://github.com/bids-standard/pybv/pull/66>`_).
+- :func:`pybv.write_brainvision` automatically converts ``uV`` and ``μV`` (Greek μ) to ``µV`` (micro sign µ), by `Adam Li`_ (`#66 <https://github.com/bids-standard/pybv/pull/66>`_).
+
+API
+~~~
+- The ``unit`` parameter in :func:`pybv.write_brainvision` now accepts a list of units (one unit per channel), by `Adam Li`_ (`#66 <https://github.com/bids-standard/pybv/pull/66>`_).
+
+Authors
+~~~~~~~
+- `Adam Li`_
 
 0.4.0
 =====
@@ -119,6 +130,7 @@ Authors
 - `Phillip Alday`_
 - `Stefan Appelhoff`_
 - `Tristan Stenner`_
+- `Adam Li`_
 
 .. _Chris Holdgraf: https://bids.berkeley.edu/people/chris-holdgraf
 .. _Stefan Appelhoff: http://stefanappelhoff.com/
@@ -126,3 +138,4 @@ Authors
 .. _Phillip Alday: https://palday.bitbucket.io/
 .. _Clemens Brunner: https://cbrnr.github.io/
 .. _Richard Höchenberger: https://hoechenberger.net/
+.. _Adam Li: https://adam2392.github.io/

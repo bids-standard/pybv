@@ -18,9 +18,9 @@ import pytest
 from mne.utils import requires_version
 from numpy.testing import assert_allclose, assert_array_equal
 
-from pybv.io import (SUPPORTED_FORMATS, SUPPORTED_UNITS, _check_data_in_range,
-                     _chk_fmt, _scale_data_to_unit, _write_bveeg_file,
-                     _write_vhdr_file, write_brainvision)
+from pybv.io import (SUPPORTED_FORMATS, SUPPORTED_VOLTAGE_SCALINGS,
+                     _check_data_in_range, _chk_fmt, _scale_data_to_unit,
+                     _write_bveeg_file, _write_vhdr_file, write_brainvision)
 
 # create testing data
 fname = 'pybv'
@@ -97,18 +97,22 @@ def test_bv_bad_format(tmpdir):
     with pytest.raises(ValueError, match='Orientation bad not supported'):
         _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data=data,
                          sfreq=sfreq, ch_names=ch_names, orientation='bad',
-                         format="binary_float32", resolution=1e-6, unit="V")
+                         format="binary_float32", resolution=1e-6,
+                         units=["V"] * n_chans)
     with pytest.raises(ValueError, match='Data format bad not supported'):
         _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data=data,
                          sfreq=sfreq, ch_names=ch_names,
                          orientation='multiplexed', format="bad",
-                         resolution=1e-6, unit="V")
+                         resolution=1e-6,
+                         units=["V"] * n_chans)
     with pytest.raises(ValueError, match='Orientation bad not supported'):
         _write_bveeg_file(eeg_fname, data=data, orientation='bad',
-                          format="bad", resolution=1e-6, unit="µV")
+                          format="bad", resolution=1e-6,
+                          units=["µV"] * n_chans)
     with pytest.raises(ValueError, match='Data format bad not supported'):
         _write_bveeg_file(eeg_fname, data=data, orientation='multiplexed',
-                          format="bad", resolution=1e-6, unit="µV")
+                          format="bad", resolution=1e-6,
+                          units=["µV"] * n_chans)
 
 
 @pytest.mark.parametrize("meas_date,match",
@@ -150,14 +154,15 @@ def test_write_read_cycle(tmpdir, meas_date):
     """Test that a write/read cycle produces identical data."""
     # First fail writing due to wrong unit
     unsupported_unit = "rV"
-    with pytest.raises(ValueError, match='Encountered unsupported unit'):
+    with pytest.warns(UserWarning, match='Encountered unsupported '
+                                         'non-voltage unit'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
                           unit=unsupported_unit)
 
     # write and read data to BV format
     # ensure that greek small letter mu gets converted to micro sign
-    with pytest.warns(UserWarning, match="Encountered small greek letter mu"):
+    with pytest.warns(UserWarning, match="Encountered small Greek letter mu"):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir, events=events,
                           resolution=np.power(10., -np.arange(10)),
@@ -194,11 +199,11 @@ resolutions = np.hstack((resolutions, [np.pi, 0.5, 0.27e-6, 13]))
 
 @pytest.mark.parametrize("format", SUPPORTED_FORMATS.keys())
 @pytest.mark.parametrize("resolution", resolutions)
-@pytest.mark.parametrize("unit", SUPPORTED_UNITS)
+@pytest.mark.parametrize("unit", SUPPORTED_VOLTAGE_SCALINGS)
 def test_format_resolution_unit(tmpdir, format, resolution, unit):
     """Test different combinations of formats, resolutions, and units."""
     # Check whether this test will be numerically possible
-    tmpdata = _scale_data_to_unit(data.copy(), unit)
+    tmpdata = _scale_data_to_unit(data.copy(), [unit] * n_chans)
     tmpdata = tmpdata * np.atleast_2d((1 / resolution)).T
     _, dtype = _chk_fmt(format)
     data_will_fit = _check_data_in_range(tmpdata, dtype)
@@ -246,3 +251,77 @@ def test_sampling_frequencies(tmpdir, sfreq):
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
     assert_allclose(sfreq, raw_written.info['sfreq'])
+
+
+@pytest.mark.parametrize("unit", SUPPORTED_VOLTAGE_SCALINGS)
+def test_write_multiple_units(tmpdir, unit):
+    """Test writing data with a list of units."""
+    wrong_num_units = [unit]
+    with pytest.raises(ValueError, match='Number of channels in unit'):
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=tmpdir,
+                          unit=wrong_num_units)
+
+    # write brain vision file
+    vhdr_fname = tmpdir / fname + '.vhdr'
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                      fname_base=fname, folder_out=tmpdir,
+                      unit=[unit] * n_chans)
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
+                                              preload=True)
+
+    # check round-trip works
+    absolute_tolerance = 0
+    assert_allclose(data, raw_written.get_data(), atol=absolute_tolerance)
+
+    # Check that the correct units were written in the BV file
+    orig_units = [u for key, u in raw_written._orig_units.items()]
+    assert len(set(orig_units)) == 1
+    assert orig_units[0] == unit.replace("u", "µ")
+
+    # now write with different units across all channels
+    other_unit = 'mV' if unit != 'mV' else 'V'
+    units = [unit] * (n_chans // 2)
+    units.extend([other_unit] * (n_chans // 2))
+
+    # write file and read back in
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                      fname_base=fname, folder_out=tmpdir,
+                      unit=units)
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
+                                              preload=True)
+
+    # Check that the correct units were written in the BV file
+    orig_units = [u for key, u in raw_written._orig_units.items()]
+    assert len(set(orig_units)) == 2
+    assert all([orig_units[idx] == unit.replace("u", "µ")
+                for idx in range(n_chans // 2)])
+    assert all([orig_units[-idx] == other_unit.replace("u", "µ")
+                for idx in range(1, n_chans // 2 + 1)])
+
+
+def test_write_unsupported_units(tmpdir):
+    """Test writing data with a list of possibly unsupported BV units."""
+    unit = 'V'  # supported test unit
+    units = [unit] * n_chans
+    units[-1] = '°C'
+
+    # write brain vision file
+    vhdr_fname = tmpdir / (fname + '.vhdr')
+    with pytest.warns(UserWarning, match='Encountered unsupported '
+                                         'non-voltage unit'):
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=tmpdir,
+                          unit=units)
+    raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
+                                              preload=True)
+
+    # check round-trip works
+    absolute_tolerance = 0
+    assert_allclose(data, raw_written.get_data(), atol=absolute_tolerance)
+
+    # Check that the correct units were written in the BV file
+    orig_units = [u for key, u in raw_written._orig_units.items()]
+    assert len(set(orig_units)) == 2
+    assert all([orig_units[idx] == unit for idx in range(n_chans - 1)])
+    assert orig_units[-1] == '°C'

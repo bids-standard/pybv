@@ -15,6 +15,7 @@ import datetime
 import os
 import warnings
 from os import path as op
+from warnings import warn
 
 import numpy as np
 
@@ -28,7 +29,9 @@ SUPPORTED_FORMATS = {
 
 SUPPORTED_ORIENTS = {'multiplexed'}
 
-SUPPORTED_UNITS = {'V': 1e0, 'mV': 1e3, 'µV': 1e6, 'uV': 1e6, 'nV': 1e9}
+SUPPORTED_VOLTAGE_SCALINGS = {
+    'V': 1e0, 'mV': 1e3, 'µV': 1e6, 'uV': 1e6, 'nV': 1e9
+}
 
 
 def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
@@ -39,8 +42,9 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
-        The raw data to export. Data is assumed to be in **Volts** and will be
-        stored as specified by `unit`.
+        The raw data to export. Voltage data is assumed to be in **Volts** and
+        will be scaled as specified by ``unit``. Non-voltage channels (as
+        specified by ``unit``) are never scaled (e.g. ``'°C'``).
     sfreq : int | float
         The sampling frequency of the data.
     ch_names : list of strings, shape (n_channels,)
@@ -49,8 +53,8 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         The base name for the output files. Three files will be created
         (.vhdr, .vmrk, .eeg) and all will share this base name.
     folder_out : str
-        The folder where output files will be saved. Will be created if it
-        does not exist yet.
+        The folder where output files will be saved. Will be created if it does
+        not exist yet.
     events : ndarray, shape (n_events, 2) or (n_events, 3) | None
         Events to write in the marker file. This array has either two or three
         columns. The first column is always the zero-based index of each event
@@ -58,25 +62,26 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         column is a number associated with the "type" of event. The (optional)
         third column specifies the length of each event (default 1 sample).
         Currently all events are written as type "Stimulus" and must be
-        numeric.
-        Defaults to None (not writing any events).
+        numeric. Defaults to None (not writing any events).
     resolution : float | ndarray, shape(nchannels,)
-        The resolution in `unit` in which you'd like the data to be stored.
-        If float, the same resolution is applied to all channels.
-        If ndarray with n_channels elements, each channel is scaled with
-        its own corresponding resolution from the ndarray.
-        Note that `resolution` is applied on top of the default resolution
-        that a data format (see `fmt`) has. For example, the binary_int16
-        format by design has no floating point support, but when scaling the
-        data in µV for 0.1 resolution (default), accurate writing for all
-        values >= 0.1 µV will be guaranteed. In contrast, the binary_float32
-        format by design already supports floating points up to 1e-6
-        resolution, and writing data in µV with 0.1 resolution will thus
-        guarantee accurate writing vor all values >= 1e-7 µV
+        The resolution in `unit` in which you'd like the data to be stored. If
+        float, the same resolution is applied to all channels. If ndarray with
+        n_channels elements, each channel is scaled with its own corresponding
+        resolution from the ndarray. Note that `resolution` is applied on top
+        of the default resolution that a data format (see `fmt`) has. For
+        example, the binary_int16 format by design has no floating point
+        support, but when scaling the data in µV for 0.1 resolution (default),
+        accurate writing for all values >= 0.1 µV is guaranteed. In contrast,
+        the binary_float32 format by design already supports floating points up
+        to 1e-6 resolution, and writing data in µV with 0.1 resolution will
+        thus guarantee accurate writing for all values >= 1e-7 µV
         (``1e-6 * 0.1``).
-    unit : str
+    unit : str | list of str
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
-        equivalently 'uV') , or 'nV'. Defaults to 'µV'.
+        equivalently 'uV') , or 'nV', which will scale the data accordingly.
+        Defaults to 'µV'. Can also be a list of units with one unit per
+        channel. Non-voltage channels are stored as is, for example temperature
+        might be available in ``°C``, which ``pybv`` will not scale.
     fmt : str
         Binary format the data should be written as. Valid choices are
         'binary_float32' (default) and 'binary_int16'.
@@ -86,13 +91,26 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         ('u' stands for microseconds). Note that setting a measurement date
         implies that one additional event is created in the .vmrk file. To
         prevent this, set this parameter to None (default).
-    """
-    # Create output file names/paths
-    os.makedirs(folder_out, exist_ok=True)
-    vhdr_fname = op.join(folder_out, fname_base + '.vhdr')
-    vmrk_fname = op.join(folder_out, fname_base + '.vmrk')
-    eeg_fname = op.join(folder_out, fname_base + '.eeg')
 
+    Notes
+    -----
+    iEEG/EEG/MEG data is assumed to be in V, and we will scale these data to µV
+    by default. Any unit besides µV is officially unsupported in the
+    BrainVision specification. However, if one specifies other voltage units
+    such as 'mV' or 'nV', we will still scale the signals accordingly in the
+    exported file. We will also write channels with non-voltage units such as
+    ``°C`` as is (without scaling). For maximum compatibility, all signals
+    should be written as µV.
+
+    Example
+    -------
+    >>> data = np.random.rand((3, 5))
+    >>> # write data with varying units
+    >>> write_brainvision(data, sfreq=1, ch_names=['A1', 'A2', 'TEMP'],
+    >>>                   folder_out='./',
+    >>>                   fname_base='test_file',
+    >>>                   unit=['µV', 'mV', '°C'])
+    """
     # Input checks
     ev_err = ("events must be an ndarray of shape (n_events, 2) or "
               "(n_events, 3) containing numeric values, or None")
@@ -133,14 +151,30 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     _chk_fmt(fmt)
 
-    if unit == 'μV':
-        # this is greek mu: μ
-        # https://www.compart.com/de/unicode/U+03BC
+    # check unit is single str
+    if isinstance(unit, str):
+        # convert unit to list, assuming all units are the same
+        unit = [unit] * nchan
+    if len(unit) != nchan:
+        raise ValueError(f"Number of channels in unit ({len(unit)}) does not "
+                         f"match number of channel names ({nchan})")
+    units = unit
+
+    # check units for compatibility with greek lettering
+    show_warning = False
+    for idx, unit in enumerate(units):
+        # Greek mu μ (U+03BC)
+        if unit == 'μV' or unit == 'uV':
+            unit = 'µV'  # micro symbol µ (U+00B5)
+            units[idx] = unit
+            show_warning = True
+
+    # only show the warning once if a greek letter was encountered
+    if show_warning:
         warnings.warn(
-            f"Encountered small greek letter mu: 'μ' in unit: {unit} ... "
-            f"converting to micro sign: 'µ': {unit.replace('μ', 'µ')}"
+            f"Encountered small Greek letter mu 'μ' or 'u' in unit: {unit}. "
+            f"Converting to micro sign 'µ'."
         )
-        unit = 'µV'
 
     # measurement date
     if not isinstance(meas_date, (str, datetime.datetime, type(None))):
@@ -155,15 +189,22 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
                          'as expected. Please supply a str in the format: '
                          '"YYYYMMDDhhmmssuuuuuu".')
 
+    # Create output file names/paths
+    os.makedirs(folder_out, exist_ok=True)
+
+    vhdr_fname = op.join(folder_out, fname_base + '.vhdr')
+    vmrk_fname = op.join(folder_out, fname_base + '.vmrk')
+    eeg_fname = op.join(folder_out, fname_base + '.eeg')
+
     # Write output files
     # NOTE: call _write_bveeg_file first, so that if it raises ValueError,
     # no files are written.
     _write_bveeg_file(eeg_fname, data, orientation='multiplexed', format=fmt,
-                      resolution=resolution, unit=unit)
+                      resolution=resolution, units=units)
     _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date)
     _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
                      ch_names, orientation='multiplexed', format=fmt,
-                     resolution=resolution, unit=unit)
+                     resolution=resolution, units=units)
 
 
 def _chk_fmt(fmt):
@@ -228,19 +269,48 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
                   f'{i_dur},0', file=fout)
 
 
-def _scale_data_to_unit(data, unit):
-    """Scale `data` in Volts to `data` in `unit`."""
-    scale = SUPPORTED_UNITS.get(unit, None)
-    if scale is None:
-        msg = (f'Encountered unsupported unit: {unit}\n'
-               f'Use one of the following: {set(SUPPORTED_UNITS.keys())}')
-        raise ValueError(msg)
+def _scale_data_to_unit(data, units):
+    """Scale `data` in Volts to `data` in `units`."""
+    # only µV is supported by the BrainVision specs, but we support additional
+    # voltage prefixes (e.g. V, mV, nV); if such voltage units are used, we
+    # issue a warning
+    voltage_units = set()
 
-    return data * scale
+    # similar to voltages other than µV, we also support arbitrary units, but
+    # since these are not supported by the BrainVision specs we issue a warning
+    # related signals
+    non_voltage_units = set()
+
+    # create a vector to multiply with to play nice with numpy
+    scales = np.zeros((len(units), 1))
+    for idx, unit in enumerate(units):
+        scale = SUPPORTED_VOLTAGE_SCALINGS.get(unit, None)
+        # unless the unit is 'µV', it is not supported by the specs
+        if scale is not None and unit != 'µV':
+            voltage_units.add(unit)
+        elif scale is None:  # if not voltage unit at all, then don't scale
+            non_voltage_units.add(unit)
+            scale = 1
+        scales[idx] = scale
+
+    if len(voltage_units) > 0:
+        msg = (f'Encountered unsupported voltage units: '
+               f'{", ".join(voltage_units)}\n'
+               f'We will scale the data appropriately, but for maximum '
+               f'compatibility you should use µV for all channels.')
+        warn(msg)
+
+    if len(non_voltage_units) > 0:
+        msg = (f'Encountered unsupported non-voltage units: '
+               f'{", ".join(non_voltage_units)}\n'
+               f'Note that the BrainVision format specification supports only '
+               f'µV.')
+        warn(msg)
+    return data * scales
 
 
 def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
-                     orientation, format, resolution, unit):
+                     orientation, format, resolution, units):
     """Write BrainvVision header file."""
     bvfmt, _ = _chk_fmt(format)
 
@@ -281,7 +351,6 @@ def _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq, ch_names,
         nchan = len(ch_names)
         # broadcast to nchan elements if necessary
         resolutions = resolution * np.ones((nchan,))
-        units = [unit] * nchan
 
         for i in range(nchan):
             _ch_name = ch_names[i].replace(',', r'\1')
@@ -306,14 +375,14 @@ def _check_data_in_range(data, dtype):
     return True
 
 
-def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, unit):
+def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, units):
     """Write BrainVision data file."""
     # check the orientation and format
     _chk_multiplexed(orientation)
     _, dtype = _chk_fmt(format)
 
     # convert the data to the desired unit
-    data = _scale_data_to_unit(data, unit)
+    data = _scale_data_to_unit(data, units)
 
     # Invert the resolution so that we know how much to scale our data
     scaling_factor = 1 / resolution
@@ -326,7 +395,7 @@ def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, unit):
             # if we have individual resolutions, do not print them all
             mod = "s"
         msg = (f"`data` can not be represented in '{format}' given "
-               f"the desired resolution{mod} and unit ('{unit}').")
+               f"the desired resolution{mod} and units ('{units}').")
         if format == "binary_int16":
             msg += "\nPlease consider writing using 'binary_float32' format."
         raise ValueError(msg)
