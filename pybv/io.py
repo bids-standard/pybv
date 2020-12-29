@@ -53,8 +53,8 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         The base name for the output files. Three files will be created
         (.vhdr, .vmrk, .eeg) and all will share this base name.
     folder_out : str
-        The folder where output files will be saved. Will be created if it
-        does not exist yet.
+        The folder where output files will be saved. Will be created if it does
+        not exist yet.
     events : ndarray, shape (n_events, 2) or (n_events, 3) | None
         Events to write in the marker file. This array has either two or three
         columns. The first column is always the zero-based index of each event
@@ -62,21 +62,19 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         column is a number associated with the "type" of event. The (optional)
         third column specifies the length of each event (default 1 sample).
         Currently all events are written as type "Stimulus" and must be
-        numeric.
-        Defaults to None (not writing any events).
+        numeric. Defaults to None (not writing any events).
     resolution : float | ndarray, shape(nchannels,)
-        The resolution in `unit` in which you'd like the data to be stored.
-        If float, the same resolution is applied to all channels.
-        If ndarray with n_channels elements, each channel is scaled with
-        its own corresponding resolution from the ndarray.
-        Note that `resolution` is applied on top of the default resolution
-        that a data format (see `fmt`) has. For example, the binary_int16
-        format by design has no floating point support, but when scaling the
-        data in µV for 0.1 resolution (default), accurate writing for all
-        values >= 0.1 µV will be guaranteed. In contrast, the binary_float32
-        format by design already supports floating points up to 1e-6
-        resolution, and writing data in µV with 0.1 resolution will thus
-        guarantee accurate writing vor all values >= 1e-7 µV
+        The resolution in `unit` in which you'd like the data to be stored. If
+        float, the same resolution is applied to all channels. If ndarray with
+        n_channels elements, each channel is scaled with its own corresponding
+        resolution from the ndarray. Note that `resolution` is applied on top
+        of the default resolution that a data format (see `fmt`) has. For
+        example, the binary_int16 format by design has no floating point
+        support, but when scaling the data in µV for 0.1 resolution (default),
+        accurate writing for all values >= 0.1 µV is guaranteed. In contrast,
+        the binary_float32 format by design already supports floating points up
+        to 1e-6 resolution, and writing data in µV with 0.1 resolution will
+        thus guarantee accurate writing for all values >= 1e-7 µV
         (``1e-6 * 0.1``).
     unit : str | list of str
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
@@ -96,8 +94,8 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     Notes
     -----
-    iEEG/EEG/MEG data is assumed to be in V, and we will scale these data
-    to µV by default. Any unit besides µV is officially unsupported in the
+    iEEG/EEG/MEG data is assumed to be in V, and we will scale these data to µV
+    by default. Any unit besides µV is officially unsupported in the
     BrainVision specification. However, if one specifies other voltage units
     such as 'mV' or 'nV', we will still scale the signals accordingly in the
     exported file. We will also write channels with non-voltage units such as
@@ -158,16 +156,14 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         # convert unit to list, assuming all units are the same
         unit = [unit] * nchan
     if len(unit) != nchan:
-        raise ValueError(f"Number of channels in unit ({len(unit)}) "
-                         f"does not match number of channel "
-                         f"names ({nchan})")
+        raise ValueError(f"Number of channels in unit ({len(unit)}) does not "
+                         f"match number of channel names ({nchan})")
     units = unit
 
     # check units for compatibility with greek lettering
     show_warning = False
     for idx, unit in enumerate(units):
         # Greek mu μ (U+03BC)
-        # https://www.compart.com/de/unicode/U+03BC
         if unit == 'μV' or unit == 'uV':
             unit = 'µV'  # micro symbol µ (U+00B5)
             units[idx] = unit
@@ -275,11 +271,13 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
 
 def _scale_data_to_unit(data, units):
     """Scale `data` in Volts to `data` in `units`."""
-    # keep track of any unsupported units to warn user
-    # these are voltage units that we convert to microvolts
+    # only µV is supported by the BrainVision specs, but we support additional
+    # voltage prefixes (e.g. V, mV, nV); if such voltage units are used, we
+    # issue a warning
     voltage_units = set()
 
-    # officially unsupported units that contain non-voltage
+    # similar to voltages other than µV, we also support arbitrary units, but
+    # since these are not supported by the BrainVision specs we issue a warning
     # related signals
     non_voltage_units = set()
 
@@ -287,32 +285,26 @@ def _scale_data_to_unit(data, units):
     scales = np.zeros((len(units), 1))
     for idx, unit in enumerate(units):
         scale = SUPPORTED_VOLTAGE_SCALINGS.get(unit, None)
-        # unless the unit is 'µV', then
-        # technically it is not supported in BrainVision
+        # unless the unit is 'µV', it is not supported by the specs
         if scale is not None and unit != 'µV':
             voltage_units.add(unit)
-        # if not voltage unit at all, then don't scale
-        elif scale is None:
+        elif scale is None:  # if not voltage unit at all, then don't scale
             non_voltage_units.add(unit)
-            scale = 1  # don't scale the data at all
+            scale = 1
         scales[idx] = scale
 
     if len(voltage_units) > 0:
         msg = (f'Encountered unsupported voltage units: '
                f'{", ".join(voltage_units)}\n'
-               f'We will automatically scale and convert '
-               f'these to the voltage units specified (e.g. mV). '
-               f'If this is a mistake, '
-               f'use one of the following: '
-               f'{", ".join(sorted(SUPPORTED_VOLTAGE_SCALINGS.keys()))}')
+               f'We will scale the data appropriately, but for maximum '
+               f'compatibility you should use µV for all channels.')
         warn(msg)
 
     if len(non_voltage_units) > 0:
         msg = (f'Encountered unsupported non-voltage units: '
                f'{", ".join(non_voltage_units)}\n'
-               f'If this is a mistake, '
-               f'use one of the following: '
-               f'{", ".join(sorted(SUPPORTED_VOLTAGE_SCALINGS.keys()))}')
+               f'Note that the BrainVision format specification supports only '
+               f'µV.')
         warn(msg)
     return data * scales
 
