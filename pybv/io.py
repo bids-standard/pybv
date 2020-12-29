@@ -81,10 +81,9 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     unit : str | list of str
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
         equivalently 'uV') , or 'nV', which will scale the data accordingly.
-        Defaults to 'µV'. Can also be a list of units with
-        one unit per channel. Non-voltage channels are stored as is, for
-        example temperature might be available in ``°C``, which ``pybv`` will
-        not scale.
+        Defaults to 'µV'. Can also be a list of units with one unit per
+        channel. Non-voltage channels are stored as is, for example temperature
+        might be available in ``°C``, which ``pybv`` will not scale.
     fmt : str
         Binary format the data should be written as. Valid choices are
         'binary_float32' (default) and 'binary_int16'.
@@ -100,10 +99,10 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     iEEG/EEG/MEG data is assumed to be in V, and we will scale these data
     to µV by default. Any unit besides µV is officially unsupported in the
     BrainVision specification. However, if one specifies other voltage units
-    such as 'mV' or 'nV', we will still scale the signals accordingly
-    in the exported file. We will also write channels with non-voltage units
-    such as ``°C`` as is (without scaling). For maximum compatibility,
-    all signals should be written as µV.
+    such as 'mV' or 'nV', we will still scale the signals accordingly in the
+    exported file. We will also write channels with non-voltage units such as
+    ``°C`` as is (without scaling). For maximum compatibility, all signals
+    should be written as µV.
 
     Example
     -------

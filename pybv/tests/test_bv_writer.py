@@ -294,9 +294,10 @@ def test_write_multiple_units(tmpdir, unit):
     # Check that the correct units were written in the BV file
     orig_units = [u for key, u in raw_written._orig_units.items()]
     assert len(set(orig_units)) == 2
-    assert all([orig_units[idx] == unit.replace("u", "µ") for idx in range(5)])
+    assert all([orig_units[idx] == unit.replace("u", "µ")
+                for idx in range(n_chans // 2)])
     assert all([orig_units[-idx] == other_unit.replace("u", "µ")
-                for idx in range(1, 6)])
+                for idx in range(1, n_chans // 2 + 1)])
 
 
 def test_write_unsupported_units(tmpdir):
@@ -322,5 +323,5 @@ def test_write_unsupported_units(tmpdir):
     # Check that the correct units were written in the BV file
     orig_units = [u for key, u in raw_written._orig_units.items()]
     assert len(set(orig_units)) == 2
-    assert all([orig_units[idx] == unit for idx in range(9)])
+    assert all([orig_units[idx] == unit for idx in range(n_chans - 1)])
     assert orig_units[-1] == '°C'
