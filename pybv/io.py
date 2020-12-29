@@ -29,7 +29,7 @@ SUPPORTED_FORMATS = {
 
 SUPPORTED_ORIENTS = {'multiplexed'}
 
-SUPPORTED_VOLTAGE_UNITS = {
+SUPPORTED_VOLTAGE_SCALINGS = {
     'V': 1e0, 'mV': 1e3, 'µV': 1e6, 'uV': 1e6, 'nV': 1e9
 }
 
@@ -287,7 +287,7 @@ def _scale_data_to_unit(data, units):
     # create a vector to multiply with to play nice with numpy
     scales = np.zeros((len(units), 1))
     for idx, unit in enumerate(units):
-        scale = SUPPORTED_VOLTAGE_UNITS.get(unit, None)
+        scale = SUPPORTED_VOLTAGE_SCALINGS.get(unit, None)
         # unless the unit is 'µV', then
         # technically it is not supported in BrainVision
         if scale is not None and unit != 'µV':
@@ -305,7 +305,7 @@ def _scale_data_to_unit(data, units):
                f'these to the voltage units specified (e.g. mV). '
                f'If this is a mistake, '
                f'use one of the following: '
-               f'{", ".join(sorted(SUPPORTED_VOLTAGE_UNITS.keys()))}')
+               f'{", ".join(sorted(SUPPORTED_VOLTAGE_SCALINGS.keys()))}')
         warn(msg)
 
     if len(non_voltage_units) > 0:
@@ -313,7 +313,7 @@ def _scale_data_to_unit(data, units):
                f'{", ".join(non_voltage_units)}\n'
                f'If this is a mistake, '
                f'use one of the following: '
-               f'{", ".join(sorted(SUPPORTED_VOLTAGE_UNITS.keys()))}')
+               f'{", ".join(sorted(SUPPORTED_VOLTAGE_SCALINGS.keys()))}')
         warn(msg)
     return data * scales
 
