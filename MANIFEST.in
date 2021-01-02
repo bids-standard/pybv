@@ -1,1 +1,18 @@
+include MANIFEST.in
+include README.rst
 include LICENSE
+include requirements.txt
+include requirements-dev.txt
+
+graft docs
+graft pybv
+graft specification
+
+recursive-exclude pybv/__pycache__ *
+recursive-exclude pybv/tests/__pycache__ *
+recursive-exclude docs/_build *
+recursive-exclude docs/generated *
+recursive-exclude .github *
+
+exclude .gitignore
+exclude Makefile

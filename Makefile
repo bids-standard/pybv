@@ -8,8 +8,8 @@ all: inplace test
 inplace:
 	$(PYTHON) setup.py develop
 
-test-doc:
-	$(PYTESTS) --doctest-modules --doctest-ignore-import-errors pybv
+test:
+	$(PYTESTS) --doctest-modules --cov=./pybv --cov-report=xml --verbose
 
 flake:
 	@if command -v flake8 > /dev/null; then \
@@ -25,9 +25,14 @@ pydocstyle:
 	@echo "Running pydocstyle"
 	@pydocstyle
 
+check-manifest:
+	@echo "Running check-manifest"
+	@check-manifest
+
 pep:
-	@$(MAKE) -k flake pydocstyle
+	@$(MAKE) -k flake pydocstyle check-manifest
 
 build-doc:
-	cd doc; make clean
-	cd doc; make html
+	cd docs; make clean
+	cd docs; make html
+	cd docs; make view
