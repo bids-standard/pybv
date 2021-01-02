@@ -57,6 +57,7 @@ The PyPi credentials are handled via a "GitHub secret"
    assumes that you have a git remote configured with the name "upstream" and
    pointing to https://github.com/bids-standard/pybv). Note also that the
    version from `__init__.py` is preprended with a `v`: `1.2.3` --> `v1.2.3`
+   **NOTE: Make sure you have your `master` branch up to date for this step!**
 1. `git push --follow-tags upstream`
 1. Make a [release on GitHub](https://help.github.com/en/articles/creating-releases),
    using the git tag from the previous step (e.g., `v1.2.3`). Fill the tag name
