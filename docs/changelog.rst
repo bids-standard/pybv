@@ -1,17 +1,6 @@
 :orphan:
 
-.. _changelog:
-
-=========
-Changelog
-=========
-
-Here we list a changelog of pybv.
-
-.. contents:: Contents
-   :local:
-   :depth: 1
-
+=======
 Authors
 =======
 
@@ -25,8 +14,20 @@ People who contributed to this software across releases (in **alphabetical order
 - `Stefan Appelhoff`_
 - `Tristan Stenner`_
 
-Current
-=======
+.. _changelog:
+
+=========
+Changelog
+=========
+
+Here we list a changelog of pybv.
+
+.. contents:: Contents
+   :local:
+   :depth: 1
+
+Current (unreleased)
+====================
 
 Changelog
 ~~~~~~~~~
@@ -37,8 +38,8 @@ API
 ~~~
 - The ``unit`` parameter in :func:`pybv.write_brainvision` now accepts a list of units (one unit per channel), by `Adam Li`_ (:gh:`66`).
 
-0.4.0
-=====
+0.4.0 (2020-11-08)
+==================
 
 Changelog
 ~~~~~~~~~
@@ -58,8 +59,8 @@ API
 - In :func:`pybv.write_brainvision`, the ``scale_data`` parameter was removed from :func:`pybv.write_brainvision`, by `Stefan Appelhoff`_ (:gh:`58`)
 - In :func:`pybv.write_brainvision`, the ``unit`` parameter no longer accepts an argument ``None`` to automatically determine a unit based on the ``resolution``, by `Stefan Appelhoff`_ (:gh:`58`)
 
-0.3.0
-=====
+0.3.0 (2020-04-02)
+==================
 
 Changelog
 ~~~~~~~~~
@@ -69,16 +70,16 @@ API
 ~~~
 - The order of parameters in :func:`pybv.write_brainvision` has changed, by `Clemens Brunner`_ (:gh:`39`)
 
-0.2.0
-=====
+0.2.0 (2019-08-26)
+==================
 
 Changelog
 ~~~~~~~~~
 - Add option to disable writing a meas_date event (which is also the new default), by `Clemens Brunner`_ (:gh:`32`)
 - Support event durations by passing an (N, 3) array to the events parameter (the third column contains the event durations), by `Clemens Brunner`_ (:gh:`33`)
 
-0.1.0
-=====
+0.1.0 (2019-06-23)
+==================
 
 Changelog
 ~~~~~~~~~
@@ -90,15 +91,15 @@ Bug
 - fix bug with events indexing. VMRK events are now correctly written with 1-based indexing, by `Stefan Appelhoff`_ (:gh:`29`)
 - fix bug with events that only have integer codes of length less than 3, by `Stefan Appelhoff`_ (:gh:`26`)
 
-0.0.2
-=====
+0.0.2 (2019-04-28)
+==================
 
 Changelog
 ~~~~~~~~~
 - Support channel-specific scaling factors, by `Tristan Stenner`_ (:gh:`17`)
 
-0.0.1
-=====
+0.0.1 (2018-12-10)
+==================
 
 Changelog
 ~~~~~~~~~
