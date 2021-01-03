@@ -26,6 +26,11 @@ Here we list a changelog of pybv.
    :local:
    :depth: 1
 
+Current (unreleased)
+====================
+
+- nothing so far
+
 0.5.0 (2021-01-03)
 ==================
 
