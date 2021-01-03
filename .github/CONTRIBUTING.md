@@ -40,7 +40,6 @@ The PyPi credentials are handled via a "GitHub secret"
 
 1. go to your python environment for `pybv`
 1. Make sure all tests pass and the docs are built cleanly
-1. run `pip install -U setuptools wheel twine`
 1. update the `__version__` variable in `__init__.py`
     - remove the `.devN` suffix
     - if the version preceding the `.devN` suffix is not the version to be

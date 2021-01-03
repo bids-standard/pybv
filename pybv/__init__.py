@@ -10,5 +10,5 @@
 #
 # License: BSD (3-clause)
 
-__version__ = '0.5.0.dev0'
+__version__ = '0.5.0'
 from .io import write_brainvision  # noqa: F401
