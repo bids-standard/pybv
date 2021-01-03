@@ -52,6 +52,9 @@ if __name__ == "__main__":
           long_description_content_type='text/x-rst',
           zip_safe=True,  # the package can run out of an .egg file
           python_requires='~=3.6',
+          install_requires=[
+              'numpy >=1.15.4',
+          ],
           classifiers=[
               'Intended Audience :: Science/Research',
               'Intended Audience :: Developers',
@@ -63,6 +66,10 @@ if __name__ == "__main__":
               'Operating System :: POSIX',
               'Operating System :: Unix',
               'Operating System :: MacOS'
+              'Programming Language :: Python :: 3.6',
+              'Programming Language :: Python :: 3.7',
+              'Programming Language :: Python :: 3.8',
+              'Programming Language :: Python :: 3.9',
           ],
           platforms='any',
           keywords='Brain Products BrainVision vhdr vmrk eeg',

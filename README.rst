@@ -88,7 +88,7 @@ The development of ``pybv`` is taking place on
 `GitHub <https://github.com/bids-standard/pybv>`_.
 
 For more information, please see
-`CONTRIBUTING.md <https://github.com/bids-standard/pybv/blob/master/CONTRIBUTING.md>`_
+`CONTRIBUTING.md <https://github.com/bids-standard/pybv/blob/master/.github/CONTRIBUTING.md>`_
 
 Usage
 =====
@@ -132,6 +132,6 @@ Acknowledgements
 
 This package was originally adapted from the
 `Philistine package <https://gitlab.com/palday/philistine>`_ by
-`palday <https://palday.bitbucket.io/>`_. It copies much of the BrainVision
-exporting code, removes the dependence on MNE, and focuses the code around
-BrainVision I/O.
+`palday <https://palday.bitbucket.io/>`_.
+It copies much of the BrainVision exporting code, but removes the dependence on MNE.
+Several features have been added, such as support for individual units for each channel.

@@ -37,7 +37,7 @@ SUPPORTED_VOLTAGE_SCALINGS = {
 def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
                       events=None, resolution=0.1, unit='µV',
                       fmt='binary_float32', meas_date=None):
-    """Write raw data to BrainVision format.
+    """Write raw data to BrainVision format [1]_.
 
     Parameters
     ----------
@@ -102,14 +102,26 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     ``°C`` as is (without scaling). For maximum compatibility, all signals
     should be written as µV.
 
-    Example
-    -------
-    >>> data = np.random.rand((3, 5))
+    References
+    ----------
+    .. [1] https://www.brainproducts.com/productdetails.php?id=21&tab=5
+
+    Examples
+    --------
+    >>> data = np.random.random((3, 5))
     >>> # write data with varying units
-    >>> write_brainvision(data, sfreq=1, ch_names=['A1', 'A2', 'TEMP'],
-    >>>                   folder_out='./',
-    >>>                   fname_base='test_file',
-    >>>                   unit=['µV', 'mV', '°C'])
+    ... # Note channels A1 and A2 are expected to be in Volt and will get
+    ... # rescaled to µV and mV respectively.
+    ... # TEMP is expected to be in some other unit (i.e., NOT Volt), and
+    ... # will not get scaled (it is "written as is")
+    ... write_brainvision(data=data, sfreq=1, ch_names=['A1', 'A2', 'TEMP'],
+    ...                   folder_out='./',
+    ...                   fname_base='pybv_test_file',
+    ...                   unit=['µV', 'mV', '°C'])
+    >>> # remove the files
+    >>> for ext in ['.vhdr', '.vmrk', '.eeg']:
+    ...     os.remove('pybv_test_file' + ext)
+
     """
     # Input checks
     ev_err = ("events must be an ndarray of shape (n_events, 2) or "

@@ -12,14 +12,20 @@ import pybv
 
 curdir = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(curdir, '..', 'pybv')))
+sys.path.append(os.path.abspath(os.path.join(curdir, 'sphinxext')))
 
 # see: https://sphinx.readthedocs.io/en/1.3/extensions.html
 extensions = [
    'sphinx.ext.autosummary',
    'sphinx.ext.viewcode',
    'sphinx.ext.intersphinx',
-   'numpydoc'
+   'numpydoc',
+   'sphinx_copybutton',
+   'gh_substitutions',  # custom extension, see ./sphinxext/gh_substitutions.py
    ]
+
+copybutton_prompt_text = r'>>> |\.\.\. '
+copybutton_prompt_is_regexp = True
 
 # Generate the autosummary
 autosummary_generate = True
