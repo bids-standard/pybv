@@ -1,15 +1,12 @@
-# simple makefile to simplify repetitive build env management tasks under posix
-
-PYTHON ?= python
-PYTESTS ?= pytest
+.PHONY: all inplace test flake pydocstyle check-manifest pep build-doc
 
 all: inplace test
 
 inplace:
-	$(PYTHON) setup.py develop
+	python setup.py develop
 
 test:
-	$(PYTESTS) --doctest-modules --cov=./pybv --cov-report=xml --verbose
+	pytest --doctest-modules --cov=./pybv --cov-report=xml --verbose
 
 flake:
 	@if command -v flake8 > /dev/null; then \
@@ -29,8 +26,7 @@ check-manifest:
 	@echo "Running check-manifest"
 	@check-manifest
 
-pep:
-	@$(MAKE) -k flake pydocstyle check-manifest
+pep: flake pydocstyle check-manifest
 
 build-doc:
 	cd docs; make clean
