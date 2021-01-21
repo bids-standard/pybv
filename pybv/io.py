@@ -41,7 +41,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     Parameters
     ----------
-    data : ndarray, shape (n_channels, n_times)
+    data : np.ndarray, shape (n_channels, n_times)
         The raw data to export. Voltage data is assumed to be in **Volts** and
         will be scaled as specified by ``unit``. Non-voltage channels (as
         specified by ``unit``) are never scaled (e.g. ``'°C'``).
@@ -55,7 +55,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     folder_out : str
         The folder where output files will be saved. Will be created if it does
         not exist yet.
-    events : ndarray, shape (n_events, 2) or (n_events, 3) | None
+    events : np.ndarray, shape (n_events, 2) or (n_events, 3) | None
         Events to write in the marker file. This array has either two or three
         columns. The first column is always the zero-based index of each event
         (corresponding to the "time" dimension of the data array). The second
@@ -63,7 +63,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         third column specifies the length of each event (default 1 sample).
         Currently all events are written as type "Stimulus" and must be
         numeric. Defaults to None (not writing any events).
-    resolution : float | ndarray, shape(nchannels,)
+    resolution : float | np.ndarray, shape(nchannels,)
         The resolution in `unit` in which you'd like the data to be stored. If
         float, the same resolution is applied to all channels. If ndarray with
         n_channels elements, each channel is scaled with its own corresponding

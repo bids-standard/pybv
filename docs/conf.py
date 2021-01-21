@@ -24,8 +24,12 @@ extensions = [
    'gh_substitutions',  # custom extension, see ./sphinxext/gh_substitutions.py
    ]
 
+# configure sphinx-copybutton
 copybutton_prompt_text = r'>>> |\.\.\. '
 copybutton_prompt_is_regexp = True
+
+# configure numpydoc
+numpydoc_xref_param_type = True
 
 # Generate the autosummary
 autosummary_generate = True
