@@ -5,7 +5,7 @@ Contributions are welcome in the form of feedback and discussion in issues, or
 pull requests for changes to the code.
 
 Once the implementation of a piece of functionality is considered to be free of
-bugs and properly documented, it can be incorporated into the master branch.
+bugs and properly documented, it can be incorporated into the `main` branch.
 
 To help developing `pybv`, you will need a few adjustments to your
 installation as shown below.
@@ -50,20 +50,20 @@ The PyPi credentials are handled via a "GitHub secret"
    version and (if applicable) extending the "Authors" section of the document
     - "Authors" are all people who committed code or in other ways contributed
     to `pybv` (e.g., by extensively reviewing PRs).
-1. Commit the change and git push to master (or make a pull request and merge it).
+1. Commit the change and git push to `main` (or make a pull request and merge it).
    Include "REL" in your commit message.
-1. Then, make an annotated tag `git tag -a -m "v1.2.3" v1.2.3 upstream/master` (This
+1. Then, make an annotated tag `git tag -a -m "v1.2.3" v1.2.3 upstream/main` (This
    assumes that you have a git remote configured with the name "upstream" and
    pointing to https://github.com/bids-standard/pybv). Note also that the
    version from `__init__.py` is preprended with a `v`: `1.2.3` --> `v1.2.3`
-   **NOTE: Make sure you have your `master` branch up to date for this step!**
+   **NOTE: Make sure you have your `main` branch up to date for this step!**
 1. `git push --follow-tags upstream`
 1. Make a [release on GitHub](https://help.github.com/en/articles/creating-releases),
    using the git tag from the previous step (e.g., `v1.2.3`). Fill the tag name
    into all fields of the release.
 1. This will trigger a GitHub Action that will build the package and release it to PyPi.
 
-Then the release is done and `master` has to be prepared for development of
+Then the release is done and `main` has to be prepared for development of
 the next release:
 
 1. update the `__version__` variable in `__init__.py`
@@ -72,4 +72,4 @@ the next release:
       the version that is planned to be released next (e.g., `1.3.0`)
     - append `.dev0` to the version (e.g., `1.3.0.dev0`)
 1. add a "Current (unreleased)" headline to `docs/changelog.rst`
-1. commit the changes and git push to master (or make a pull request)
+1. commit the changes and git push to `main` (or make a pull request)

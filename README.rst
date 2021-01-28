@@ -2,7 +2,7 @@
    :target: https://github.com/bids-standard/pybv/actions?query=workflow%3A%22Python+tests%22
    :alt: GitHub Actions Python tests
 
-.. image:: https://codecov.io/gh/bids-standard/pybv/branch/master/graph/badge.svg
+.. image:: https://codecov.io/gh/bids-standard/pybv/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/bids-standard/pybv
    :alt: codecov
 
@@ -88,7 +88,7 @@ The development of ``pybv`` is taking place on
 `GitHub <https://github.com/bids-standard/pybv>`_.
 
 For more information, please see
-`CONTRIBUTING.md <https://github.com/bids-standard/pybv/blob/master/.github/CONTRIBUTING.md>`_
+`CONTRIBUTING.md <https://github.com/bids-standard/pybv/blob/main/.github/CONTRIBUTING.md>`_
 
 Usage
 =====

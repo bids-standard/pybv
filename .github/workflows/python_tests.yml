@@ -2,11 +2,11 @@ name: Python tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [main]
   pull_request:
-    branches: [ master ]
+    branches: [main]
   create:
-    branches: [master]
+    branches: [main]
     tags: ['**']
   schedule:
     - cron: "0 4 1 * *"
@@ -41,10 +41,10 @@ jobs:
         pip install -r requirements-dev.txt
         pip install -e .
 
-    - name: install MNE-Python master
+    - name: install MNE-Python main
       if: "matrix.platform == 'ubuntu-18.04'"
       run: |
-        pip install -U https://api.github.com/repos/mne-tools/mne-python/zipball/master
+        pip install -U https://api.github.com/repos/mne-tools/mne-python/zipball/main
 
     - name: Display versions and environment information
       run: |

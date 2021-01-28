@@ -2,11 +2,11 @@ name: Python build
 
 on:
   push:
-    branches: [ master ]
+    branches: [main]
   pull_request:
-    branches: [ master ]
+    branches: [main]
   create:
-    branches: [master]
+    branches: [main]
     tags: ['**']
 
 jobs:
