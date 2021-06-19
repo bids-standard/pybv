@@ -33,8 +33,8 @@ SUPPORTED_VOLTAGE_SCALINGS = {
 }
 
 
-def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
-                      events=None, ref_ch_name=None, resolution=0.1, unit='µV',
+def write_brainvision(*, data, sfreq, ch_names, ref_ch_name=None, fname_base,
+                      folder_out, events=None, resolution=0.1, unit='µV',
                       fmt='binary_float32', meas_date=None):
     """Write raw data to BrainVision format [1]_.
 
@@ -48,6 +48,10 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         The sampling frequency of the data.
     ch_names : list of strings, shape (n_channels,)
         The names of the channels.
+    ref_ch_name : str | None
+        The name of the channel used as a reference during the recording.
+        Must be included in ``ch_names``. If ``None`` (default), do not set
+        a reference.
     fname_base : str
         The base name for the output files. Three files will be created
         (.vhdr, .vmrk, .eeg) and all will share this base name.
@@ -62,10 +66,6 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         third column specifies the length of each event (default 1 sample).
         Currently all events are written as type "Stimulus" and must be
         numeric. Defaults to None (not writing any events).
-    ref_ch_name : str | None
-        The name of the channel used as a reference during the recording.
-        Must be included in ``ch_names``. If ``None`` (default), do not set
-        a reference.
     resolution : float | np.ndarray, shape(nchannels,)
         The resolution in `unit` in which you'd like the data to be stored. If
         float, the same resolution is applied to all channels. If ndarray with
