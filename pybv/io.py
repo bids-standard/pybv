@@ -153,7 +153,7 @@ def write_brainvision(*, data, sfreq, ch_names, ref_ch_names=None, fname_base,
 
     # Ensure we have a list of strings as reference channel names
     if ref_ch_names is None:
-        ref_ch_names = [''] * nchan
+        ref_ch_names = [''] * nchan  # common average reference
     elif isinstance(ref_ch_names, str):
         ref_ch_names = [ref_ch_names] * nchan
     else:
