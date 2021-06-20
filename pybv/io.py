@@ -53,6 +53,12 @@ def write_brainvision(*, data, sfreq, ch_names, ref_ch_names=None, fname_base,
         references differed between channels, you may supply a list of
         reference channel names corresponding to each channel in ``ch_names``.
         If ``None`` (default), assume the common average reference.
+
+        .. note:: The reference channel name specified here does not need to
+                  appear in ``ch_names``; that is, it is okay to specify the
+                  name of a reference channel that was not saved along with
+                  the data.
+
     fname_base : str
         The base name for the output files. Three files will be created
         (.vhdr, .vmrk, .eeg) and all will share this base name.

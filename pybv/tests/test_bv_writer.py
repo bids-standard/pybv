@@ -357,6 +357,7 @@ def test_write_unsupported_units(tmpdir):
         None,
         ref_ch_name,
         [ref_ch_name] * n_chans,
+        'foobar'
     )
 )
 def test_ref_ch(tmpdir, ref_ch_names):
