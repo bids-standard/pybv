@@ -32,7 +32,7 @@ Current (unreleased)
 Changelog
 ~~~~~~~~~
 
-- :func:`pybv.write_brainvision` gained a new parameter, ``ref_ch_name``, to specify the reference channel used during recording, by `Richard Höchenberger`_ (:gh:`75`)
+- :func:`pybv.write_brainvision` gained a new parameter, ``ref_ch_names``, to specify the reference channels used during recording, by `Richard Höchenberger`_ (:gh:`75`)
 
 0.5.0 (2021-01-03)
 ==================

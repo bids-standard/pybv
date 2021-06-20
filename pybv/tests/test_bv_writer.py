@@ -91,9 +91,17 @@ def test_bv_writer_inputs(tmpdir):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
                           resolution=np.arange(n_chans-1))
-    with pytest.raises(ValueError, match='reference channel.*not found'):
+    with pytest.raises(ValueError, match='number of reference channel names'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                          ref_ch_name='foobar', fname_base=fname,
+                          ref_ch_names=['foo', 'bar'], fname_base=fname,
+                          folder_out=tmpdir)
+    # Passing data that's not all-zero for a reference channel should raise
+    # an exception
+    data_ = data.copy()
+    data_[ch_names.index(ref_ch_name), :] = 5
+    with pytest.raises(ValueError, match='reference channel.*not.*zero'):
+        write_brainvision(data=data_, sfreq=sfreq, ch_names=ch_names,
+                          ref_ch_names=ref_ch_name, fname_base=fname,
                           folder_out=tmpdir)
 
 
@@ -106,14 +114,14 @@ def test_bv_bad_format(tmpdir):
     with pytest.raises(ValueError, match='Orientation bad not supported'):
         _write_vhdr_file(vhdr_fname=vhdr_fname, vmrk_fname=vmrk_fname,
                          eeg_fname=eeg_fname, data=data,
-                         sfreq=sfreq, ch_names=ch_names, ref_ch_name=None,
+                         sfreq=sfreq, ch_names=ch_names, ref_ch_names=None,
                          orientation='bad',
                          format="binary_float32", resolution=1e-6,
                          units=["V"] * n_chans)
     with pytest.raises(ValueError, match='Data format bad not supported'):
         _write_vhdr_file(vhdr_fname=vhdr_fname, vmrk_fname=vmrk_fname,
                          eeg_fname=eeg_fname, data=data,
-                         sfreq=sfreq, ch_names=ch_names, ref_ch_name=None,
+                         sfreq=sfreq, ch_names=ch_names, ref_ch_names=None,
                          orientation='multiplexed', format="bad",
                          resolution=1e-6,
                          units=["V"] * n_chans)
@@ -160,27 +168,27 @@ def test_comma_in_ch_name(tmpdir, ch_names_tricky):
 
 
 @pytest.mark.parametrize(
-    "meas_date, ref_ch_name",
+    "meas_date, ref_ch_names",
     [
         ('20000101120000000000', ref_ch_name),
         (datetime(2000, 1, 1, 12, 0, 0, 0), None)
     ]
 )
-def test_write_read_cycle(tmpdir, meas_date, ref_ch_name):
+def test_write_read_cycle(tmpdir, meas_date, ref_ch_names):
     """Test that a write/read cycle produces identical data."""
     # First fail writing due to wrong unit
     unsupported_unit = "rV"
     with pytest.warns(UserWarning, match='Encountered unsupported '
                                          'non-voltage unit'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                          ref_ch_name=ref_ch_name, fname_base=fname,
+                          ref_ch_names=ref_ch_names, fname_base=fname,
                           folder_out=tmpdir, unit=unsupported_unit)
 
     # write and read data to BV format
     # ensure that greek small letter mu gets converted to micro sign
     with pytest.warns(UserWarning, match="Encountered small Greek letter mu"):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                          ref_ch_name=ref_ch_name, fname_base=fname,
+                          ref_ch_names=ref_ch_names, fname_base=fname,
                           folder_out=tmpdir, events=events,
                           resolution=np.power(10., -np.arange(10)),
                           unit='μV', meas_date=meas_date)
@@ -344,38 +352,25 @@ def test_write_unsupported_units(tmpdir):
     assert orig_units[-1] == '°C'
 
 
-def test_ref_ch(tmpdir):
+@pytest.mark.parametrize(
+    'ref_ch_names', (
+        None,
+        ref_ch_name,
+        [ref_ch_name] * n_chans,
+    )
+)
+def test_ref_ch(tmpdir, ref_ch_names):
     """Test reference channel writing."""
     # these are the default values
     resolution = '0.1'
     unit = 'µV'
-
     vhdr_fname = tmpdir / fname + '.vhdr'
 
-    # Passing a ref_ch_name should write it to the VHDR file
     write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      ref_ch_name=ref_ch_name, fname_base=fname,
+                      ref_ch_names=ref_ch_name, fname_base=fname,
                       folder_out=tmpdir)
 
     vhdr = vhdr_fname.read_text(encoding='utf-8')
     regexp = f'Ch.*=ch.*,{ref_ch_name},{resolution},{unit}'
     matches = re.findall(pattern=regexp, string=vhdr)
     assert len(matches) == len(ch_names)
-
-    # Not passing a ref_ch_name should omit the reference channel field
-    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      fname_base=fname, folder_out=tmpdir)
-
-    vhdr = vhdr_fname.read_text(encoding='utf-8')
-    regexp = f'Ch.*=ch.*,,{resolution},{unit}'
-    matches = re.findall(pattern=regexp, string=vhdr)
-    assert len(matches) == len(ch_names)
-
-    # Passing data that's not all-zero for a reference channel should raise
-    # an exception
-    data_ = data.copy()
-    data_[ch_names.index(ref_ch_name), :] = 5
-    with pytest.raises(ValueError, match='reference channel.*not.*zero'):
-        write_brainvision(data=data_, sfreq=sfreq, ch_names=ch_names,
-                          ref_ch_name=ref_ch_name, fname_base=fname,
-                          folder_out=tmpdir)

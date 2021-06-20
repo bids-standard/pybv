@@ -33,7 +33,7 @@ SUPPORTED_VOLTAGE_SCALINGS = {
 }
 
 
-def write_brainvision(*, data, sfreq, ch_names, ref_ch_name=None, fname_base,
+def write_brainvision(*, data, sfreq, ch_names, ref_ch_names=None, fname_base,
                       folder_out, events=None, resolution=0.1, unit='µV',
                       fmt='binary_float32', meas_date=None):
     """Write raw data to BrainVision format [1]_.
@@ -48,10 +48,11 @@ def write_brainvision(*, data, sfreq, ch_names, ref_ch_name=None, fname_base,
         The sampling frequency of the data.
     ch_names : list of strings, shape (n_channels,)
         The names of the channels.
-    ref_ch_name : str | None
-        The name of the channel used as a reference during the recording.
-        Must be included in ``ch_names``. If ``None`` (default), do not set
-        a reference.
+    ref_ch_names : str | list of string, shape (n_channels,) | None
+        The name of the channel used as a reference during the recording. If
+        references differed between channels, you may supply a list of
+        reference channel names corresponding to each channel in ``ch_names``.
+        If ``None`` (default), assume the common average reference.
     fname_base : str
         The base name for the output files. Three files will be created
         (.vhdr, .vmrk, .eeg) and all will share this base name.
@@ -150,23 +151,32 @@ def write_brainvision(*, data, sfreq, ch_names, ref_ch_name=None, fname_base,
     if len(set(ch_names)) != nchan:
         raise ValueError("Channel names must be unique, found duplicate name.")
 
-    if ref_ch_name is None:
-        ref_ch_name = ''
-    if ref_ch_name and ref_ch_name not in ch_names:
-        raise ValueError(f"Requested reference channel {ref_ch_name} not "
-                         f"found in ch_names.")
+    # Ensure we have a list of strings as reference channel names
+    if ref_ch_names is None:
+        ref_ch_names = [''] * nchan
+    elif isinstance(ref_ch_names, str):
+        ref_ch_names = [ref_ch_names] * nchan
+    else:
+        ref_ch_names = [str(ref_ch_name) for ref_ch_name in ref_ch_names]
 
-    if (ref_ch_name and not
-            np.allclose(data[ch_names.index(ref_ch_name), :], 0)):
+    if len(ref_ch_names) != nchan:
         raise ValueError(
-            f"The provided data for the reference channel "
-            f"{ref_ch_name} does not appear to be zero across "
-            f"all time points. This indicates that this channel "
-            f"either did not serve as a reference during the recording, "
-            f"or the data has been altered since. Please either pick a "
-            f"different reference channel, or omit the "
-            f"ref_ch_name parameter."
+            f'The number of reference channel names ({len(ref_ch_names)})'
+            f'must match the number of channels in your data ({nchan})'
         )
+
+    for ref_ch_name in ref_ch_names:
+        if (ref_ch_name and not
+                np.allclose(data[ch_names.index(ref_ch_name), :], 0)):
+            raise ValueError(
+                f"The provided data for the reference channel "
+                f"{ref_ch_name} does not appear to be zero across "
+                f"all time points. This indicates that this channel "
+                f"either did not serve as a reference during the recording, "
+                f"or the data has been altered since. Please either pick a "
+                f"different reference channel, or omit the "
+                f"ref_ch_name parameter."
+            )
 
     if not isinstance(sfreq, (int, float)):
         raise ValueError("sfreq must be one of (float | int)")
@@ -237,7 +247,7 @@ def write_brainvision(*, data, sfreq, ch_names, ref_ch_name=None, fname_base,
     _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date)
     _write_vhdr_file(vhdr_fname=vhdr_fname, vmrk_fname=vmrk_fname,
                      eeg_fname=eeg_fname, data=data, sfreq=sfreq,
-                     ch_names=ch_names, ref_ch_name=ref_ch_name,
+                     ch_names=ch_names, ref_ch_names=ref_ch_names,
                      orientation='multiplexed', format=fmt,
                      resolution=resolution, units=units)
 
@@ -345,7 +355,7 @@ def _scale_data_to_unit(data, units):
 
 
 def _write_vhdr_file(*, vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
-                     ch_names, ref_ch_name, orientation, format, resolution,
+                     ch_names, ref_ch_names, orientation, format, resolution,
                      units):
     """Write BrainvVision header file."""
     bvfmt, _ = _chk_fmt(format)
@@ -388,11 +398,12 @@ def _write_vhdr_file(*, vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
         # broadcast to nchan elements if necessary
         resolutions = resolution * np.ones((nchan,))
 
-        _ref_ch_name = ref_ch_name.replace(',', r'\1')
         for i in range(nchan):
+            # take care of commas in the channel names
             _ch_name = ch_names[i].replace(',', r'\1')
-            resolution = np.format_float_positional(resolutions[i],
-                                                    trim="-")
+            _ref_ch_name = ref_ch_names[i].replace(',', r'\1')
+
+            resolution = np.format_float_positional(resolutions[i], trim="-")
             unit = units[i]
             print(f'Ch{i + 1}={_ch_name},{_ref_ch_name},{resolution},{unit}',
                   file=fout)
