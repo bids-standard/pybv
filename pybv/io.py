@@ -46,9 +46,9 @@ def write_brainvision(*, data, sfreq, ch_names, ref_ch_names=None, fname_base,
         specified by ``unit``) are never scaled (e.g. ``'°C'``).
     sfreq : int | float
         The sampling frequency of the data.
-    ch_names : list of strings, shape (n_channels,)
+    ch_names : list of str, shape (n_channels,)
         The names of the channels.
-    ref_ch_names : str | list of strings, shape (n_channels,) | None
+    ref_ch_names : str | list of str, shape (n_channels,) | None
         The name of the channel used as a reference during the recording. If
         references differed between channels, you may supply a list of
         reference channel names corresponding to each channel in ``ch_names``.
