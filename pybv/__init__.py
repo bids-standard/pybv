@@ -8,7 +8,7 @@
 #          Clemens Brunner <clemens.brunner@gmail.com>
 #          Richard Höchenberger <richard.hoechenberger@gmail.com>
 #
-# License: BSD (3-clause)
+# License: BSD-3-Clause
 
 __version__ = '0.6.0.dev0'
 from .io import write_brainvision  # noqa: F401

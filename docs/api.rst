@@ -4,7 +4,7 @@
 API Documentation
 =================
 
-Here we list the Application Programming Interface (API) for pybv.
+Here we list the Application Programming Interface (API) for ``pybv``.
 
 pybv (:py:mod:`pybv`)
 =====================

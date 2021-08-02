@@ -1,3 +1,5 @@
+numpy>=1.16.0
+mne
 check-manifest
 pytest
 pytest-cov
