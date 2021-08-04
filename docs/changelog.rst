@@ -4,7 +4,7 @@
 Authors
 =======
 
-People who contributed to this software across releases (in **alphabetical order**)
+People who contributed to this software across releases (in **alphabetical order**):
 
 - `Adam Li`_
 - `Chris Holdgraf`_
@@ -108,7 +108,8 @@ Changelog
 
 Changelog
 ~~~~~~~~~
-- Initial import from philistine package by `Phillip Alday`_ and removing dependency on MNE-Python, by `Chris Holdgraf`_, and `Stefan Appelhoff`_
+- Initial import from `philistine <https://pypi.org/project/philistine/>`_ package by `Phillip Alday`_
+  and removing dependency on MNE-Python, by `Chris Holdgraf`_, and `Stefan Appelhoff`_
 
 .. _Chris Holdgraf: https://bids.berkeley.edu/people/chris-holdgraf
 .. _Stefan Appelhoff: http://stefanappelhoff.com/

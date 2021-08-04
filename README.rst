@@ -131,6 +131,6 @@ Acknowledgements
 
 This package was originally adapted from the
 `Philistine package <https://gitlab.com/palday/philistine>`_ by
-`palday <https://palday.bitbucket.io/>`_.
+`palday <https://phillipalday.com/>`_.
 It copies much of the BrainVision exporting code, but removes the dependence on MNE.
 Several features have been added, such as support for individual units for each channel.
