@@ -148,6 +148,10 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
             raise ValueError(ev_err)
 
     nchan = len(ch_names)
+    for ch in ch_names:
+        if not isinstance(ch, (str, int)):
+            raise ValueError("ch_names must be a list of str.")
+    ch_names = [str(ch) for ch in ch_names]
 
     if len(data) != nchan:
         raise ValueError(f"Number of channels in data ({len(data)}) does not "
