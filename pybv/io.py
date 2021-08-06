@@ -237,7 +237,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         else:
             # else, only remove the files we might have created
             for fname in (eeg_fname, vmrk_fname, vhdr_fname):
-                if op.exists(fname):
+                if op.exists(fname):  # pragma: no cover
                     os.remove(fname)
 
         raise
