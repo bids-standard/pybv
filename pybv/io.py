@@ -17,7 +17,6 @@ import os
 import shutil
 import warnings
 from os import path as op
-from pathlib import Path
 from warnings import warn
 
 import numpy as np
@@ -235,7 +234,8 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
                          resolution=resolution, units=units)
     except ValueError:
         for fname in (eeg_fname, vmrk_fname, vhdr_fname):
-            Path(fname).unlink(missing_ok=True)
+            if op.exists(fname):
+                os.remove(fname)
         if folder_out_created:
             shutil.rmtree(folder_out)
         raise
