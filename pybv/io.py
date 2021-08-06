@@ -131,7 +131,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     """
     # Input checks
-    if not isinstance(overwrite, bool) and overwrite not in [0, 1]:
+    if not isinstance(overwrite, bool):
         raise ValueError("overwrite must be a boolean (True or False).")
 
     ev_err = ("events must be an ndarray of shape (n_events, 2) or "
