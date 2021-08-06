@@ -38,6 +38,7 @@ SUPPORTED_VOLTAGE_SCALINGS = {
 
 
 def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
+                      overwrite=False,
                       events=None, resolution=0.1, unit='µV',
                       fmt='binary_float32', meas_date=None):
     """Write raw data to BrainVision format [1]_.
@@ -58,6 +59,8 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     folder_out : str
         The folder where output files will be saved. Will be created if it does
         not exist yet.
+    overwrite : bool
+        Whether or not to overwrite existing files. Defaults to False.
     events : np.ndarray, shape (n_events, 2) or (n_events, 3) | None
         Events to write in the marker file. This array has either two or three
         columns. The first column is always the zero-based index of each event
@@ -127,6 +130,9 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     """
     # Input checks
+    if not isinstance(overwrite, bool) and overwrite not in [0, 1]:
+        raise ValueError("overwrite must be a boolean (True or False).")
+
     ev_err = ("events must be an ndarray of shape (n_events, 2) or "
               "(n_events, 3) containing numeric values, or None")
     if not isinstance(events, (np.ndarray, type(None))):
@@ -204,12 +210,16 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
                          'as expected. Please supply a str in the format: '
                          '"YYYYMMDDhhmmssuuuuuu".')
 
-    # Create output file names/paths
+    # Create output file names/paths, checking if they already exist
     folder_out_created = not op.exists(folder_out)
     os.makedirs(folder_out, exist_ok=True)
-    vhdr_fname = op.join(folder_out, fname_base + '.vhdr')
-    vmrk_fname = op.join(folder_out, fname_base + '.vmrk')
     eeg_fname = op.join(folder_out, fname_base + '.eeg')
+    vmrk_fname = op.join(folder_out, fname_base + '.vmrk')
+    vhdr_fname = op.join(folder_out, fname_base + '.vhdr')
+    msg = "File already exists: {}.\nConsider setting overwrite=True."
+    for fname in (eeg_fname, vmrk_fname, vhdr_fname):
+        if op.exists(fname) and not overwrite:
+            raise IOError(msg.format(fname))
 
     # Write output files, but delete everything if we come across an error
     try:
