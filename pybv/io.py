@@ -37,8 +37,11 @@ SUPPORTED_VOLTAGE_SCALINGS = {
 
 def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
                       overwrite=False,
-                      events=None, resolution=0.1, unit='µV',
-                      fmt='binary_float32', meas_date=None):
+                      events=None,
+                      resolution=0.1,
+                      unit='µV',
+                      fmt='binary_float32',
+                      meas_date=None):
     """Write raw data to BrainVision format [1]_.
 
     Parameters
@@ -49,7 +52,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         specified by ``unit``) are never scaled (e.g. ``'°C'``).
     sfreq : int | float
         The sampling frequency of the data.
-    ch_names : list of str, shape (n_channels,)
+    ch_names : list of {str | int}, shape (n_channels,)
         The name of each channel.
     fname_base : str
         The base name for the output files. Three files will be created
@@ -148,7 +151,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     nchan = len(ch_names)
     for ch in ch_names:
         if not isinstance(ch, (str, int)):
-            raise ValueError("ch_names must be a list of str.")
+            raise ValueError("ch_names must be a list of str or list of int.")
     ch_names = [str(ch) for ch in ch_names]
 
     if len(data) != nchan:
@@ -219,7 +222,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     for fname in (eeg_fname, vmrk_fname, vhdr_fname):
         if op.exists(fname) and not overwrite:
             raise IOError(f"File already exists: {fname}.\n"
-                          f"Consider setting overwrite=True."))
+                          f"Consider setting overwrite=True.")
 
     # Write output files, but delete everything if we come across an error
     try:
