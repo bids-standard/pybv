@@ -70,7 +70,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         third column specifies the length of each event (default 1 sample).
         Currently all events are written as type "Stimulus" and must be
         numeric. Defaults to None (not writing any events).
-    resolution : float | np.ndarray, shape(nchannels,)
+    resolution : float | np.ndarray, shape (nchannels,)
         The resolution in `unit` in which you'd like the data to be stored. If
         float, the same resolution is applied to all channels. If ndarray with
         n_channels elements, each channel is scaled with its own corresponding
