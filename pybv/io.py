@@ -14,8 +14,10 @@
 import codecs
 import datetime
 import os
+import shutil
 import warnings
 from os import path as op
+from pathlib import Path
 from warnings import warn
 
 import numpy as np
@@ -203,21 +205,26 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
                          '"YYYYMMDDhhmmssuuuuuu".')
 
     # Create output file names/paths
+    folder_out_created = not op.exists(folder_out)
     os.makedirs(folder_out, exist_ok=True)
-
     vhdr_fname = op.join(folder_out, fname_base + '.vhdr')
     vmrk_fname = op.join(folder_out, fname_base + '.vmrk')
     eeg_fname = op.join(folder_out, fname_base + '.eeg')
 
-    # Write output files
-    # NOTE: call _write_bveeg_file first, so that if it raises ValueError,
-    # no files are written.
-    _write_bveeg_file(eeg_fname, data, orientation='multiplexed', format=fmt,
-                      resolution=resolution, units=units)
-    _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date)
-    _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
-                     ch_names, orientation='multiplexed', format=fmt,
-                     resolution=resolution, units=units)
+    # Write output files, but delete everything if we come across an error
+    try:
+        _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
+                          format=fmt, resolution=resolution, units=units)
+        _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date)
+        _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
+                         ch_names, orientation='multiplexed', format=fmt,
+                         resolution=resolution, units=units)
+    except ValueError:
+        for fname in (eeg_fname, vmrk_fname, vhdr_fname):
+            Path(fname).unlink(missing_ok=True)
+        if folder_out_created:
+            shutil.rmtree(folder_out)
+        raise
 
 
 def _chk_fmt(fmt):
