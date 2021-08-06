@@ -15,7 +15,6 @@ import codecs
 import datetime
 import os
 import shutil
-import warnings
 from os import path as op
 from warnings import warn
 
@@ -195,7 +194,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     # only show the warning once if a greek letter was encountered
     if show_warning:
-        warnings.warn(
+        warn(
             f"Encountered small Greek letter mu 'μ' or 'u' in unit: {unit}. "
             f"Converting to micro sign 'µ'."
         )
@@ -226,6 +225,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     # Write output files, but delete everything if we come across an error
     try:
+
         _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
                           format=fmt, resolution=resolution, units=units)
         _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date)
