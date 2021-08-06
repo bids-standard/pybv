@@ -91,6 +91,9 @@ def test_bv_writer_inputs(tmpdir):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
                           resolution=np.arange(n_chans-1))
+    with pytest.raises(ValueError, match='overwrite must be a boolean'):
+        write_brainvision(data=data[1:, :], sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=tmpdir, overwrite=2)
 
 
 def test_bv_bad_format(tmpdir):

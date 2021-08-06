@@ -73,7 +73,7 @@ jobs:
         path: docs/_build/html
 
     - name: Upload coverage report
-      if: "matrix.platform == 'ubuntu-18.04'"
+      if: ${{ matrix.platform == 'ubuntu-18.04' && matrix.python-version == '3.9' }}
       uses: codecov/codecov-action@v2
       with:
         files: ./coverage.xml

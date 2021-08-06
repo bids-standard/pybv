@@ -233,11 +233,15 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
                          ch_names, orientation='multiplexed', format=fmt,
                          resolution=resolution, units=units)
     except ValueError:
-        for fname in (eeg_fname, vmrk_fname, vhdr_fname):
-            if op.exists(fname):
-                os.remove(fname)
         if folder_out_created:
+            # if this is a new folder, remove everything
             shutil.rmtree(folder_out)
+        else:
+            # else, only remove the files we might have created
+            for fname in (eeg_fname, vmrk_fname, vhdr_fname):
+                if op.exists(fname):
+                    os.remove(fname)
+
         raise
 
 
