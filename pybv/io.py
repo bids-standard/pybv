@@ -216,10 +216,10 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     eeg_fname = op.join(folder_out, fname_base + '.eeg')
     vmrk_fname = op.join(folder_out, fname_base + '.vmrk')
     vhdr_fname = op.join(folder_out, fname_base + '.vhdr')
-    msg = "File already exists: {}.\nConsider setting overwrite=True."
     for fname in (eeg_fname, vmrk_fname, vhdr_fname):
         if op.exists(fname) and not overwrite:
-            raise IOError(msg.format(fname))
+            raise IOError(f"File already exists: {fname}.\n"
+                          f"Consider setting overwrite=True."))
 
     # Write output files, but delete everything if we come across an error
     try:
