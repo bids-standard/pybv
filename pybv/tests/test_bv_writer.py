@@ -11,6 +11,7 @@
 #
 # License: BSD-3-Clause
 
+import os
 import os.path as op
 from datetime import datetime, timezone
 
@@ -343,6 +344,19 @@ def test_cleanup(tmpdir):
                           fname_base=fname, folder_out=folder_out,
                           fmt="binary_float999")
     assert not op.exists(folder_out)
+    assert not op.exists(folder_out / fname + ".eeg")
+    assert not op.exists(folder_out / fname + ".vmrk")
+    assert not op.exists(folder_out / fname + ".vhdr")
+
+    # if folder already existed before erroneous writing, it is not deleted
+    os.makedirs(folder_out)
+    with pytest.raises(ValueError, match="Data format binary_float999"):
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=folder_out,
+                          fmt="binary_float999")
+    assert op.exists(folder_out)
+
+    # but all other (incomplete/erroneous) files are deleted
     assert not op.exists(folder_out / fname + ".eeg")
     assert not op.exists(folder_out / fname + ".vmrk")
     assert not op.exists(folder_out / fname + ".vhdr")

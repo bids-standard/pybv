@@ -172,8 +172,6 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     if np.any(resolution <= 0):
         raise ValueError("Resolution should be > 0")
 
-    _chk_fmt(fmt)
-
     # check unit is single str
     if isinstance(unit, str):
         # convert unit to list, assuming all units are the same
