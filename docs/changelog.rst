@@ -4,7 +4,7 @@
 Authors
 =======
 
-People who contributed to this software across releases (in **alphabetical order**)
+People who contributed to this software across releases (in **alphabetical order**):
 
 - `Adam Li`_
 - `Chris Holdgraf`_
@@ -33,6 +33,10 @@ Changelog
 ~~~~~~~~~
 
 - :func:`pybv.write_brainvision` gained a new parameter, ``ref_ch_names``, to specify the reference channels used during recording, by `Richard Höchenberger`_ (:gh:`75`)
+
+API
+~~~
+- :func:`pybv.write_brainvision` now has an ``overwrite`` parameter that defaults to ``False``, by `Stefan Appelhoff`_ (:gh:`78`).
 
 0.5.0 (2021-01-03)
 ==================
@@ -111,7 +115,8 @@ Changelog
 
 Changelog
 ~~~~~~~~~
-- Initial import from philistine package by `Phillip Alday`_ and removing dependency on MNE-Python, by `Chris Holdgraf`_, and `Stefan Appelhoff`_
+- Initial import from `philistine <https://pypi.org/project/philistine/>`_ package by `Phillip Alday`_
+  and removing dependency on MNE-Python, by `Chris Holdgraf`_, and `Stefan Appelhoff`_
 
 .. _Chris Holdgraf: https://bids.berkeley.edu/people/chris-holdgraf
 .. _Stefan Appelhoff: http://stefanappelhoff.com/

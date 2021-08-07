@@ -29,6 +29,6 @@ check-manifest:
 pep: flake pydocstyle check-manifest
 
 build-doc:
-	cd docs; make clean
-	cd docs; make html
-	cd docs; make view
+	make -C docs/ clean
+	make -C docs/ html
+	make -C docs/ view

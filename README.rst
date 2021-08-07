@@ -4,15 +4,15 @@
 
 .. image:: https://codecov.io/gh/bids-standard/pybv/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/bids-standard/pybv
-   :alt: codecov
+   :alt: Codecov
 
 .. image:: https://badge.fury.io/py/pybv.svg
    :target: https://badge.fury.io/py/pybv
-   :alt: pypi version
+   :alt: PyPi version
 
 .. image:: https://img.shields.io/conda/vn/conda-forge/pybv.svg
    :target: https://anaconda.org/conda-forge/pybv
-   :alt: conda version
+   :alt: Conda version
 
 .. image:: https://readthedocs.org/projects/pybv/badge/?version=stable
    :target: https://pybv.readthedocs.io/en/stable/?badge=stable
@@ -24,8 +24,8 @@ pybv
 
 ``pybv`` is a lightweight exporter to the BrainVision data format.
 
-The BrainVision data format is a recommended data format
-for use in the `Brain Imaging Data Structure <https://bids.neuroimaging.io>`_.
+The BrainVision data format is a recommended data format for use in the
+`Brain Imaging Data Structure <https://bids.neuroimaging.io>`_.
 
 
 The documentation can be found under the following links:
@@ -36,10 +36,9 @@ The documentation can be found under the following links:
 About the BrainVision data format
 =================================
 
-BrainVision is the name of a file format commonly used for storing
-electrophysiology data. Originally, it was put forward by the
-company `Brain Products <https://www.brainproducts.com>`_, however the
-simplicity of the format has allowed for a diversity of tools reading from and
+BrainVision is the name of a file format commonly used for storing electrophysiology data.
+Originally, it was put forward by the company `Brain Products <https://www.brainproducts.com>`_,
+however the simplicity of the format has allowed for a diversity of tools reading from and
 writing to the format.
 
 The format consists of three separate files:
@@ -65,11 +64,11 @@ as hosted by Brain Products.
 Installation
 ============
 
-``pybv`` runs on Python version 3.6 or higher.
+``pybv`` runs on Python version 3.7 or higher.
 
-``pybv``'s only dependency is ``numpy``. However, we currently recommend that
-you install MNE-Python for reading BrainVision data. See their instructions
-`here <https://mne.tools/stable/install/index.html>`_.
+``pybv``'s only dependency is ``numpy``.
+However, we currently recommend that you install MNE-Python for reading BrainVision data.
+See their `installation instructions <https://mne.tools/stable/install/index.html>`_.
 
 After you have a working installation of MNE-Python (or only ``numpy`` if you
 do not want to read data and only write it), you can install ``pybv`` through
@@ -115,7 +114,7 @@ Reading BrainVision files
 Currently, ``pybv`` recommends using `MNE-Python <https://mne.tools>`_
 for reading BrainVision files.
 
-Here is an example of the MNE code required to read in BrainVision data:
+Here is an example of the MNE-Python code required to read BrainVision data:
 
 .. code-block:: python
 
@@ -132,6 +131,6 @@ Acknowledgements
 
 This package was originally adapted from the
 `Philistine package <https://gitlab.com/palday/philistine>`_ by
-`palday <https://palday.bitbucket.io/>`_.
+`palday <https://phillipalday.com/>`_.
 It copies much of the BrainVision exporting code, but removes the dependence on MNE.
 Several features have been added, such as support for individual units for each channel.

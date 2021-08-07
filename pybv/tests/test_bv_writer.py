@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""BrainVision Writer tests."""
+"""BrainVision writer tests."""
 
 # Authors: Phillip Alday <phillip.alday@unisa.edu.au>
 #          Chris Holdgraf <choldgraf@berkeley.edu>
@@ -7,9 +7,12 @@
 #          Tristan Stenner <stenner@med-psych.uni-kiel.de>
 #          Clemens Brunner <clemens.brunner@gmail.com>
 #          Richard Höchenberger <richard.hoechenberger@gmail.com>
+#          Adam Li <adam2392@gmail.com>
 #
-# License: BSD (3-clause)
+# License: BSD-3-Clause
 
+import os
+import os.path as op
 from datetime import datetime, timezone
 import re
 
@@ -78,6 +81,9 @@ def test_bv_writer_inputs(tmpdir):
     with pytest.raises(ValueError, match='Channel names must be unique'):
         write_brainvision(data=data[0:2, :], sfreq=sfreq, ch_names=['b', 'b'],
                           fname_base=fname, folder_out=tmpdir)
+    with pytest.raises(ValueError, match='ch_names must be a list of str.'):
+        write_brainvision(data=data[0:2, :], sfreq=sfreq, ch_names=['b', 2.3],
+                          fname_base=fname, folder_out=tmpdir)
     with pytest.raises(ValueError, match='sfreq must be one of '):
         write_brainvision(data=data, sfreq='100', ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir)
@@ -103,6 +109,9 @@ def test_bv_writer_inputs(tmpdir):
         write_brainvision(data=data_, sfreq=sfreq, ch_names=ch_names,
                           ref_ch_names=ref_ch_name, fname_base=fname,
                           folder_out=tmpdir)
+    with pytest.raises(ValueError, match='overwrite must be a boolean'):
+        write_brainvision(data=data[1:, :], sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=tmpdir, overwrite=1)
 
 
 def test_bv_bad_format(tmpdir):
@@ -182,7 +191,8 @@ def test_write_read_cycle(tmpdir, meas_date, ref_ch_names):
                                          'non-voltage unit'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           ref_ch_names=ref_ch_names, fname_base=fname,
-                          folder_out=tmpdir, unit=unsupported_unit)
+                          folder_out=tmpdir, unit=unsupported_unit,
+                          overwrite=True)
 
     # write and read data to BV format
     # ensure that greek small letter mu gets converted to micro sign
@@ -191,7 +201,7 @@ def test_write_read_cycle(tmpdir, meas_date, ref_ch_names):
                           ref_ch_names=ref_ch_names, fname_base=fname,
                           folder_out=tmpdir, events=events,
                           resolution=np.power(10., -np.arange(10)),
-                          unit='μV', meas_date=meas_date)
+                          unit='μV', meas_date=meas_date, overwrite=True)
     vhdr_fname = tmpdir / fname + '.vhdr'
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
@@ -312,7 +322,7 @@ def test_write_multiple_units(tmpdir, unit):
     # write file and read back in
     write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                       fname_base=fname, folder_out=tmpdir,
-                      unit=units)
+                      unit=units, overwrite=True)
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
 
@@ -375,3 +385,41 @@ def test_ref_ch(tmpdir, ref_ch_names):
     regexp = f'Ch.*=ch.*,{ref_ch_name},{resolution},{unit}'
     matches = re.findall(pattern=regexp, string=vhdr)
     assert len(matches) == len(ch_names)
+
+    
+def test_cleanup(tmpdir):
+    """Test cleaning up intermediate data upon a writing failure."""
+    folder_out = tmpdir / "my_output"
+    with pytest.raises(ValueError, match="Data format binary_float999"):
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=folder_out,
+                          fmt="binary_float999")
+    assert not op.exists(folder_out)
+    assert not op.exists(folder_out / fname + ".eeg")
+    assert not op.exists(folder_out / fname + ".vmrk")
+    assert not op.exists(folder_out / fname + ".vhdr")
+
+    # if folder already existed before erroneous writing, it is not deleted
+    os.makedirs(folder_out)
+    with pytest.raises(ValueError, match="Data format binary_float999"):
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=folder_out,
+                          fmt="binary_float999")
+    assert op.exists(folder_out)
+
+    # but all other (incomplete/erroneous) files are deleted
+    assert not op.exists(folder_out / fname + ".eeg")
+    assert not op.exists(folder_out / fname + ".vmrk")
+    assert not op.exists(folder_out / fname + ".vhdr")
+
+
+def test_overwrite(tmpdir):
+    """Test overwriting behavior."""
+    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                      fname_base=fname, folder_out=tmpdir,
+                      overwrite=False)
+
+    with pytest.raises(IOError, match="File already exists"):
+        write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=tmpdir,
+                          overwrite=False)

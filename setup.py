@@ -7,8 +7,9 @@
 #          Tristan Stenner <stenner@med-psych.uni-kiel.de>
 #          Clemens Brunner <clemens.brunner@gmail.com>
 #          Richard Höchenberger <richard.hoechenberger@gmail.com>
+#          Adam Li <adam2392@gmail.com>
 #
-# License: BSD (3-clause)
+# License: BSD-3-Clause
 
 import os
 
@@ -32,7 +33,7 @@ DESCRIPTION = descr
 MAINTAINER = 'Stefan Appelhoff'
 MAINTAINER_EMAIL = 'stefan.appelhoff@mailbox.org'
 URL = 'https://pybv.readthedocs.io'
-LICENSE = 'BSD (3-clause)'
+LICENSE = 'BSD-3-Clause'
 DOWNLOAD_URL = 'https://github.com/bids-standard/pybv'
 VERSION = version
 
@@ -51,9 +52,9 @@ if __name__ == "__main__":
           long_description=open('README.rst').read(),
           long_description_content_type='text/x-rst',
           zip_safe=True,  # the package can run out of an .egg file
-          python_requires='~=3.6',
+          python_requires='~=3.7',
           install_requires=[
-              'numpy >=1.15.4',
+              'numpy >=1.16.0',
           ],
           classifiers=[
               'Intended Audience :: Science/Research',
@@ -66,7 +67,6 @@ if __name__ == "__main__":
               'Operating System :: POSIX',
               'Operating System :: Unix',
               'Operating System :: MacOS',
-              'Programming Language :: Python :: 3.6',
               'Programming Language :: Python :: 3.7',
               'Programming Language :: Python :: 3.8',
               'Programming Language :: Python :: 3.9',
