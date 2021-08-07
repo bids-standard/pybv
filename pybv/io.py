@@ -269,8 +269,10 @@ def write_brainvision(*, data, sfreq, ch_names,
         _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
                           format=fmt, resolution=resolution, units=units)
         _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date)
-        _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
-                         ch_names, ref_ch_names, orientation='multiplexed',
+        _write_vhdr_file(vhdr_fname=vhdr_fname, vmrk_fname=vmrk_fname,
+                         eeg_fname=eeg_fname, data=data, sfreq=sfreq,
+                         ch_names=ch_names, ref_ch_names=ref_ch_names,
+                         orientation='multiplexed',
                          format=fmt, resolution=resolution, units=units)
     except ValueError:
         if folder_out_created:
