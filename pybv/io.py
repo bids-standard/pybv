@@ -52,7 +52,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         specified by ``unit``) are never scaled (e.g. ``'°C'``).
     sfreq : int | float
         The sampling frequency of the data.
-    ch_names : list of {str | int}, shape (n_channels,)
+    ch_names : list of {str | int}, len (n_channels)
         The name of each channel.
     fname_base : str
         The base name for the output files. Three files will be created
