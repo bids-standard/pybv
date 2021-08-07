@@ -13,8 +13,8 @@
 
 import os
 import os.path as op
-from datetime import datetime, timezone
 import re
+from datetime import datetime, timezone
 
 import mne
 import numpy as np
@@ -386,7 +386,7 @@ def test_ref_ch(tmpdir, ref_ch_names):
     matches = re.findall(pattern=regexp, string=vhdr)
     assert len(matches) == len(ch_names)
 
-    
+
 def test_cleanup(tmpdir):
     """Test cleaning up intermediate data upon a writing failure."""
     folder_out = tmpdir / "my_output"
