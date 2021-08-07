@@ -14,7 +14,7 @@
 import codecs
 import datetime
 import os
-import warnings
+import shutil
 from os import path as op
 from warnings import warn
 
@@ -36,8 +36,12 @@ SUPPORTED_VOLTAGE_SCALINGS = {
 
 
 def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
-                      events=None, resolution=0.1, unit='µV',
-                      fmt='binary_float32', meas_date=None):
+                      overwrite=False,
+                      events=None,
+                      resolution=0.1,
+                      unit='µV',
+                      fmt='binary_float32',
+                      meas_date=None):
     """Write raw data to BrainVision format [1]_.
 
     Parameters
@@ -48,7 +52,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         specified by ``unit``) are never scaled (e.g. ``'°C'``).
     sfreq : int | float
         The sampling frequency of the data.
-    ch_names : list of strings, shape (n_channels,)
+    ch_names : list of {str | int}, len (n_channels)
         The name of each channel.
     fname_base : str
         The base name for the output files. Three files will be created
@@ -56,6 +60,8 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     folder_out : str
         The folder where output files will be saved. Will be created if it does
         not exist yet.
+    overwrite : bool
+        Whether or not to overwrite existing files. Defaults to False.
     events : np.ndarray, shape (n_events, 2) or (n_events, 3) | None
         Events to write in the marker file. This array has either two or three
         columns. The first column is always the zero-based index of each event
@@ -64,7 +70,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
         third column specifies the length of each event (default 1 sample).
         Currently all events are written as type "Stimulus" and must be
         numeric. Defaults to None (not writing any events).
-    resolution : float | np.ndarray, shape(nchannels,)
+    resolution : float | np.ndarray, shape (nchannels,)
         The resolution in `unit` in which you'd like the data to be stored. If
         float, the same resolution is applied to all channels. If ndarray with
         n_channels elements, each channel is scaled with its own corresponding
@@ -125,6 +131,9 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     """
     # Input checks
+    if not isinstance(overwrite, bool):
+        raise ValueError("overwrite must be a boolean (True or False).")
+
     ev_err = ("events must be an ndarray of shape (n_events, 2) or "
               "(n_events, 3) containing numeric values, or None")
     if not isinstance(events, (np.ndarray, type(None))):
@@ -140,6 +149,10 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
             raise ValueError(ev_err)
 
     nchan = len(ch_names)
+    for ch in ch_names:
+        if not isinstance(ch, (str, int)):
+            raise ValueError("ch_names must be a list of str or list of int.")
+    ch_names = [str(ch) for ch in ch_names]
 
     if len(data) != nchan:
         raise ValueError(f"Number of channels in data ({len(data)}) does not "
@@ -162,8 +175,6 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
     if np.any(resolution <= 0):
         raise ValueError("Resolution should be > 0")
 
-    _chk_fmt(fmt)
-
     # check unit is single str
     if isinstance(unit, str):
         # convert unit to list, assuming all units are the same
@@ -184,7 +195,7 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
 
     # only show the warning once if a greek letter was encountered
     if show_warning:
-        warnings.warn(
+        warn(
             f"Encountered small Greek letter mu 'μ' or 'u' in unit: {unit}. "
             f"Converting to micro sign 'µ'."
         )
@@ -202,22 +213,37 @@ def write_brainvision(*, data, sfreq, ch_names, fname_base, folder_out,
                          'as expected. Please supply a str in the format: '
                          '"YYYYMMDDhhmmssuuuuuu".')
 
-    # Create output file names/paths
+    # Create output file names/paths, checking if they already exist
+    folder_out_created = not op.exists(folder_out)
     os.makedirs(folder_out, exist_ok=True)
-
-    vhdr_fname = op.join(folder_out, fname_base + '.vhdr')
-    vmrk_fname = op.join(folder_out, fname_base + '.vmrk')
     eeg_fname = op.join(folder_out, fname_base + '.eeg')
+    vmrk_fname = op.join(folder_out, fname_base + '.vmrk')
+    vhdr_fname = op.join(folder_out, fname_base + '.vhdr')
+    for fname in (eeg_fname, vmrk_fname, vhdr_fname):
+        if op.exists(fname) and not overwrite:
+            raise IOError(f"File already exists: {fname}.\n"
+                          f"Consider setting overwrite=True.")
 
-    # Write output files
-    # NOTE: call _write_bveeg_file first, so that if it raises ValueError,
-    # no files are written.
-    _write_bveeg_file(eeg_fname, data, orientation='multiplexed', format=fmt,
-                      resolution=resolution, units=units)
-    _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date)
-    _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
-                     ch_names, orientation='multiplexed', format=fmt,
-                     resolution=resolution, units=units)
+    # Write output files, but delete everything if we come across an error
+    try:
+
+        _write_bveeg_file(eeg_fname, data, orientation='multiplexed',
+                          format=fmt, resolution=resolution, units=units)
+        _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date)
+        _write_vhdr_file(vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
+                         ch_names, orientation='multiplexed', format=fmt,
+                         resolution=resolution, units=units)
+    except ValueError:
+        if folder_out_created:
+            # if this is a new folder, remove everything
+            shutil.rmtree(folder_out)
+        else:
+            # else, only remove the files we might have created
+            for fname in (eeg_fname, vmrk_fname, vhdr_fname):
+                if op.exists(fname):  # pragma: no cover
+                    os.remove(fname)
+
+        raise
 
 
 def _chk_fmt(fmt):

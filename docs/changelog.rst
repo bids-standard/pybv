@@ -29,7 +29,10 @@ Here we list a changelog of pybv.
 Current (unreleased)
 ====================
 
-- nothing so far
+
+API
+~~~
+- :func:`pybv.write_brainvision` now has an ``overwrite`` parameter that defaults to ``False``, by `Stefan Appelhoff`_ (:gh:`78`).
 
 0.5.0 (2021-01-03)
 ==================
