@@ -1,3 +1,7 @@
+.. image:: https://github.com/bids-standard/pybv/workflows/Python%20build/badge.svg
+   :target: https://github.com/bids-standard/pybv/actions?query=workflow%3A%22Python+build%22
+   :alt: GitHub Actions Python build
+
 .. image:: https://github.com/bids-standard/pybv/workflows/Python%20tests/badge.svg
    :target: https://github.com/bids-standard/pybv/actions?query=workflow%3A%22Python+tests%22
    :alt: GitHub Actions Python tests

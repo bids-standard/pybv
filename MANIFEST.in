@@ -17,3 +17,4 @@ recursive-exclude .github *
 
 exclude .gitignore
 exclude Makefile
+global-exclude *.pyc
