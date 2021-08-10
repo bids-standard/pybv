@@ -179,6 +179,11 @@ def write_brainvision(*, data, sfreq, ch_names,
     elif isinstance(ref_ch_names, str):
         ref_ch_names = [ref_ch_names] * nchan
     else:
+        if "" in ref_ch_names:
+            msg = (f"ref_ch_names contains an empty string: {ref_ch_names}\n"
+                   f"Empty strings are reserved values and not permitted "
+                   f"as reference channel names.")
+            raise ValueError(msg)
         ref_ch_names = [str(ref_ch_name) for ref_ch_name in ref_ch_names]
 
     if len(ref_ch_names) != nchan:
