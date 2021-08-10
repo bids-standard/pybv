@@ -97,6 +97,9 @@ def test_bv_writer_inputs(tmpdir):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
                           resolution=np.arange(n_chans-1))
+    with pytest.raises(ValueError, match='overwrite must be a boolean'):
+        write_brainvision(data=data[1:, :], sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=tmpdir, overwrite=1)
     with pytest.raises(ValueError, match='number of reference channel names'):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           ref_ch_names=['foo', 'bar'], fname_base=fname,
@@ -109,9 +112,12 @@ def test_bv_writer_inputs(tmpdir):
         write_brainvision(data=data_, sfreq=sfreq, ch_names=ch_names,
                           ref_ch_names=ref_ch_name, fname_base=fname,
                           folder_out=tmpdir)
-    with pytest.raises(ValueError, match='overwrite must be a boolean'):
-        write_brainvision(data=data[1:, :], sfreq=sfreq, ch_names=ch_names,
-                          fname_base=fname, folder_out=tmpdir, overwrite=1)
+    # Empty str is a reserved value for ref_ch_names
+    with pytest.raises(ValueError, match='Empty strings are reserved values'):
+        _ref_ch_names = [""] + ch_names[1:]
+        write_brainvision(data=data_, sfreq=sfreq, ch_names=ch_names,
+                          ref_ch_names=_ref_ch_names, fname_base=fname,
+                          folder_out=tmpdir)
 
 
 def test_bv_bad_format(tmpdir):
