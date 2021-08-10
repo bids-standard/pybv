@@ -175,7 +175,7 @@ def write_brainvision(*, data, sfreq, ch_names,
 
     # Ensure we have a list of strings as reference channel names
     if ref_ch_names is None:
-        ref_ch_names = [''] * nchan  # common average reference
+        ref_ch_names = [''] * nchan  # common but unspecified reference
     elif isinstance(ref_ch_names, str):
         ref_ch_names = [ref_ch_names] * nchan
     else:
@@ -187,9 +187,9 @@ def write_brainvision(*, data, sfreq, ch_names,
             f'must match the number of channels in your data ({nchan})'
         )
 
-    for ref_ch_name in ref_ch_names:
-        if (ref_ch_name and not
-                np.allclose(data[ch_names.index(ref_ch_name), :], 0)):
+    # ensure ref chs that are in data are zero
+    for ref_ch_name in list(set(ref_ch_names) & set(ch_names)):
+        if not np.allclose(data[ch_names.index(ref_ch_name), :], 0):
             raise ValueError(
                 f"The provided data for the reference channel "
                 f"{ref_ch_name} does not appear to be zero across "
