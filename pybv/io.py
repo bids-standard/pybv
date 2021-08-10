@@ -56,16 +56,16 @@ def write_brainvision(*, data, sfreq, ch_names,
         The sampling frequency of the data.
     ch_names : list of {str | int}, len (n_channels)
         The names of the channels.
-    ref_ch_names : str | list of str, shape (n_channels,) | None
+    ref_ch_names : str | list of str, len (n_channels) | None
         The name of the channel used as a reference during the recording. If
         references differed between channels, you may supply a list of
         reference channel names corresponding to each channel in ``ch_names``.
-        If ``None`` (default), assume the common average reference.
+        If ``None`` (default), assume that all channels are referenced to a
+        common channel that is not further specified (BrainVision default).
 
         .. note:: The reference channel name specified here does not need to
-                  appear in ``ch_names``; that is, it is okay to specify the
-                  name of a reference channel that was not saved along with
-                  the data.
+                  appear in ``ch_names``. It is permissible to specify a
+                  reference channel that is not present in ``data``.
     fname_base : str
         The base name for the output files. Three files will be created
         (.vhdr, .vmrk, .eeg) and all will share this base name.
