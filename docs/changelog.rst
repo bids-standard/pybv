@@ -29,6 +29,10 @@ Here we list a changelog of pybv.
 Current (unreleased)
 ====================
 
+Changelog
+~~~~~~~~~
+
+- :func:`pybv.write_brainvision` gained a new parameter, ``ref_ch_names``, to specify the reference channels used during recording, by `Richard Höchenberger`_ and `Stefan Appelhoff`_ (:gh:`75`)
 
 API
 ~~~
