@@ -14,6 +14,7 @@
 import datetime
 import os
 import shutil
+import sys
 from os import path as op
 from warnings import warn
 
@@ -490,6 +491,12 @@ def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, units):
             msg += "\nPlease consider writing using 'binary_float32' format."
         raise ValueError(msg)
     data = data.astype(dtype=dtype)
+
+    # Swap bytes if system architecure is big-endian and dtype is "native" or
+    # "big-endian"
+    if (sys.byteorder == "big" and
+       (data.dtype.byteorder == "=" or data.dtype.byteorder == ">")):
+        data = data.byteswap()
 
     # Save to binary
     data.ravel(order='F').tofile(eeg_fname)
