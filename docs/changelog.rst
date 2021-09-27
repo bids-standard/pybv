@@ -34,7 +34,7 @@ Changelog
 ~~~~~~~~~
 
 - :func:`pybv.write_brainvision` gained a new parameter, ``ref_ch_names``, to specify the reference channels used during recording, by `Richard Höchenberger`_ and `Stefan Appelhoff`_ (:gh:`75`)
-- Fix bug where :func:`pybv.write_brainvision` would write the binary eeg file in big-endian on a big-endian system. This could lead to non-uniformity of data-files written by big-endian or little-endian machines, by `Aniket Pradhan`_, `Clemens Brunner`_ and `Stefan Appelhoff`_ (:gh:`80`).
+- Fix bug where :func:`pybv.write_brainvision` would write the binary file in big-endian on a big-endian system, by `Aniket Pradhan`_, `Clemens Brunner`_, and `Stefan Appelhoff`_ (:gh:`80`)
 
 API
 ~~~
