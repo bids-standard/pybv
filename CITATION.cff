@@ -23,6 +23,9 @@ authors:
 - given-names: "Phillip"
   family-names: "Alday"
   orcid: https://orcid.org/0000-0002-9984-5745
+- given-names: "Aniket"
+  family-names: "Pradhan"
+  orcid: https://orcid.org/0000-0002-6705-5116
 title: "pybv"
 version: 0.5.0
 date-released: 2021-01-03
