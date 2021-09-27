@@ -495,7 +495,8 @@ def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, units):
     # Swap bytes if system architecure is big-endian and dtype is "native" or
     # "big-endian"
     byteorder = data.dtype.byteorder
-    if (sys.byteorder == "big" and byteorder == "=") or byteorder == ">":  # pragma: no cover noqa: E501
+    if ((sys.byteorder == "big" and byteorder == "=") or
+            byteorder == ">"):  # pragma: no cover
         data = data.byteswap()
 
     # Save to binary
