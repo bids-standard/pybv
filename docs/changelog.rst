@@ -32,13 +32,15 @@ Current (unreleased)
 
 Changelog
 ~~~~~~~~~
-
 - :func:`pybv.write_brainvision` gained a new parameter, ``ref_ch_names``, to specify the reference channels used during recording, by `Richard Höchenberger`_ and `Stefan Appelhoff`_ (:gh:`75`)
-- Fix bug where :func:`pybv.write_brainvision` would write the binary file in big-endian on a big-endian system, by `Aniket Pradhan`_, `Clemens Brunner`_, and `Stefan Appelhoff`_ (:gh:`80`)
 
 API
 ~~~
 - :func:`pybv.write_brainvision` now has an ``overwrite`` parameter that defaults to ``False``, by `Stefan Appelhoff`_ (:gh:`78`).
+
+Bug
+~~~
+- Fix bug where :func:`pybv.write_brainvision` would write the binary file in big-endian on a big-endian system, by `Aniket Pradhan`_, `Clemens Brunner`_, and `Stefan Appelhoff`_ (:gh:`80`)
 
 0.5.0 (2021-01-03)
 ==================
