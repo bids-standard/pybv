@@ -492,11 +492,13 @@ def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, units):
         raise ValueError(msg)
     data = data.astype(dtype=dtype)
 
-    # Swap bytes if system architecture is big-endian and dtype is "native" or
-    # "big-endian"
-    byteorder = data.dtype.byteorder
-    if ((sys.byteorder == "big" and byteorder == "=") or
-            byteorder == ">"):  # pragma: no cover
+    # We always write data as little-endian without BOM
+    # `data` is already in native byte order due to numpy operations that
+    # result in copies of the `data` array (see above)
+    assert data.dtype.byteorder == "="
+
+    # swap bytes if system architecture is big-endian
+    if sys.byteorder == "big":  # pragma: no cover
         data = data.byteswap()
 
     # Save to binary
