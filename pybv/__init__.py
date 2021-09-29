@@ -11,7 +11,7 @@
 #
 # License: BSD-3-Clause
 
-__version__ = '0.6.0'
+__version__ = '0.7.0.dev0'
 from .io import write_brainvision
 
 __all__ = ['write_brainvision']
