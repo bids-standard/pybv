@@ -60,7 +60,12 @@ consisting of:
 - comments marked as ``; comment``
 - key-value pairs marked as ``key=value``
 
-A documentation for core BrainVision file format is provided by Brain Products.
+The binary ``.eeg`` data file is written in little-endian format without a Byte Order
+Mark (BOM), in accordance with the specification by Brain Products.
+This ensures that the data file is uniformly written irrespective of the
+native system architecture.
+
+A documentation for the BrainVision file format is provided by Brain Products.
 You can `view the specification <https://www.brainproducts.com/productdetails.php?id=21&tab=5>`_
 as hosted by Brain Products.
 
