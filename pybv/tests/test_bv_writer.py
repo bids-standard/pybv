@@ -303,11 +303,19 @@ def test_write_multiple_units(tmpdir, unit):
                           fname_base=fname, folder_out=tmpdir,
                           unit=wrong_num_units)
 
+    expect_warn = unit in ["V", "mV", "nV", "uV"]
+    expect_match = "Converting" if unit == "uV" else "unsupported"
+
     # write brain vision file
     vhdr_fname = tmpdir / fname + '.vhdr'
-    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      fname_base=fname, folder_out=tmpdir,
-                      unit=[unit] * n_chans)
+    kwargs = dict(data=data, sfreq=sfreq, ch_names=ch_names,
+                  fname_base=fname, folder_out=tmpdir,
+                  unit=[unit] * n_chans)
+    if expect_warn:
+        with pytest.warns(UserWarning, match=expect_match):
+            write_brainvision(**kwargs)
+    else:
+        write_brainvision(**kwargs)
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
 
@@ -326,9 +334,15 @@ def test_write_multiple_units(tmpdir, unit):
     units.extend([other_unit] * (n_chans // 2))
 
     # write file and read back in
-    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      fname_base=fname, folder_out=tmpdir,
-                      unit=units, overwrite=True)
+    expect_warn = True
+    kwargs["unit"] = units
+    kwargs["overwrite"] = True
+    if expect_warn:
+        with pytest.warns(UserWarning, match="unsupported"):
+            write_brainvision(**kwargs)
+    else:
+        write_brainvision(**kwargs)
+
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
 
