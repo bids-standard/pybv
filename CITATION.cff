@@ -1,3 +1,5 @@
+%YAML 1.2
+---
 # Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
 cff-version: "1.2.0"
 message: "If you use this software, please cite it using the metadata in this file."
@@ -5,28 +7,28 @@ abstract: "pybv is a lightweight I/O utility for the BrainVision data format."
 authors:
 - given-names: "Stefan"
   family-names: "Appelhoff"
-  orcid: https://orcid.org/0000-0001-8002-0877
+  orcid: "https://orcid.org/0000-0001-8002-0877"
 - given-names: "Clemens"
   family-names: "Brunner"
-  orcid: https://orcid.org/0000-0002-6030-2233
+  orcid: "https://orcid.org/0000-0002-6030-2233"
 - given-names: "Tristan"
   family-names: "Stenner"
-  orcid: https://orcid.org/0000-0002-2428-9051
+  orcid: "https://orcid.org/0000-0002-2428-9051"
 - given-names: "Chris R."
   family-names: "Holdgraf"
-  orcid: https://orcid.org/0000-0002-2391-0678
+  orcid: "https://orcid.org/0000-0002-2391-0678"
 - given-names: "Richard"
   family-names: "Höchenberger"
-  orcid: https://orcid.org/0000-0002-0380-4798
+  orcid: "https://orcid.org/0000-0002-0380-4798"
 - given-names: "Adam"
   family-names: "Li"
-  orcid: https://orcid.org/0000-0001-8421-365X
+  orcid: "https://orcid.org/0000-0001-8421-365X"
 - given-names: "Phillip"
   family-names: "Alday"
-  orcid: https://orcid.org/0000-0002-9984-5745
+  orcid: "https://orcid.org/0000-0002-9984-5745"
 - given-names: "Aniket"
   family-names: "Pradhan"
-  orcid: https://orcid.org/0000-0002-6705-5116
+  orcid: "https://orcid.org/0000-0002-6705-5116"
 title: "pybv"
 version: "0.6.0"
 date-released: "2021-09-29"
@@ -38,3 +40,4 @@ keywords:
 - "eeg"
 - "vhdr"
 - "vmrk"
+...
