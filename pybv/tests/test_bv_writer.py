@@ -238,11 +238,23 @@ resolutions = np.logspace(0, -9, 10)
 resolutions = np.hstack((resolutions, [np.pi, 0.5, 0.27e-6, 13]))
 
 
+@pytest.mark.filterwarnings("ignore:Encountered unsupported voltage units")
+@pytest.mark.filterwarnings("ignore:Encountered small Greek letter mu")
 @pytest.mark.parametrize("format", SUPPORTED_FORMATS.keys())
 @pytest.mark.parametrize("resolution", resolutions)
 @pytest.mark.parametrize("unit", SUPPORTED_VOLTAGE_SCALINGS)
 def test_format_resolution_unit(tmpdir, format, resolution, unit):
-    """Test different combinations of formats, resolutions, and units."""
+    """Test different combinations of formats, resolutions, and units.
+
+    This test would raise warnings for several cases of "unit"
+    (Encountered unsupported voltage units), and a specific warning
+    if "unit" is "uV" (Encountered small Greek letter mu).
+    We ignore those warnings throughout the test.
+
+    Each run of the test is furthermore expected to exit early
+    with a ValueError for combinations of "resolution" and "format"
+    that would result in data that cannot accurately be written.
+    """
     # Check whether this test will be numerically possible
     tmpdata = _scale_data_to_unit(data.copy(), [unit] * n_chans)
     tmpdata = tmpdata * np.atleast_2d((1 / resolution)).T
