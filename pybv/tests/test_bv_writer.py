@@ -345,14 +345,10 @@ def test_write_multiple_units(tmpdir, unit):
     units = [unit] * (n_chans // 2)
     units.extend([other_unit] * (n_chans // 2))
 
-    # write file and read back in
-    expect_warn = True
+    # write file and read back in, we always expect a warning here
     kwargs["unit"] = units
     kwargs["overwrite"] = True
-    if expect_warn:
-        with pytest.warns(UserWarning, match="unsupported"):
-            write_brainvision(**kwargs)
-    else:
+    with pytest.warns(UserWarning, match="unsupported"):
         write_brainvision(**kwargs)
 
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
