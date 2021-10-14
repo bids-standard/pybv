@@ -238,11 +238,23 @@ resolutions = np.logspace(0, -9, 10)
 resolutions = np.hstack((resolutions, [np.pi, 0.5, 0.27e-6, 13]))
 
 
+@pytest.mark.filterwarnings("ignore:Encountered unsupported voltage units")
+@pytest.mark.filterwarnings("ignore:Encountered small Greek letter mu")
 @pytest.mark.parametrize("format", SUPPORTED_FORMATS.keys())
 @pytest.mark.parametrize("resolution", resolutions)
 @pytest.mark.parametrize("unit", SUPPORTED_VOLTAGE_SCALINGS)
 def test_format_resolution_unit(tmpdir, format, resolution, unit):
-    """Test different combinations of formats, resolutions, and units."""
+    """Test different combinations of formats, resolutions, and units.
+
+    This test would raise warnings for several cases of "unit"
+    (Encountered unsupported voltage units), and a specific warning
+    if "unit" is "uV" (Encountered small Greek letter mu).
+    We ignore those warnings throughout the test.
+
+    Each run of the test is furthermore expected to exit early
+    with a ValueError for combinations of "resolution" and "format"
+    that would result in data that cannot accurately be written.
+    """
     # Check whether this test will be numerically possible
     tmpdata = _scale_data_to_unit(data.copy(), [unit] * n_chans)
     tmpdata = tmpdata * np.atleast_2d((1 / resolution)).T
@@ -303,11 +315,19 @@ def test_write_multiple_units(tmpdir, unit):
                           fname_base=fname, folder_out=tmpdir,
                           unit=wrong_num_units)
 
+    expect_warn = unit in ["V", "mV", "nV", "uV"]
+    expect_match = "Converting" if unit == "uV" else "unsupported"
+
     # write brain vision file
     vhdr_fname = tmpdir / fname + '.vhdr'
-    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      fname_base=fname, folder_out=tmpdir,
-                      unit=[unit] * n_chans)
+    kwargs = dict(data=data, sfreq=sfreq, ch_names=ch_names,
+                  fname_base=fname, folder_out=tmpdir,
+                  unit=[unit] * n_chans)
+    if expect_warn:
+        with pytest.warns(UserWarning, match=expect_match):
+            write_brainvision(**kwargs)
+    else:
+        write_brainvision(**kwargs)
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
 
@@ -325,10 +345,12 @@ def test_write_multiple_units(tmpdir, unit):
     units = [unit] * (n_chans // 2)
     units.extend([other_unit] * (n_chans // 2))
 
-    # write file and read back in
-    write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
-                      fname_base=fname, folder_out=tmpdir,
-                      unit=units, overwrite=True)
+    # write file and read back in, we always expect a warning here
+    kwargs["unit"] = units
+    kwargs["overwrite"] = True
+    with pytest.warns(UserWarning, match="unsupported"):
+        write_brainvision(**kwargs)
+
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname,
                                               preload=True)
 
