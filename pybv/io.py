@@ -1,15 +1,4 @@
-# -*- coding: utf-8 -*-
 """BrainVision writer."""
-
-# Authors: Phillip Alday <phillip.alday@unisa.edu.au>
-#          Chris Holdgraf <choldgraf@berkeley.edu>
-#          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
-#          Tristan Stenner <stenner@med-psych.uni-kiel.de>
-#          Clemens Brunner <clemens.brunner@gmail.com>
-#          Richard Höchenberger <richard.hoechenberger@gmail.com>
-#          Adam Li <adam2392@gmail.com>
-#
-# License: BSD-3-Clause
 
 import datetime
 import os

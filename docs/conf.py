@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Configure docs.
 
 See: https://www.sphinx-doc.org/en/master/usage/configuration.html
