@@ -1,9 +1,9 @@
 # YAML 1.2
 ---
 # Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
-cff-version: "1.2.0"
-message: "If you use this software, please cite it using the metadata in this file."
-abstract: "pybv is a lightweight I/O utility for the BrainVision data format."
+cff-version: 1.2.0
+title: "pybv -- A lightweight Exporter to the BrainVision Data Format"
+message: "If you use this software, please cite it using the metadata below."
 authors:
 - given-names: "Stefan"
   family-names: "Appelhoff"
@@ -28,16 +28,24 @@ authors:
   orcid: "https://orcid.org/0000-0002-9984-5745"
 - given-names: "Aniket"
   family-names: "Pradhan"
-  orcid: "https://orcid.org/0000-0002-6705-5116"
-title: "pybv"
-version: "0.6.0"
-date-released: "2021-09-29"
+  orcid: https://orcid.org/0000-0002-6705-5116
+type: software
 repository-code: "https://github.com/bids-standard/pybv"
 url: "https://pybv.readthedocs.io/"
+license: BSD-3-Clause
+identifiers:
+  - description: "Code archive on Zenodo"
+    type: doi
+    value: 10.5281/zenodo.5539451
 keywords:
-- "Brain Products"
-- "BrainVision"
-- "eeg"
-- "vhdr"
-- "vmrk"
+  - data
+  - eeg
+  - vision
+  - products
+  - brain
+  - ieeg
+  - brainvision
+  - brainproducts
+  - vhdr
+  - vmrk
 ...

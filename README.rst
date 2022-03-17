@@ -22,6 +22,10 @@
    :target: https://pybv.readthedocs.io/en/stable/?badge=stable
    :alt: Documentation Status
 
+.. image:: https://zenodo.org/badge/157434681.svg
+   :target: https://zenodo.org/badge/latestdoi/157434681
+   :alt: Zenodo archive
+
 ====
 pybv
 ====
