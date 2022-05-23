@@ -94,7 +94,7 @@ def write_brainvision(*, data, sfreq, ch_names,
                 "Response"} (defaults to ``"Stimulus"``). The following
                 known BrainVision "types" are currently **not** supported:
                 "New Segment", "SyncStatus".
-            - ``channels`` : str | list of str
+            - ``channels`` : str | list of {str | int}
                 The channels that are impacted by the event. Can be "all"
                 (reflecting all channels) or a channel name, or a list of
                 channel names. Defaults to ``"all"``.
@@ -173,20 +173,6 @@ def write_brainvision(*, data, sfreq, ch_names,
     if not isinstance(overwrite, bool):
         raise ValueError("overwrite must be a boolean (True or False).")
 
-    ev_err = ("events must be an ndarray of shape (n_events, 2) or "
-              "(n_events, 3) containing numeric values, or None")
-    if not isinstance(events, (np.ndarray, type(None))):
-        raise ValueError(ev_err)
-    if isinstance(events, np.ndarray):
-        if events.ndim != 2:
-            raise ValueError(ev_err)
-        if events.shape[1] not in (2, 3):
-            raise ValueError(ev_err)
-        try:
-            events.astype(float)
-        except ValueError:
-            raise ValueError(ev_err)
-
     nchan = len(ch_names)
     for ch in ch_names:
         if not isinstance(ch, (str, int)):
@@ -199,6 +185,8 @@ def write_brainvision(*, data, sfreq, ch_names,
 
     if len(set(ch_names)) != nchan:
         raise ValueError("Channel names must be unique, found duplicate name.")
+
+    events = _chk_events(events, ch_names)
 
     # Ensure we have a list of strings as reference channel names
     if ref_ch_names is None:
@@ -317,6 +305,102 @@ def write_brainvision(*, data, sfreq, ch_names,
                     os.remove(fname)
 
         raise
+
+
+def _chk_events(events, ch_names):
+    """Check that the events parameter is as expected.
+
+    This function may change events in-place. It will add missing keys with
+    default values, and it will turn events[i]["channels"] into a list of
+    1-based channel name indices, where 0 = "all".
+    """
+    if not isinstance(events, (type(None), np.ndarray, list)):
+        raise ValueError("events must be an array, a list of dict, or None")
+
+    # validate input: None
+    if isinstance(events, type(None)):
+        return events
+
+    # validate input: ndarray
+    if isinstance(events, np.ndarray):
+        if events.ndim != 2:
+            raise ValueError(f"When array, events must be 2D, but got {events.ndim}")
+        if events.shape[1] not in (2, 3):
+            raise ValueError(f"When array, events must have 2 or 3 columns, but got: {events.shape[1]}")
+        try:
+            events.astype(float)
+        except ValueError:
+            raise ValueError("When array, events must be numeric, but found non-numeric types")
+
+    # validate input: list of dict
+    assert isinstance(events, list)  # must be true
+    for event in list:
+
+        # each item must be dict
+        if not isinstance(event, dict):
+            raise ValueError("When list, events must be a list of dict, but found non-dict element in list")
+
+        # required keys
+        for required_key in ["onset", "description"]:
+            if required_key not in event:
+                raise ValueError("When list of dict, each dict in events must have the keys 'onset' and 'description'")
+
+        # populate keys with default if missing (in-place)
+        # NOTE: using "ch_names" as default for channels translates directly
+        #       into "all" but is robust with respect to channels named
+        #       "all"
+        event_defaults = dict(duration=1, type="Stimulus", channels=ch_names)
+        for optional_key, default in event_defaults.items():
+            event[optional_key] = event.get(optional_key, default)
+
+        # validate key types
+        # `onset`, `duration`
+        for key in ["onset", "duration"]:
+            if not isinstance(event[key], int):
+                raise ValueError(f"events: `{key}` must be int")
+
+        # `type`
+        event_types = ["Stimulus", "Response", "Comment"]
+        if event["type"] not in event_types:
+            raise ValueError(f"events: `type` must be one of {event_types}")
+
+        # `description`
+        if event["type"] in ["Stimulus", "Response"]:
+            if not isinstance(event["description"], int):
+                raise ValueError(f"events: when `type` is {event['type']}, `description` must be int")
+        else:
+            assert event["type"] == "Comment"
+            if not isinstance(event["description"], (int, str)):
+                raise ValueError(f"events: when `type` is {event['type']}, `description` must be str or int")
+
+        # `channels`
+        # "all" becomes ch_names (list of all channel names)
+        # single str 'ch_name' becomes [ch_name]
+        if not isinstance(event["channels"], (list, str)):
+            raise ValueError("events: `channels` must be str or list of str")
+
+        if isinstance(event["channels"], str):
+            if event["channels"] == "all":
+                if "all" in ch_names:
+                    raise ValueError("Found channel named 'all'. Your `channels` specification in events is also 'all': This is ambiguous, because 'all' is a reserved keyword. Either rename the channel called 'all', or explicitly list all ch_names in `channels` in each event instead of using 'all'")
+                event["channels"] = ch_names
+            else:
+                event["channels"] = [event["channels"]]
+
+        # now channels is a list
+        for ch in event["channels"]:
+            if not isinstance(ch, (str, int)):
+                raise ValueError("events: `channels` must be list of str or int corresponding to ch_names")
+
+            if str(ch) not in ch_names:
+                raise ValueError(f"events: found channel name that is not present in the data: {ch}")
+
+        # check for duplicates
+        event["channels"] = [str(ch) for ch in event["channels"]]
+        if len(set(event["channels"])) != len(event["channels"]):
+            raise ValueError("events: found duplicate channel names")
+
+    return events
 
 
 def _chk_fmt(fmt):
