@@ -43,7 +43,7 @@ if __name__ == "__main__":
           zip_safe=True,  # the package can run out of an .egg file
           python_requires='~=3.7',
           install_requires=[
-              'numpy >=1.16.0',
+              'numpy >=1.18.1',
           ],
           classifiers=[
               'Intended Audience :: Science/Research',
@@ -59,6 +59,7 @@ if __name__ == "__main__":
               'Programming Language :: Python :: 3.7',
               'Programming Language :: Python :: 3.8',
               'Programming Language :: Python :: 3.9',
+              'Programming Language :: Python :: 3.10',
           ],
           platforms='any',
           keywords='Brain Products BrainVision vhdr vmrk eeg',

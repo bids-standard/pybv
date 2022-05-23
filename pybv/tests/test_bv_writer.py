@@ -17,7 +17,7 @@ from pybv.io import (SUPPORTED_FORMATS, SUPPORTED_VOLTAGE_SCALINGS,
 
 # create testing data
 fname = 'pybv'
-rng = np.random.RandomState(1337)
+rng = np.random.default_rng(1337)
 n_chans = 10
 ch_names = [f'ch_{i}' for i in range(n_chans)]
 sfreq = 1000
@@ -26,7 +26,7 @@ n_times = n_seconds * sfreq
 event_times = np.arange(1, 5)
 events = np.column_stack([event_times * sfreq, [1, 1, 2, 2]])
 # scale random data to reasonable EEG signal magnitude in V
-data = rng.randn(n_chans, n_times) * 10 * 1e-6
+data = rng.normal(size=(n_chans, n_times)) * 10 * 1e-6
 
 # add reference channel
 ref_ch_name = ch_names[-1]
@@ -36,8 +36,8 @@ data[-1, :] = 0.
 @pytest.mark.parametrize(
     "events_errormsg",
     [([], 'events must be an ndarray of shape'),
-     (rng.randn(10, 20, 30), 'events must be an ndarray of shape'),
-     (rng.randn(10, 4), 'events must be an ndarray of shape'),
+     (rng.normal(size=(10, 20, 30)), 'events must be an ndarray of shape'),
+     (rng.normal(size=(10, 4)), 'events must be an ndarray of shape'),
      (np.array([i for i in "abcd"]).reshape(2, -1), 'events must be an ndarray of shape'),  # noqa: E501
      (events, ''),
      (None, '')

@@ -1,5 +1,9 @@
 name: Python build
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}-${{ github.event.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [main]
@@ -8,6 +12,8 @@ on:
   create:
     branches: [main]
     tags: ['**']
+  schedule:
+    - cron: "0 4 1 * *"
 
 jobs:
   build:
@@ -16,17 +22,17 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
     steps:
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Update pip and wheel
       run: python -m pip install --upgrade pip wheel
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Build sdist
       run: python setup.py sdist
     - name: Install sdist
@@ -38,7 +44,7 @@ jobs:
     - name: Remove sdist install
       run: pip uninstall -y pybv
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Build wheel
       run: python setup.py bdist_wheel
     - name: Install wheel

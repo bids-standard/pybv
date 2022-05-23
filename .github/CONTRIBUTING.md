@@ -91,9 +91,7 @@ Thus, the release protocol can be briefly described as follows:
       released, update the version as well according to
       [semantic versioning](https://semver.org/) with its `major.minor.patch`
       style.
-1. Copy the version from `__init__.py` to the version metadata field in the
-   `CITATION.cff` file.
-    - If applicable, append new authors to the author metadata in the `CITATION.cff` file.
+1. If applicable, append new authors to the author metadata in the `CITATION.cff` file.
 1. Update `docs/changelog.rst`, renaming the "current" headline to the new
    version and (if applicable) extending the "Authors" section of the document.
     - "Authors" are all people who committed code or in other ways contributed
@@ -121,6 +119,5 @@ the next release:
       [semantic versioning](https://semver.org/) so that the version will be
       the version that is planned to be released next (e.g., `1.3.0`).
     - Append `.dev0` to the version (e.g., `1.3.0.dev0`).
-1. Note that the version version metadata in the `CITATION.cff` file remains unchanged.
 1. Add a "Current (unreleased)" headline to `docs/changelog.rst`.
 1. Commit the changes and git push to `main` (or make a pull request).

@@ -30,7 +30,7 @@
 pybv
 ====
 
-``pybv`` is a lightweight exporter to the BrainVision data format.
+``pybv`` is a lightweight I/O utility for the BrainVision data format.
 
 The BrainVision data format is a recommended data format for use in the
 `Brain Imaging Data Structure <https://bids.neuroimaging.io>`_.

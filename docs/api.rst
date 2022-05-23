@@ -6,8 +6,8 @@ API Documentation
 
 Here we list the Application Programming Interface (API) for ``pybv``.
 
-pybv (:py:mod:`pybv`)
-=====================
+pybv
+====
 
 .. currentmodule:: pybv
 

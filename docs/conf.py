@@ -28,6 +28,12 @@ copybutton_prompt_is_regexp = True
 
 # configure numpydoc
 numpydoc_xref_param_type = True
+numpydoc_xref_ignore = {
+    # words
+    "shape", "of", "len", "or",
+    # shapes
+    "n_channels", "n_times", "n_events"
+}
 
 # Generate the autosummary
 autosummary_generate = True

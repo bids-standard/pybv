@@ -72,7 +72,7 @@ def write_brainvision(*, data, sfreq, ch_names,
         third column specifies the length of each event (default 1 sample).
         Currently all events are written as type "Stimulus" and must be
         numeric. Defaults to None (not writing any events).
-    resolution : float | np.ndarray, shape (nchannels,)
+    resolution : float | np.ndarray, shape (n_channels,)
         The resolution in `unit` in which you'd like the data to be stored. If
         float, the same resolution is applied to all channels. If ndarray with
         n_channels elements, each channel is scaled with its own corresponding
@@ -130,7 +130,6 @@ def write_brainvision(*, data, sfreq, ch_names,
     >>> # remove the files
     >>> for ext in ['.vhdr', '.vmrk', '.eeg']:
     ...     os.remove('pybv_test_file' + ext)
-
     """
     # Input checks
     if not isinstance(overwrite, bool):
@@ -204,7 +203,7 @@ def write_brainvision(*, data, sfreq, ch_names,
         raise ValueError(f"Resolution should be numeric, is {resolution.dtype}")  # noqa: E501
 
     if resolution.shape != (1,) and resolution.shape != (nchan,):
-        raise ValueError("Resolution should be one or n_chan floats")
+        raise ValueError("Resolution should be one or n_channels floats")
 
     if np.any(resolution <= 0):
         raise ValueError("Resolution should be > 0")
