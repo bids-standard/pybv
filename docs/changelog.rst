@@ -32,7 +32,7 @@ Current (unreleased)
 
 Changelog
 ~~~~~~~~~
-- Added an overview table of alternative software for BrainVision data, by `Stefan Appelhoff`: (:gh:`85`)
+- Added an overview table of alternative software for BrainVision data, by `Stefan Appelhoff`_: (:gh:`85`)
 
 0.6.0 (2021-09-29)
 ==================
