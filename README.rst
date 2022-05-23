@@ -139,6 +139,33 @@ Here is an example of the MNE-Python code required to read BrainVision data:
     # Reconstruct the original events from our Raw object
     events, event_ids = mne.events_from_annotations(raw)
 
+Alternatives
+============
+
+The BrainVision data format is very popular and accordingly there are many
+software packages to read this format, or write to it.
+The following table is intended as a quick overview of packages similar to
+`pybv <https://github.com/bids-standard/pybv>`_.
+Please let us know if you know of additional packages that should be listed here.
+
++-----------------------------------------------------------------------------+----------------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| Name of software                                                            | Language             | Notes                                                                                                                                       |
++=============================================================================+======================+=============================================================================================================================================+
+| `BioSig Project <http://biosig.sourceforge.net/index.html>`_                | miscellaneous        | Reading and writing capabilities depend on bindings used, see their `overview <https://pub.ist.ac.at/~schloegl/biosig/TESTED>`_             |
++-----------------------------------------------------------------------------+----------------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| `Brainstorm <https://neuroimage.usc.edu/brainstorm/>`_                      | MATLAB               | Read and write, search for ``brainamp`` in their `io functions <https://github.com/brainstorm-tools/brainstorm3/tree/master/toolbox/io>`_   |
++-----------------------------------------------------------------------------+----------------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| `BrainVision Analyzer <https://www.brainproducts.com/downloads.php?kid=9>`_ | n/a, GUI for Windows | Read and write, by Brain Products, requires commercial license                                                                              |
++-----------------------------------------------------------------------------+----------------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| `brainvisionloader.jl <https://github.com/agricolab/brainvisionloader.jl>`_ | Julia                | Read                                                                                                                                        |
++-----------------------------------------------------------------------------+----------------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| `EEGLAB <https://sccn.ucsd.edu/eeglab/index.php>`_                          | MATLAB / Octave      | Read and write via `BVA-IO <https://github.com/arnodelorme/bva-io>`_                                                                        |
++-----------------------------------------------------------------------------+----------------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| `FieldTrip <https://www.fieldtriptoolbox.org>`_                             | MATLAB               | Read and write, search for ``brainvision`` in their `fileio functions <https://github.com/fieldtrip/fieldtrip/tree/master/fileio/private>`_ |
++-----------------------------------------------------------------------------+----------------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+| `MNE-Python <https://mne.tools>`_                                           | Python               | Read (writing via ``pybv``)                                                                                                                 |
++-----------------------------------------------------------------------------+----------------------+---------------------------------------------------------------------------------------------------------------------------------------------+
+
 Acknowledgements
 ================
 
