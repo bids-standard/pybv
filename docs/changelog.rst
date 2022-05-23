@@ -30,7 +30,9 @@ Here we list a changelog of pybv.
 Current (unreleased)
 ====================
 
-- nothing new yet
+Changelog
+~~~~~~~~~
+- Added an overview table of alternative software for BrainVision data, by `Stefan Appelhoff`: (:gh:`85`)
 
 0.6.0 (2021-09-29)
 ==================
@@ -41,7 +43,7 @@ Changelog
 
 API
 ~~~
-- :func:`pybv.write_brainvision` now has an ``overwrite`` parameter that defaults to ``False``, by `Stefan Appelhoff`_ (:gh:`78`).
+- :func:`pybv.write_brainvision` now has an ``overwrite`` parameter that defaults to ``False``, by `Stefan Appelhoff`_ (:gh:`78`)
 
 Bug
 ~~~
@@ -52,12 +54,12 @@ Bug
 
 Changelog
 ~~~~~~~~~
-- :func:`pybv.write_brainvision` adds support for channels with non-Volt units, by `Adam Li`_ (:gh:`66`).
-- :func:`pybv.write_brainvision` automatically converts ``uV`` and ``μV`` (Greek μ) to ``µV`` (micro sign µ), by `Adam Li`_ (:gh:`66`).
+- :func:`pybv.write_brainvision` adds support for channels with non-Volt units, by `Adam Li`_ (:gh:`66`)
+- :func:`pybv.write_brainvision` automatically converts ``uV`` and ``μV`` (Greek μ) to ``µV`` (micro sign µ), by `Adam Li`_ (:gh:`66`)
 
 API
 ~~~
-- The ``unit`` parameter in :func:`pybv.write_brainvision` now accepts a list of units (one unit per channel), by `Adam Li`_ (:gh:`66`).
+- The ``unit`` parameter in :func:`pybv.write_brainvision` now accepts a list of units (one unit per channel), by `Adam Li`_ (:gh:`66`)
 
 0.4.0 (2020-11-08)
 ==================
