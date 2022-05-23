@@ -144,8 +144,9 @@ Alternatives
 
 The BrainVision data format is very popular and accordingly there are many
 software packages to read this format, or write to it.
-The following table is intended as a quick overview, please let us know if
-you know of additional packages that should be listed here.
+The following table is intended as a quick overview of packages similar to
+`pybv <https://github.com/bids-standard/pybv>`_.
+Please let us know if you know of additional packages that should be listed here.
 
 +-----------------------------------------------------------------------------+----------------------+---------------------------------------------------------------------------------------------------------------------------------------------+
 | Name of software                                                            | Language             | Notes                                                                                                                                       |
