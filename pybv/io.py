@@ -34,82 +34,120 @@ def write_brainvision(*, data, sfreq, ch_names,
                       unit='µV',
                       fmt='binary_float32',
                       meas_date=None):
-    """Write raw data to BrainVision format [1]_.
+    """Write raw data to the BrainVision format [1]_.
 
     Parameters
     ----------
     data : np.ndarray, shape (n_channels, n_times)
         The raw data to export. Voltage data is assumed to be in **Volts** and
-        will be scaled as specified by ``unit``. Non-voltage channels (as
-        specified by ``unit``) are never scaled (e.g. ``'°C'``).
+        will be scaled as specified by `unit`. Non-voltage channels (as
+        specified by `unit`) are never scaled (e.g. '°C').
     sfreq : int | float
-        The sampling frequency of the data.
+        The sampling frequency of the data in Hz.
     ch_names : list of {str | int}, len (n_channels)
         The names of the channels.
     ref_ch_names : str | list of str, len (n_channels) | None
         The name of the channel used as a reference during the recording. If
         references differed between channels, you may supply a list of
-        reference channel names corresponding to each channel in ``ch_names``.
+        reference channel names corresponding to each channel in `ch_names`.
         If ``None`` (default), assume that all channels are referenced to a
         common channel that is not further specified (BrainVision default).
 
         .. note:: The reference channel name specified here does not need to
-                  appear in ``ch_names``. It is permissible to specify a
-                  reference channel that is not present in ``data``.
+                  appear in `ch_names`. It is permissible to specify a
+                  reference channel that is not present in `data`.
     fname_base : str
         The base name for the output files. Three files will be created
-        (.vhdr, .vmrk, .eeg) and all will share this base name.
+        (*.vhdr*, *.vmrk*, *.eeg*) and all will share this base name.
     folder_out : str
         The folder where output files will be saved. Will be created if it does
         not exist yet.
     overwrite : bool
-        Whether or not to overwrite existing files. Defaults to False.
-    events : np.ndarray, shape (n_events, 2) or (n_events, 3) | None
-        Events to write in the marker file. This array has either two or three
-        columns. The first column is always the zero-based index of each event
-        (corresponding to the "time" dimension of the data array). The second
-        column is a number associated with the "type" of event. The (optional)
-        third column specifies the length of each event (default 1 sample).
-        Currently all events are written as type "Stimulus" and must be
-        numeric. Defaults to None (not writing any events).
+        Whether or not to overwrite existing files. Defaults to ``False``.
+    events : np.ndarray, shape (n_events, {2, 3}) | list of dict, len (n_events) | None
+        Events to write in the marker file (*.vmrk*). Defaults to ``None``
+        (not writing any events).
+
+        If an array is passed, it must have either two or three columns.
+        The first column is always the zero-based index of each event
+        (corresponding to the "time" dimension of the `data` array).
+        The second column is a number associated with the "description" of
+        event. The (optional) third column specifies the length of each event
+        (default 1 sample). All events are written as type "Stimulus" and
+        must be numeric. For more fine grained control over how to write
+        events, pass a list of dict as described next.
+
+        If list of dict is passed, each dict in the list corresponds to an
+        event and may have the following entries:
+
+            - ``onset`` : int
+                The zero-based index of the event onset, corresponding to the
+                "time" dimension of the `data` array.
+            - ``duration`` : int
+                The duration of the event in samples (defaults to ``1``).
+            - ``description`` : str | int
+                The description of the event. Must be an integer when `type`
+                (see below) is either "Stimulus" or "Response", and may be
+                a string when `type` is "Comment".
+            - ``type`` : str
+                The type of the event, must be one of {"Stimulus", "Comment",
+                "Response"} (defaults to ``"Stimulus"``). The following
+                known BrainVision "types" are currently **not** supported:
+                "New Segment", "SyncStatus".
+            - ``channels`` : str | list of str
+                The channels that are impacted by the event. Can be "all"
+                (reflecting all channels) or a channel name, or a list of
+                channel names. Defaults to ``"all"``.
+
+        Note that ``onset`` and ``description`` MUST be specified in each
+        dict.
+
+        .. note:: When specifying more than one but less than "all" channels
+                  that are impacted by an event, ``pybv`` will write the same
+                  event for as many times as channels are specified (see
+                  :gh:`77` for a discussion). This is valid according to the
+                  BrainVision specification, however for maximum compatibility
+                  with other BrainVision readers, we do not (yet) recommend
+                  using this feature.
+
     resolution : float | np.ndarray, shape (n_channels,)
         The resolution in `unit` in which you'd like the data to be stored. If
-        float, the same resolution is applied to all channels. If ndarray with
+        float, the same resolution is applied to all channels. If array with
         n_channels elements, each channel is scaled with its own corresponding
-        resolution from the ndarray. Note that `resolution` is applied on top
+        resolution from the array. Note that `resolution` is applied on top
         of the default resolution that a data format (see `fmt`) has. For
-        example, the binary_int16 format by design has no floating point
+        example, the 'binary_int16' format by design has no floating point
         support, but when scaling the data in µV for 0.1 resolution (default),
         accurate writing for all values >= 0.1 µV is guaranteed. In contrast,
-        the binary_float32 format by design already supports floating points up
-        to 1e-6 resolution, and writing data in µV with 0.1 resolution will
-        thus guarantee accurate writing for all values >= 1e-7 µV
+        the 'binary_float32' format by design already supports floating points
+        up to 1e-6 resolution, and writing data in 'µV' with 0.1 resolution
+        will thus guarantee accurate writing for all values >= 1e-7 'µV'
         (``1e-6 * 0.1``).
     unit : str | list of str
         The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
         equivalently 'uV') , or 'nV', which will scale the data accordingly.
-        Defaults to 'µV'. Can also be a list of units with one unit per
-        channel. Non-voltage channels are stored as is, for example temperature
-        might be available in ``°C``, which ``pybv`` will not scale.
+        Defaults to ``'µV'``. Can also be a list of units with one unit per
+        channel. Non-voltage channels are stored as is, for example
+        temperature might be available in '°C', which ``pybv`` will not scale.
     fmt : str
         Binary format the data should be written as. Valid choices are
         'binary_float32' (default) and 'binary_int16'.
     meas_date : datetime.datetime | str | None
-        The measurement date specified as a datetime.datetime object.
-        Alternatively, can be a string in the format 'YYYYMMDDhhmmssuuuuuu'
+        The measurement date specified as a :class:`datetime.datetime` object.
+        Alternatively, can be a str in the format 'YYYYMMDDhhmmssuuuuuu'
         ('u' stands for microseconds). Note that setting a measurement date
-        implies that one additional event is created in the .vmrk file. To
-        prevent this, set this parameter to None (default).
+        implies that one additional event is created in the *.vmrk* file. To
+        prevent this, set this parameter to ``None`` (default).
 
     Notes
     -----
-    iEEG/EEG/MEG data is assumed to be in V, and we will scale these data to µV
-    by default. Any unit besides µV is officially unsupported in the
+    iEEG/EEG/MEG data is assumed to be in 'V', and we will scale these data to
+    'µV' by default. Any unit besides 'µV' is officially unsupported in the
     BrainVision specification. However, if one specifies other voltage units
     such as 'mV' or 'nV', we will still scale the signals accordingly in the
     exported file. We will also write channels with non-voltage units such as
-    ``°C`` as is (without scaling). For maximum compatibility, all signals
-    should be written as µV.
+    '°C' as is (without scaling). For maximum compatibility, all signals
+    should be written as 'µV'.
 
     References
     ----------
@@ -130,7 +168,7 @@ def write_brainvision(*, data, sfreq, ch_names,
     >>> # remove the files
     >>> for ext in ['.vhdr', '.vmrk', '.eeg']:
     ...     os.remove('pybv_test_file' + ext)
-    """
+    """  # noqa: E501
     # Input checks
     if not isinstance(overwrite, bool):
         raise ValueError("overwrite must be a boolean (True or False).")
