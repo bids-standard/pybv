@@ -4,6 +4,7 @@ include LICENSE
 include requirements-dev.txt
 include CITATION.cff
 include .mailmap
+include .flake8
 
 graft docs
 graft pybv
