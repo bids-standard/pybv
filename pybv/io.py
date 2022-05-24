@@ -379,7 +379,7 @@ def _chk_events(events, ch_names, n_times):
         del _events
 
     # validate input: list of dict
-    for event in list:
+    for event in events:
 
         # each item must be dict
         if not isinstance(event, dict):
