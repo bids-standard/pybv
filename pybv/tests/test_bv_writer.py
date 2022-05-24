@@ -24,7 +24,23 @@ sfreq = 1000
 n_seconds = 5
 n_times = n_seconds * sfreq
 event_times = np.arange(1, 5)
-events = np.column_stack([event_times * sfreq, [1, 1, 2, 2]]).astype(int)
+events_array = np.column_stack([event_times * sfreq, [1, 1, 2, 2]]).astype(int)
+events = [
+    {"onset": 1,
+     "duration": 10,
+     "description": 1,
+     "type": "Stimulus",
+     "channels": "all",
+     },
+    {"onset": 100,
+     "description": "Some string :-)",
+     "type": "Comment",
+     "channels": "ch_1",
+     },
+    {"onset": 200,
+     "description": 1,
+     },
+]
 # scale random data to reasonable EEG signal magnitude in V
 data = rng.normal(size=(n_chans, n_times)) * 10 * 1e-6
 
@@ -39,12 +55,34 @@ data[-1, :] = 0.
      (rng.normal(size=(10, 20, 30)), 'When array, events must be 2D, but got 3'),
      (rng.normal(size=(10, 4)), 'When array, events must have 2 or 3 columns, but got: 4'),  # noqa: E501
      (np.array([i for i in "abcd"]).reshape(2, -1), 'When array, all entries in events must be int'),  # noqa: E501
-     (events, ''),
+     (events_array, ''),
      (None, ''),
-     ([], ''),
+     (np.arange(90).reshape(30, 3), ''),
      ])
-def test_bv_writer_events(tmpdir, events_errormsg):
-    """Test that all event options work without throwing an error."""
+def test_bv_writer_events_array(tmpdir, events_errormsg):
+    """Test that all array-based event options work without throwing an error."""
+    kwargs = dict(data=data, sfreq=sfreq, ch_names=ch_names,
+                  fname_base=fname, folder_out=tmpdir)
+
+    ev, errormsg = events_errormsg
+    if errormsg:
+        with pytest.raises(ValueError, match=errormsg):
+            write_brainvision(**kwargs, events=ev)
+    else:
+        write_brainvision(**kwargs, events=ev)
+
+
+@pytest.mark.parametrize(
+    "events_errormsg",
+    [([{}, {"onset": 1}], "must have the keys 'onset' and 'description'"),
+     ([{"onset": 1, "description": 2}, 12], "When list, events must be a list of dict"),
+     ([{"onset": "1", "description": 2}], "events: `onset` must be int"),  # noqa: E501
+     (np.array([i for i in "abcd"]).reshape(2, -1), 'When array, all entries in events must be int'),  # noqa: E501
+     ([], ''),
+     (events, ''),
+     ])
+def test_bv_writer_events_list_of_dict(tmpdir, events_errormsg):
+    """Test that events are written properly when list of dict."""
     kwargs = dict(data=data, sfreq=sfreq, ch_names=ch_names,
                   fname_base=fname, folder_out=tmpdir)
 
@@ -64,7 +102,13 @@ def test_kw_only_args(tmpdir):
 
 
 def test_bv_writer_inputs(tmpdir):
-    """Test channels, sfreq=sfreq, and resolution."""
+    """Test data, channels, sfreq, resolution, ref_ch_names, and overwrite."""
+    with pytest.raises(ValueError, match='data must be np.ndarray'):
+        write_brainvision(data=[1, 2, 3], sfreq=sfreq, ch_names=ch_names,
+                          fname_base=fname, folder_out=tmpdir)
+    with pytest.raises(ValueError, match='data must be 2D: shape'):
+        write_brainvision(data=rng.normal(size=(3, 3, 3)), sfreq=sfreq,
+                          ch_names=ch_names, fname_base=fname, folder_out=tmpdir)
     with pytest.raises(ValueError, match='Number of channels in data'):
         write_brainvision(data=data[1:, :], sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir)
@@ -195,7 +239,7 @@ def test_write_read_cycle(tmpdir, meas_date, ref_ch_names):
     with pytest.warns(UserWarning, match="Encountered small Greek letter mu"):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           ref_ch_names=ref_ch_names, fname_base=fname,
-                          folder_out=tmpdir, events=events,
+                          folder_out=tmpdir, events=events_array,
                           resolution=np.power(10., -np.arange(10)),
                           unit='μV', meas_date=meas_date, overwrite=True)
     vhdr_fname = tmpdir / fname + '.vhdr'
@@ -210,8 +254,8 @@ def test_write_read_cycle(tmpdir, meas_date, ref_ch_names):
     assert sfreq == raw_written.info['sfreq']
 
     # event timing should be exactly the same
-    assert_array_equal(events[:, 0], events_written[:, 0])
-    assert_array_equal(events[:, 1], events_written[:, 2])
+    assert_array_equal(events_array[:, 0], events_written[:, 0])
+    assert_array_equal(events_array[:, 1], events_written[:, 2])
 
     assert len(event_id) == 2  # there should be two unique event types
 

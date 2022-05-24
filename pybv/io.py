@@ -379,13 +379,13 @@ def _chk_events(events, ch_names, n_times):
         del _events
 
     # validate input: list of dict
-    for iev, event in enumerate(events):
-
+    for event in events:
         # each item must be dict
         if not isinstance(event, dict):
             raise ValueError("When list, events must be a list of dict, but found "
                              "non-dict element in list")
 
+    for iev, event in enumerate(events):
         # required keys
         for required_key in ["onset", "description"]:
             if required_key not in event:
@@ -434,7 +434,9 @@ def _chk_events(events, ch_names, n_times):
             # NOTE: We format 1 -> "S  1", 10 -> "S 10", 100 -> "S100", etc.,
             # https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677
             if iev == 0:
-                max_event_descr = max([event["description"] for event in events])
+                max_event_descr = max([1] + [ev["description"]
+                                      for ev in events
+                                      if isinstance(ev["description"], int)])
             twidth = int(np.ceil(np.log10(max_event_descr)))
             twidth = max(3, twidth)
             tformat = event["type"][0] + '{:>' + str(twidth) + '}'
