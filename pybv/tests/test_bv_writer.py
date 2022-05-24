@@ -24,7 +24,7 @@ sfreq = 1000
 n_seconds = 5
 n_times = n_seconds * sfreq
 event_times = np.arange(1, 5)
-events = np.column_stack([event_times * sfreq, [1, 1, 2, 2]])
+events = np.column_stack([event_times * sfreq, [1, 1, 2, 2]]).astype(int)
 # scale random data to reasonable EEG signal magnitude in V
 data = rng.normal(size=(n_chans, n_times)) * 10 * 1e-6
 
@@ -35,12 +35,13 @@ data[-1, :] = 0.
 
 @pytest.mark.parametrize(
     "events_errormsg",
-    [([], 'events must be an ndarray of shape'),
-     (rng.normal(size=(10, 20, 30)), 'events must be an ndarray of shape'),
-     (rng.normal(size=(10, 4)), 'events must be an ndarray of shape'),
-     (np.array([i for i in "abcd"]).reshape(2, -1), 'events must be an ndarray of shape'),  # noqa: E501
+    [({}, 'events must be an array, a list of dict, or None'),
+     (rng.normal(size=(10, 20, 30)), 'When array, events must be 2D, but got 3'),
+     (rng.normal(size=(10, 4)), 'When array, events must have 2 or 3 columns, but got: 4'),  # noqa: E501
+     (np.array([i for i in "abcd"]).reshape(2, -1), 'When array, all entries in events must be int'),  # noqa: E501
      (events, ''),
-     (None, '')
+     (None, ''),
+     ([], ''),
      ])
 def test_bv_writer_events(tmpdir, events_errormsg):
     """Test that all event options work without throwing an error."""

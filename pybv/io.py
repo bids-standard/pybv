@@ -365,21 +365,21 @@ def _chk_events(events, ch_names, n_times):
                              "found other types")
 
         # convert array to list of dict
-        durations = np.ones(events.shape[0]) * event_defaults["duration"]
+        durations = np.ones(events.shape[0], dtype=int) * event_defaults["duration"]
         if events.ndim == 3:
             durations = events[:, -1]
         _events = []
         for irow, row in enumerate(events[:, 0:2]):
-            _events.append(dict(onset=row[0],
-                                duration=durations[irow],
-                                description=row[1],
+            _events.append(dict(onset=int(row[0]),
+                                duration=int(durations[irow]),
+                                description=int(row[1]),
                                 type=event_defaults["type"],
                                 channels=event_defaults["channels"]))
         events = _events
         del _events
 
     # validate input: list of dict
-    for event in events:
+    for iev, event in enumerate(events):
 
         # each item must be dict
         if not isinstance(event, dict):
@@ -433,7 +433,8 @@ def _chk_events(events, ch_names, n_times):
 
             # NOTE: We format 1 -> "S  1", 10 -> "S 10", 100 -> "S100", etc.,
             # https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677
-            max_event_descr = max([event["description"] for event in events])
+            if iev == 0:
+                max_event_descr = max([event["description"] for event in events])
             twidth = int(np.ceil(np.log10(max_event_descr)))
             twidth = max(3, twidth)
             tformat = event["type"][0] + '{:>' + str(twidth) + '}'
