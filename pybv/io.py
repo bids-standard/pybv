@@ -366,7 +366,7 @@ def _chk_events(events, ch_names, n_times):
 
         # convert array to list of dict
         durations = np.ones(events.shape[0], dtype=int) * event_defaults["duration"]
-        if events.ndim == 3:
+        if events.shape[1] == 3:
             durations = events[:, -1]
         _events = []
         for irow, row in enumerate(events[:, 0:2]):
