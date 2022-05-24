@@ -68,14 +68,15 @@ def write_brainvision(*, data, sfreq, ch_names,
         Events to write in the marker file (*.vmrk*). Defaults to ``None``
         (not writing any events).
 
-        If an array is passed, it must have either two or three columns.
-        The first column is always the zero-based index of each event
-        (corresponding to the "time" dimension of the `data` array).
-        The second column is a number associated with the "description" of
-        event. The (optional) third column specifies the length of each event
-        (default 1 sample). All events are written as type "Stimulus" and
-        must be numeric. For more fine grained control over how to write
-        events, pass a list of dict as described next.
+        If an array is passed, it must have either two or three columns and
+        consist of positive integer values. The first column is always the
+        zero-based "onset" index of each event (corresponding to the
+        "time" dimension of the `data` array). The second column is a number
+        associated with the "description" of the event. The (optional) third
+        column specifies the "duration" of each event in samples (default
+        1 sample). All events are written as type "Stimulus" and interpreted
+        as relevant to all channels. For more fine grained control over how to
+        write events, pass a list of dict as described next.
 
         If list of dict is passed, each dict in the list corresponds to an
         event and may have the following entries:
@@ -170,6 +171,12 @@ def write_brainvision(*, data, sfreq, ch_names,
     ...     os.remove('pybv_test_file' + ext)
     """  # noqa: E501
     # Input checks
+    if not isinstance(data, np.ndarray):
+        raise ValueError(f"data must be np.ndarray, but found: {type(data)}")
+
+    if not data.ndim == 2:
+        raise ValueError("data must be 2D: shape (n_channels, n_times)")
+
     if not isinstance(overwrite, bool):
         raise ValueError("overwrite must be a boolean (True or False).")
 
@@ -186,7 +193,7 @@ def write_brainvision(*, data, sfreq, ch_names,
     if len(set(ch_names)) != nchan:
         raise ValueError("Channel names must be unique, found duplicate name.")
 
-    events = _chk_events(events, ch_names)
+    events = _chk_events(events, ch_names, data.shape[1])
 
     # Ensure we have a list of strings as reference channel names
     if ref_ch_names is None:
@@ -307,7 +314,7 @@ def write_brainvision(*, data, sfreq, ch_names,
         raise
 
 
-def _chk_events(events, ch_names):
+def _chk_events(events, ch_names, n_times):
     """Check that the events parameter is as expected.
 
     This function may change events in-place. It will always return `events`
@@ -322,6 +329,8 @@ def _chk_events(events, ch_names):
         The events parameter as passed to :func:`pybv.write_brainvision`.
     ch_names : list of str, len (n_channels)
         The channel names, preprocessed in :func:`pybv.write_brainvision`.
+    n_times : int
+        The length of the data in samples.
 
     Returns
     -------
@@ -336,6 +345,9 @@ def _chk_events(events, ch_names):
         events = []
 
     # default events
+    # NOTE: using "ch_names" as default for channels translates directly
+    #       into "all" but is robust with respect to channels named
+    #       "all"
     event_defaults = dict(duration=1, type="Stimulus", channels=ch_names)
 
     # validate input: ndarray
@@ -343,9 +355,11 @@ def _chk_events(events, ch_names):
         if events.ndim != 2:
             raise ValueError(f"When array, events must be 2D, but got {events.ndim}")
         if events.shape[1] not in (2, 3):
-            raise ValueError(f"When array, events must have 2 or 3 columns, but got: {events.shape[1]}")
+            raise ValueError("When array, events must have 2 or 3 columns, "
+                             f"but got: {events.shape[1]}")
         if not all([np.issubdtype(i, np.integer) for i in events.flat]):
-            raise ValueError("When array, all entries in events must be int, but found other types")
+            raise ValueError("When array, all entries in events must be int, but "
+                             "found other types")
 
         # convert array to list of dict
         durations = np.ones(events.shape[0]) * event_defaults["duration"]
@@ -366,17 +380,16 @@ def _chk_events(events, ch_names):
 
         # each item must be dict
         if not isinstance(event, dict):
-            raise ValueError("When list, events must be a list of dict, but found non-dict element in list")
+            raise ValueError("When list, events must be a list of dict, but found "
+                             "non-dict element in list")
 
         # required keys
         for required_key in ["onset", "description"]:
             if required_key not in event:
-                raise ValueError("When list of dict, each dict in events must have the keys 'onset' and 'description'")
+                raise ValueError("When list of dict, each dict in events must have "
+                                 "the keys 'onset' and 'description'")
 
         # populate keys with default if missing (in-place)
-        # NOTE: using "ch_names" as default for channels translates directly
-        #       into "all" but is robust with respect to channels named
-        #       "all"
         for optional_key, default in event_defaults.items():
             event[optional_key] = event.get(optional_key, default)
 
@@ -386,6 +399,18 @@ def _chk_events(events, ch_names):
             if not isinstance(event[key], int):
                 raise ValueError(f"events: `{key}` must be int")
 
+        if not (0 <= event["onset"] < n_times):
+            raise ValueError("events: at least one onset sample is not in range of "
+                             f"data (0-{n_times-1})")
+
+        if event["duration"] < 1:
+            raise ValueError("events: at least one duration is negative. Durations "
+                             "must be >= 1 sample.")
+
+        if not (0 <= event["onset"] + event["duration"] < n_times):
+            raise ValueError("events: at least one event has a duration that exceeds "
+                             f"the range of data (0-{n_times-1})")
+
         # `type`
         event_types = ["Stimulus", "Response", "Comment"]
         if event["type"] not in event_types:
@@ -394,11 +419,17 @@ def _chk_events(events, ch_names):
         # `description`
         if event["type"] in ["Stimulus", "Response"]:
             if not isinstance(event["description"], int):
-                raise ValueError(f"events: when `type` is {event['type']}, `description` must be int")
+                raise ValueError(f"events: when `type` is {event['type']}, "
+                                 "`description` must be int")
+
+            if event["description"] < 1:
+                raise ValueError("events: descriptions must be positve ints.")
+
         else:
             assert event["type"] == "Comment"
             if not isinstance(event["description"], (int, str)):
-                raise ValueError(f"events: when `type` is {event['type']}, `description` must be str or int")
+                raise ValueError(f"events: when `type` is {event['type']}, "
+                                 "`description` must be str or int")
 
         # `channels`
         # "all" becomes ch_names (list of all channel names)
@@ -409,7 +440,12 @@ def _chk_events(events, ch_names):
         if isinstance(event["channels"], str):
             if event["channels"] == "all":
                 if "all" in ch_names:
-                    raise ValueError("Found channel named 'all'. Your `channels` specification in events is also 'all': This is ambiguous, because 'all' is a reserved keyword. Either rename the channel called 'all', or explicitly list all ch_names in `channels` in each event instead of using 'all'")
+                    raise ValueError(
+                        "Found channel named 'all'. Your `channels` specification in "
+                        "events is also 'all': This is ambiguous, because 'all' is a "
+                        "reserved keyword. Either rename the channel called 'all', "
+                        "or explicitly list all ch_names in `channels` in each event "
+                        "instead of using 'all'")
                 event["channels"] = ch_names
             else:
                 event["channels"] = [event["channels"]]
@@ -417,15 +453,25 @@ def _chk_events(events, ch_names):
         # now channels is a list
         for ch in event["channels"]:
             if not isinstance(ch, (str, int)):
-                raise ValueError("events: `channels` must be list of str or int corresponding to ch_names")
+                raise ValueError("events: `channels` must be list of str or list of "
+                                 "int corresponding to ch_names")
 
             if str(ch) not in ch_names:
-                raise ValueError(f"events: found channel name that is not present in the data: {ch}")
+                raise ValueError(
+                    f"events: found channel name that is not present in the data: {ch}"
+                    )
 
         # check for duplicates
         event["channels"] = [str(ch) for ch in event["channels"]]
         if len(set(event["channels"])) != len(event["channels"]):
             raise ValueError("events: found duplicate channel names")
+
+        # warn if more than one but less than all channels are specified
+        # (experimental feature)
+        if len(event["channels"]) > 1 and len(event["channels"]) < len(ch_names):
+            warn("events: you specified at least one event that impacts more "
+                 "than one but less than all channels in the data. This "
+                 "feature may not be supported by all BrainVision readers.")
 
     return events
 
