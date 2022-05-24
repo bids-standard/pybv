@@ -473,6 +473,12 @@ def _chk_events(events, ch_names, n_times):
                  "than one but less than all channels in the data. This "
                  "feature may not be supported by all BrainVision readers.")
 
+        # convert channels to indices (1-based, 0="all")
+        ch_idxs = [ch_names.index(ch) + 1 for ch in event["channels"]]
+        if set(ch_idxs) == {i + 1 for i in range(len(ch_names))}:
+            ch_idxs = [0]
+        event["channels"] = sorted(ch_idxs)
+
     return events
 
 
