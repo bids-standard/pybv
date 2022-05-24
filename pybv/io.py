@@ -87,9 +87,9 @@ def write_brainvision(*, data, sfreq, ch_names,
             - ``duration`` : int
                 The duration of the event in samples (defaults to ``1``).
             - ``description`` : str | int
-                The description of the event. Must be an integer when `type`
-                (see below) is either "Stimulus" or "Response", and may be
-                a string when `type` is "Comment".
+                The description of the event. Must be a positive integer when
+                `type` (see below) is either "Stimulus" or "Response", and may
+                be a string when `type` is "Comment".
             - ``type`` : str
                 The type of the event, must be one of {"Stimulus", "Comment",
                 "Response"} (defaults to ``"Stimulus"``). The following
@@ -233,7 +233,7 @@ def write_brainvision(*, data, sfreq, ch_names,
 
     resolution = np.atleast_1d(resolution)
     if not np.issubdtype(resolution.dtype, np.number):
-        raise ValueError(f"Resolution should be numeric, is {resolution.dtype}")  # noqa: E501
+        raise ValueError(f"Resolution should be numeric, is {resolution.dtype}")
 
     if resolution.shape != (1,) and resolution.shape != (nchan,):
         raise ValueError("Resolution should be one or n_channels floats")
@@ -321,7 +321,10 @@ def _chk_events(events, ch_names, n_times):
     as a list of dicts. If `events` was ``None``, it will be an empty list.
     If `events` was a list of dict, it will add missing keys to each dict with
     default values, and it will turn events[i]["channels"] into a list of
-    1-based channel name indices, where 0 = "all".
+    1-based channel name indices, where 0 = "all". Event descriptions for
+    "Stimulus" and "Response" will be reformatted to the "Sxxx" or "Rxxx"
+    format. Each events[i]["onset"] will be incremented by 1 for 1-based
+    indexing used in VMRK.
 
     Parameters
     ----------
@@ -411,6 +414,8 @@ def _chk_events(events, ch_names, n_times):
             raise ValueError("events: at least one event has a duration that exceeds "
                              f"the range of data (0-{n_times-1})")
 
+        event["onset"] = event["onset"] + 1  # VMRK uses 1-based indexing
+
         # `type`
         event_types = ["Stimulus", "Response", "Comment"]
         if event["type"] not in event_types:
@@ -423,13 +428,23 @@ def _chk_events(events, ch_names, n_times):
                                  "`description` must be int")
 
             if event["description"] < 1:
-                raise ValueError("events: descriptions must be positve ints.")
+                raise ValueError(f"events: when `type` is {event['type']}, "
+                                 "descriptions must be positve ints.")
+
+            # NOTE: We format 1 -> "S  1", 10 -> "S 10", 100 -> "S100", etc.,
+            # https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677
+            max_event_descr = max([event["description"] for event in events])
+            twidth = int(np.ceil(np.log10(max_event_descr)))
+            twidth = max(3, twidth)
+            tformat = event["type"][0] + '{:>' + str(twidth) + '}'
+            event["description"] = tformat.format(event["description"])
 
         else:
             assert event["type"] == "Comment"
             if not isinstance(event["description"], (int, str)):
                 raise ValueError(f"events: when `type` is {event['type']}, "
                                  "`description` must be str or int")
+            event["description"] = str(event["description"])
 
         # `channels`
         # "all" becomes ch_names (list of all channel names)
@@ -495,7 +510,7 @@ def _chk_multiplexed(orientation):
     """Validate an orientation, return if it is multiplexed or not."""
     if orientation not in SUPPORTED_ORIENTS:
         errmsg = (f'Orientation {orientation} not supported. Currently '
-                  f'supported orientations are: {", ".join(SUPPORTED_ORIENTS)}')  # noqa: E501
+                  f'supported orientations are: {", ".join(SUPPORTED_ORIENTS)}')
         raise ValueError(errmsg)
     return orientation == 'multiplexed'
 
@@ -515,33 +530,18 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
         print(';             <Size in data points>, <Channel number (0 = marker is related to all channels)>', file=fout)  # noqa: E501
         print(';             <Date (YYYYMMDDhhmmssuuuuuu)>', file=fout)
         print('; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
-        print(r'; Commas in type or description text are coded as "\1".', file=fout)  # noqa: E501
+        print(r'; Commas in type or description text are coded as "\1".', file=fout)
         if meas_date is not None:
             print(f'Mk1=New Segment,,1,1,0,{meas_date}', file=fout)
 
-        if events is None or len(events) == 0:
-            return
+        iev = 1 if meas_date is None else 2
+        for ev in events:
 
-        if events.shape[1] == 2:  # add third column with event durations of 1
-            events = np.column_stack([events, np.ones(len(events), dtype=int)])
-
-        # Handle events: We write all of them as "Stimulus" events for now.
-        # This is a string staring with "S" and followed by an integer of
-        # minimum length 3, padded with "space" if the integer is < length 3.
-        # For example "S  1", "S 23", "S345"
-        # XXX: see https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677  # noqa: E501
-        twidth = int(np.ceil(np.log10(np.max(events[:, 1]))))
-        twidth = max(3, twidth)
-        tformat = 'S{:>' + str(twidth) + '}'
-
-        # Currently all events are written as type "Stimulus"
-        # Currently all event descriptions must be numeric
-        for marker_number, irow in enumerate(range(len(events)), start=1 if meas_date is None else 2):  # noqa: E501
-            i_ix = events[irow, 0] + 1  # BrainVision uses 1-based indexing
-            i_val = events[irow, 1]
-            i_dur = events[irow, 2]
-            print(f'Mk{marker_number}=Stimulus,{tformat.format(i_val)},{i_ix},'
-                  f'{i_dur},0', file=fout)
+            # Write event once for each channel that this event is relevant for
+            # https://github.com/bids-standard/pybv/pull/77
+            for ch in ev["channels"]:
+                print(f"Mk{iev}={ev['type']},{ev['description']},{ev['onset']},{ev['duration']},{ch}", file=fout)  # noqa: E501
+                iev += 1
 
 
 def _scale_data_to_unit(data, units):
@@ -605,7 +605,7 @@ def _write_vhdr_file(*, vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
             print('DataFormat=BINARY', file=fout)
 
         if multiplexed:
-            print('; Data orientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...', file=fout)  # noqa: E501
+            print('; Data orientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...', file=fout)
             print('DataOrientation=MULTIPLEXED', file=fout)
 
         print(f'NumberOfChannels={len(data)}', file=fout)
@@ -620,7 +620,7 @@ def _write_vhdr_file(*, vhdr_fname, vmrk_fname, eeg_fname, data, sfreq,
 
         print('[Channel Infos]', file=fout)
         print('; Each entry: Ch<Channel number>=<Name>,<Reference channel name>,', file=fout)  # noqa: E501
-        print('; <Resolution in "Unit">,<Unit>, Future extensions..', file=fout)  # noqa: E501
+        print('; <Resolution in "Unit">,<Unit>, Future extensions..', file=fout)
         print('; Fields are delimited by commas, some fields might be omitted (empty).', file=fout)  # noqa: E501
         print(r'; Commas in channel names are coded as "\1".', file=fout)
 
