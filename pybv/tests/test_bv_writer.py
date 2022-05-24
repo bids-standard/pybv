@@ -76,8 +76,10 @@ def test_bv_writer_events_array(tmpdir, events_errormsg):
     "events_errormsg",
     [([{}, {"onset": 1}], "must have the keys 'onset' and 'description'"),
      ([{"onset": 1, "description": 2}, 12], "When list, events must be a list of dict"),
-     ([{"onset": "1", "description": 2}], "events: `onset` must be int"),  # noqa: E501
-     (np.array([i for i in "abcd"]).reshape(2, -1), 'When array, all entries in events must be int'),  # noqa: E501
+     ([{"onset": "1", "description": 2}], "events: `onset` must be int"),
+     ([{"onset": 1, "description": 1, "channels": "bogus"}], "found channel .* bogus"),
+     ([{"onset": 1, "description": 1, "channels": ["ch_1", "ch_1"]}], "events: found duplicate channel names"),  # noqa: E501
+     ([{"onset": 1, "description": 1, "channels": ["ch_1", "ch_2"]}], "warn___feature may not be supported"),  # noqa: E501
      ([], ''),
      (events, ''),
      ])
@@ -87,7 +89,11 @@ def test_bv_writer_events_list_of_dict(tmpdir, events_errormsg):
                   fname_base=fname, folder_out=tmpdir)
 
     ev, errormsg = events_errormsg
-    if errormsg:
+    if errormsg.startswith("warn"):
+        warnmsg = errormsg.split("___")[-1]
+        with pytest.warns(UserWarning, match=warnmsg):
+            write_brainvision(**kwargs, events=ev)
+    elif len(errormsg) > 0:
         with pytest.raises(ValueError, match=errormsg):
             write_brainvision(**kwargs, events=ev)
     else:
