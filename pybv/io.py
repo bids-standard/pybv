@@ -310,16 +310,33 @@ def write_brainvision(*, data, sfreq, ch_names,
 def _chk_events(events, ch_names):
     """Check that the events parameter is as expected.
 
-    This function may change events in-place. It will add missing keys with
+    This function may change events in-place. It will always return `events`
+    as a list of dicts. If `events` was ``None``, it will be an empty list.
+    If `events` was a list of dict, it will add missing keys to each dict with
     default values, and it will turn events[i]["channels"] into a list of
     1-based channel name indices, where 0 = "all".
-    """
+
+    Parameters
+    ----------
+    events : np.ndarray, shape (n_events, {2, 3}) | list of dict, len (n_events) | None
+        The events parameter as passed to :func:`pybv.write_brainvision`.
+    ch_names : list of str, len (n_channels)
+        The channel names, preprocessed in :func:`pybv.write_brainvision`.
+
+    Returns
+    -------
+    events : list of dict, len (n_events)
+        The preprocessed events, always provided as list of dict.
+    """  # noqa: E501
     if not isinstance(events, (type(None), np.ndarray, list)):
         raise ValueError("events must be an array, a list of dict, or None")
 
     # validate input: None
     if isinstance(events, type(None)):
-        return events
+        events = []
+
+    # default events
+    event_defaults = dict(duration=1, type="Stimulus", channels=ch_names)
 
     # validate input: ndarray
     if isinstance(events, np.ndarray):
@@ -327,13 +344,24 @@ def _chk_events(events, ch_names):
             raise ValueError(f"When array, events must be 2D, but got {events.ndim}")
         if events.shape[1] not in (2, 3):
             raise ValueError(f"When array, events must have 2 or 3 columns, but got: {events.shape[1]}")
-        try:
-            events.astype(float)
-        except ValueError:
-            raise ValueError("When array, events must be numeric, but found non-numeric types")
+        if not all([np.issubdtype(i, np.integer) for i in events.flat]):
+            raise ValueError("When array, all entries in events must be int, but found other types")
+
+        # convert array to list of dict
+        durations = np.ones(events.shape[0]) * event_defaults["duration"]
+        if events.ndim == 3:
+            durations = events[:, -1]
+        _events = []
+        for irow, row in enumerate(events[:, 0:2]):
+            _events.append(dict(onset=row[0],
+                                duration=durations[irow],
+                                description=row[1],
+                                type=event_defaults["type"],
+                                channels=event_defaults["channels"]))
+        events = _events
+        del _events
 
     # validate input: list of dict
-    assert isinstance(events, list)  # must be true
     for event in list:
 
         # each item must be dict
@@ -349,7 +377,6 @@ def _chk_events(events, ch_names):
         # NOTE: using "ch_names" as default for channels translates directly
         #       into "all" but is robust with respect to channels named
         #       "all"
-        event_defaults = dict(duration=1, type="Stimulus", channels=ch_names)
         for optional_key, default in event_defaults.items():
             event[optional_key] = event.get(optional_key, default)
 
