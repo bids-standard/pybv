@@ -75,7 +75,7 @@ def test_bv_writer_events_array(tmpdir, events_errormsg):
 @pytest.mark.parametrize(
     "events_errormsg",
     [([{}, {"onset": 1}], "must have the keys 'onset' and 'description'"),
-     ([{"onset": 1, "description": 2}, 12], "When list, events must be a list of dict"),
+     ([{"onset": 1, "description": 2}, np.ones(12)], "events must be a list of dict"),
      ([{"onset": "1", "description": 2}], "events: `onset` must be int"),
      ([{"onset": -1, "description": 2}], r"events: at least one onset sample is not in range of data \(0-4999\)"),  # noqa: E501
      ([{"onset": 100, "description": 1, "duration": 0}], "events: at least one duration is too short."),  # noqa: E501
