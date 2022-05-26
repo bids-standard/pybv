@@ -39,9 +39,9 @@ def write_brainvision(*, data, sfreq, ch_names,
     Parameters
     ----------
     data : np.ndarray, shape (n_channels, n_times)
-        The raw data to export. Voltage data is assumed to be in **Volts** and
+        The raw data to export. Voltage data is assumed to be in **volts** and
         will be scaled as specified by `unit`. Non-voltage channels (as
-        specified by `unit`) are never scaled (e.g. '°C').
+        specified by `unit`) are never scaled (e.g. "°C").
     sfreq : int | float
         The sampling frequency of the data in Hz.
     ch_names : list of {str | int}, len (n_channels)
@@ -69,13 +69,13 @@ def write_brainvision(*, data, sfreq, ch_names,
         (not writing any events).
 
         If an array is passed, it must have either two or three columns and
-        consist of positive integer values. The first column is always the
-        zero-based "onset" index of each event (corresponding to the
-        "time" dimension of the `data` array). The second column is a number
-        associated with the "description" of the event. The (optional) third
-        column specifies the "duration" of each event in samples (default
-        1 sample). All events are written as type "Stimulus" and interpreted
-        as relevant to all channels. For more fine grained control over how to
+        consist of positive int values. The first column is always the
+        zero-based *onset* index of each event (corresponding to the
+        time dimension of the `data` array). The second column is a number
+        associated with the *description* of the event. The (optional) third
+        column specifies the *duration* of each event in samples (defaults to
+        ``1``). All events are written as *type* "Stimulus" and interpreted
+        as relevant to all *channels*. For more fine grained control over how to
         write events, pass a list of dict as described next.
 
         If list of dict is passed, each dict in the list corresponds to an
@@ -83,18 +83,18 @@ def write_brainvision(*, data, sfreq, ch_names,
 
             - ``onset`` : int
                 The zero-based index of the event onset, corresponding to the
-                "time" dimension of the `data` array.
+                time dimension of the `data` array.
             - ``duration`` : int
                 The duration of the event in samples (defaults to ``1``).
             - ``description`` : str | int
-                The description of the event. Must be a positive integer when
+                The description of the event. Must be a positive int when
                 `type` (see below) is either "Stimulus" or "Response", and may
-                be a string when `type` is "Comment".
+                be a str when `type` is "Comment".
             - ``type`` : str
-                The type of the event, must be one of {"Stimulus", "Comment",
-                "Response"} (defaults to ``"Stimulus"``). The following
-                known BrainVision "types" are currently **not** supported:
-                "New Segment", "SyncStatus".
+                The type of the event, must be one of {"Stimulus", "Response",
+                "Comment"} (defaults to ``"Stimulus"``). Additional types like
+                the known BrainVision types "New Segment", "SyncStatus", etc.
+                are currently not supported.
             - ``channels`` : str | list of {str | int}
                 The channels that are impacted by the event. Can be "all"
                 (reflecting all channels) or a channel name, or a list of
@@ -117,38 +117,43 @@ def write_brainvision(*, data, sfreq, ch_names,
         n_channels elements, each channel is scaled with its own corresponding
         resolution from the array. Note that `resolution` is applied on top
         of the default resolution that a data format (see `fmt`) has. For
-        example, the 'binary_int16' format by design has no floating point
+        example, the "binary_int16" format by design has no floating point
         support, but when scaling the data in µV for 0.1 resolution (default),
         accurate writing for all values >= 0.1 µV is guaranteed. In contrast,
-        the 'binary_float32' format by design already supports floating points
-        up to 1e-6 resolution, and writing data in 'µV' with 0.1 resolution
-        will thus guarantee accurate writing for all values >= 1e-7 'µV'
+        the "binary_float32" format by design already supports floating points
+        up to 1e-6 resolution, and writing data in "µV" with 0.1 resolution
+        will thus guarantee accurate writing for all values >= 1e-7 "µV"
         (``1e-6 * 0.1``).
     unit : str | list of str
-        The unit of the exported data. This can be one of 'V', 'mV', 'µV' (or
-        equivalently 'uV') , or 'nV', which will scale the data accordingly.
-        Defaults to ``'µV'``. Can also be a list of units with one unit per
+        The unit of the exported data. This can be one of "V", "mV", "µV" (or
+        equivalently "uV") , or "nV", which will scale the data accordingly.
+        Defaults to ``"µV"``. Can also be a list of units with one unit per
         channel. Non-voltage channels are stored as is, for example
-        temperature might be available in '°C', which ``pybv`` will not scale.
+        temperature might be available in "°C", which ``pybv`` will not scale.
     fmt : str
         Binary format the data should be written as. Valid choices are
-        'binary_float32' (default) and 'binary_int16'.
+        "binary_float32" (default) and "binary_int16".
     meas_date : datetime.datetime | str | None
         The measurement date specified as a :class:`datetime.datetime` object.
-        Alternatively, can be a str in the format 'YYYYMMDDhhmmssuuuuuu'
-        ('u' stands for microseconds). Note that setting a measurement date
+        Alternatively, can be a str in the format "YYYYMMDDhhmmssuuuuuu"
+        ("u" stands for microseconds). Note that setting a measurement date
         implies that one additional event is created in the *.vmrk* file. To
         prevent this, set this parameter to ``None`` (default).
 
     Notes
     -----
-    iEEG/EEG/MEG data is assumed to be in 'V', and we will scale these data to
-    'µV' by default. Any unit besides 'µV' is officially unsupported in the
+    iEEG/EEG/MEG data is assumed to be in "V", and ``pybv`` will scale these data
+    to "µV" by default. Any unit besides "µV" is officially unsupported in the
     BrainVision specification. However, if one specifies other voltage units
-    such as 'mV' or 'nV', we will still scale the signals accordingly in the
+    such as "mV" or "nV", we will still scale the signals accordingly in the
     exported file. We will also write channels with non-voltage units such as
-    '°C' as is (without scaling). For maximum compatibility, all signals
-    should be written as 'µV'.
+    "°C" as is (without scaling). For maximum compatibility, all signals
+    should be written as "µV".
+
+    When passing a list of dict to `events`, the event ``type`` that can be passed
+    is currently limited to one of {"Stimulus", "Response", "Comment"}. The
+    BrainVision specification itself does not limit event types, and future
+    extensions of ``pybv`` may permit additional or even arbitrary event types.
 
     References
     ----------
@@ -162,13 +167,13 @@ def write_brainvision(*, data, sfreq, ch_names,
     ... # rescaled to µV and mV respectively.
     ... # TEMP is expected to be in some other unit (i.e., NOT Volt), and
     ... # will not get scaled (it is "written as is")
-    ... write_brainvision(data=data, sfreq=1, ch_names=['A1', 'A2', 'TEMP'],
-    ...                   folder_out='./',
-    ...                   fname_base='pybv_test_file',
-    ...                   unit=['µV', 'mV', '°C'])
+    ... write_brainvision(data=data, sfreq=1, ch_names=["A1", "A2", "TEMP"],
+    ...                   folder_out="./",
+    ...                   fname_base="pybv_test_file",
+    ...                   unit=["µV", "mV", "°C"])
     >>> # remove the files
-    >>> for ext in ['.vhdr', '.vmrk', '.eeg']:
-    ...     os.remove('pybv_test_file' + ext)
+    >>> for ext in [".vhdr", ".vmrk", ".eeg"]:
+    ...     os.remove("pybv_test_file" + ext)
     """  # noqa: E501
     # Input checks
     if not isinstance(data, np.ndarray):
