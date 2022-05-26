@@ -1,5 +1,6 @@
 """BrainVision writer."""
 
+import copy
 import datetime
 import os
 import shutil
@@ -322,8 +323,8 @@ def write_brainvision(*, data, sfreq, ch_names,
 def _chk_events(events, ch_names, n_times):
     """Check that the events parameter is as expected.
 
-    This function may change events in-place. It will always return `events`
-    as a list of dicts. If `events` was ``None``, it will be an empty list.
+    This function will always return `events` as a list of dicts.
+    If `events` was ``None``, it will be an empty list.
     If `events` was a list of dict, it will add missing keys to each dict with
     default values, and it will turn events[i]["channels"] into a list of
     1-based channel name indices, where 0 = "all". Event descriptions for
@@ -342,7 +343,7 @@ def _chk_events(events, ch_names, n_times):
 
     Returns
     -------
-    events : list of dict, len (n_events)
+    events_out : list of dict, len (n_events)
         The preprocessed events, always provided as list of dict.
     """  # noqa: E501
     if not isinstance(events, (type(None), np.ndarray, list)):
@@ -350,7 +351,7 @@ def _chk_events(events, ch_names, n_times):
 
     # validate input: None
     if isinstance(events, type(None)):
-        events = []
+        events_out = []
 
     # default events
     # NOTE: using "ch_names" as default for channels translates directly
@@ -373,24 +374,27 @@ def _chk_events(events, ch_names, n_times):
         durations = np.ones(events.shape[0], dtype=int) * event_defaults["duration"]
         if events.shape[1] == 3:
             durations = events[:, -1]
-        _events = []
+        events_out = []
         for irow, row in enumerate(events[:, 0:2]):
-            _events.append(dict(onset=int(row[0]),
-                                duration=int(durations[irow]),
-                                description=int(row[1]),
-                                type=event_defaults["type"],
-                                channels=event_defaults["channels"]))
-        events = _events
-        del _events
+            events_out.append(dict(onset=int(row[0]),
+                                   duration=int(durations[irow]),
+                                   description=int(row[1]),
+                                   type=event_defaults["type"],
+                                   channels=event_defaults["channels"]))
 
     # validate input: list of dict
-    for event in events:
+    if isinstance(events, list):
+        # we must not edit the original parameter
+        events_out = [copy.deepcopy(i) for i in events]
+
+    # now always list of dict: do full validation
+    for event in events_out:
         # each item must be dict
         if not isinstance(event, dict):
             raise ValueError("When list, events must be a list of dict, but found "
                              "non-dict element in list")
 
-    for iev, event in enumerate(events):
+    for iev, event in enumerate(events_out):
         # required keys
         for required_key in ["onset", "description"]:
             if required_key not in event:
@@ -440,7 +444,7 @@ def _chk_events(events, ch_names, n_times):
             # https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677
             if iev == 0:
                 max_event_descr = max([1] + [ev["description"]
-                                      for ev in events
+                                      for ev in events_out
                                       if isinstance(ev["description"], int)])
             twidth = int(np.ceil(np.log10(max_event_descr)))
             twidth = max(3, twidth)
@@ -502,7 +506,7 @@ def _chk_events(events, ch_names, n_times):
             ch_idxs = [0]
         event["channels"] = sorted(ch_idxs)
 
-    return events
+    return events_out
 
 
 def _chk_fmt(fmt):
