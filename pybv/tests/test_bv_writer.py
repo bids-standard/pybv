@@ -95,7 +95,7 @@ def test_bv_writer_events_array(tmpdir, events_errormsg):
      ([{"onset": 1, "description": 1, "channels": 1}], "events: `channels` must be str or list of str"),  # noqa: E501
      ([{"onset": 1, "description": 1, "channels": [{}]}], "be list of str or list of int corresponding to ch_names"),  # noqa: E501
      ([], ''),
-     (events, ''),
+     (events, 'warn___you specified at least one event that impacts more than one'),
      ])
 def test_bv_writer_events_list_of_dict(tmpdir, events_errormsg):
     """Test that events are written properly when list of dict."""
