@@ -33,6 +33,7 @@ Current (unreleased)
 Changelog
 ~~~~~~~~~
 - Added an overview table of alternative software for BrainVision data, by `Stefan Appelhoff`_: (:gh:`85`)
+- :func:`pybv.write_brainvision` now accepts a list of dict as argument to the ``events`` parameter, allowing for more control over what to write to ``.vmrk``, by `Stefan Appelhoff`_: (:gh:`86`)
 
 0.6.0 (2021-09-29)
 ==================
@@ -54,7 +55,7 @@ Bug
 
 Changelog
 ~~~~~~~~~
-- :func:`pybv.write_brainvision` adds support for channels with non-Volt units, by `Adam Li`_ (:gh:`66`)
+- :func:`pybv.write_brainvision` adds support for channels with non-volt units, by `Adam Li`_ (:gh:`66`)
 - :func:`pybv.write_brainvision` automatically converts ``uV`` and ``μV`` (Greek μ) to ``µV`` (micro sign µ), by `Adam Li`_ (:gh:`66`)
 
 API
