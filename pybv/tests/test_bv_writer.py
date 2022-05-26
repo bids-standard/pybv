@@ -32,13 +32,18 @@ events = [
      "type": "Stimulus",
      "channels": "all",
      },
-    {"onset": 100,
+    {"onset": 0,
      "description": "Some string :-)",
      "type": "Comment",
      "channels": "ch_1",
      },
+    {"onset": 1000,
+     "description": 2,
+     "type": "Response",
+     "channels": ["ch_1", "ch_2"],
+     },
     {"onset": 200,
-     "description": 1,
+     "description": 1234,
      },
 ]
 # scale random data to reasonable EEG signal magnitude in V
@@ -504,3 +509,40 @@ def test_overwrite(tmpdir):
         write_brainvision(data=data, sfreq=sfreq, ch_names=ch_names,
                           fname_base=fname, folder_out=tmpdir,
                           overwrite=False)
+
+
+def test_event_writing(tmpdir):
+    """Test writing some advanced event specifications."""
+    kwargs = dict(data=data, sfreq=sfreq, ch_names=ch_names,
+                  fname_base=fname, folder_out=tmpdir)
+
+    with pytest.warns(UserWarning, match="Such events will be written to .vmrk"):
+        write_brainvision(**kwargs, events=events)
+
+    vhdr_fname = tmpdir / fname + '.vhdr'
+    raw = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname, preload=True)
+
+    # should be one more, because event[3] is written twice (once per channel)
+    assert len(raw.annotations) == len(events) + 1
+
+    # note: mne orders events by onset, use sorted
+    onsets = np.array([ev["onset"] / raw.info["sfreq"] for ev in events])
+    onsets = sorted(onsets) + [1.]  # add duplicate event (due to channels)
+    np.testing.assert_array_equal(raw.annotations.onset, onsets)
+
+    # mne does not (yet; at 1.0.3) read ch_names for annotations from vmrk
+    np.testing.assert_array_equal([i for i in raw.annotations.ch_names],
+                                  [() for i in range(len(events) + 1)])
+
+    # test duration and description as well
+    durations = [i / raw.info["sfreq"] for i in (1, 10, 1, 1, 1)]
+    np.testing.assert_array_equal(raw.annotations.duration, durations)
+
+    descr = ['Comment/Some string :-)', 'Stimulus/S   1', 'Stimulus/S1234',
+             'Response/R   2', 'Response/R   2']
+    np.testing.assert_array_equal(raw.annotations.description, descr)
+
+    # smoke test forming events from annotations
+    _events, _event_id = mne.events_from_annotations(raw)
+    for _d in descr:
+        assert _d in _event_id

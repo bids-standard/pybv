@@ -497,8 +497,10 @@ def _chk_events(events, ch_names, n_times):
         # (experimental feature)
         if len(event["channels"]) > 1 and len(event["channels"]) < len(ch_names):
             warn("events: you specified at least one event that impacts more "
-                 "than one but less than all channels in the data. This "
-                 "feature may not be supported by all BrainVision readers.")
+                 "than one but less than all channels in the data. "
+                 "Such events will be written to .vmrk for as many times as "
+                 "channels are specified.\n\n"
+                 "This feature may not be supported by all BrainVision readers.")
 
         # convert channels to indices (1-based, 0="all")
         ch_idxs = [ch_names.index(ch) + 1 for ch in event["channels"]]
