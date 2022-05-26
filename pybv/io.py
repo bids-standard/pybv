@@ -412,7 +412,7 @@ def _chk_events(events, ch_names, n_times):
                              f"data (0-{n_times-1})")
 
         if event["duration"] < 1:
-            raise ValueError("events: at least one duration is negative. Durations "
+            raise ValueError("events: at least one duration is too short. Durations "
                              "must be >= 1 sample.")
 
         if not (0 <= event["onset"] + event["duration"] < n_times):
@@ -430,7 +430,7 @@ def _chk_events(events, ch_names, n_times):
         if event["type"] in ["Stimulus", "Response"]:
             if not isinstance(event["description"], int):
                 raise ValueError(f"events: when `type` is {event['type']}, "
-                                 "`description` must be int")
+                                 "`description` must be positive int")
 
             if event["description"] < 1:
                 raise ValueError(f"events: when `type` is {event['type']}, "

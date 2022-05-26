@@ -77,9 +77,18 @@ def test_bv_writer_events_array(tmpdir, events_errormsg):
     [([{}, {"onset": 1}], "must have the keys 'onset' and 'description'"),
      ([{"onset": 1, "description": 2}, 12], "When list, events must be a list of dict"),
      ([{"onset": "1", "description": 2}], "events: `onset` must be int"),
+     ([{"onset": -1, "description": 2}], r"events: at least one onset sample is not in range of data \(0-4999\)"),  # noqa: E501
+     ([{"onset": 100, "description": 1, "duration": 0}], "events: at least one duration is too short."),  # noqa: E501
+     ([{"onset": 100, "description": 1, "duration": 4901}], "events: at least one event has a duration that exceeds"),  # noqa: E501
+     ([{"onset": 1, "description": 2, "type": "bogus"}], "`type` must be one of"),  # noqa: E501
+     ([{"onset": 1, "description": "bogus"}], "when `type` is Stimulus, `description` must be positive int"),  # noqa: E501
+     ([{"onset": 1, "description": {}, "type": "Comment"}], "when `type` is Comment, `description` must be str or int"),  # noqa: E501
+     ([{"onset": 1, "description": -1}], "when `type` is Stimulus, descriptions must be positve ints."),  # noqa: E501
      ([{"onset": 1, "description": 1, "channels": "bogus"}], "found channel .* bogus"),
      ([{"onset": 1, "description": 1, "channels": ["ch_1", "ch_1"]}], "events: found duplicate channel names"),  # noqa: E501
      ([{"onset": 1, "description": 1, "channels": ["ch_1", "ch_2"]}], "warn___feature may not be supported"),  # noqa: E501
+     ([{"onset": 1, "description": 1, "channels": 1}], "events: `channels` must be str or list of str"),  # noqa: E501
+     ([{"onset": 1, "description": 1, "channels": [{}]}], "be list of str or list of int corresponding to ch_names"),  # noqa: E501
      ([], ''),
      (events, ''),
      ])
@@ -158,6 +167,10 @@ def test_bv_writer_inputs(tmpdir):
         write_brainvision(data=data_, sfreq=sfreq, ch_names=ch_names,
                           ref_ch_names=_ref_ch_names, fname_base=fname,
                           folder_out=tmpdir)
+    # Try ambiguous list of dict events with "all" ch
+    with pytest.raises(ValueError, match="Found channel named 'all'.*ambiguous"):
+        write_brainvision(data=data[:1, :], sfreq=sfreq, ch_names=["all"],
+                          fname_base=fname, folder_out=tmpdir, events=events)
 
 
 def test_bv_bad_format(tmpdir):
