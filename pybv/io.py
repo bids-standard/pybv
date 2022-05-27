@@ -412,7 +412,7 @@ def _chk_events(events, ch_names, n_times):
         # validate key types
         # `onset`, `duration`
         for key in ["onset", "duration"]:
-            if not isinstance(event[key], int):
+            if not np.issubdtype(type(event[key]), np.int64):
                 raise ValueError(f"events: `{key}` must be int")
 
         if not (0 <= event["onset"] < n_times):
@@ -508,6 +508,9 @@ def _chk_events(events, ch_names, n_times):
         # convert channels to indices (1-based, 0="all")
         ch_idxs = [ch_names.index(ch) + 1 for ch in event["channels"]]
         if set(ch_idxs) == {i + 1 for i in range(len(ch_names))}:
+            ch_idxs = [0]
+        elif len(ch_idxs) == 0:
+            # if not related to any channel: same as related to all channels
             ch_idxs = [0]
         event["channels"] = sorted(ch_idxs)
 
