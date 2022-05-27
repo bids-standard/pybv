@@ -76,7 +76,7 @@ def write_brainvision(*, data, sfreq, ch_names,
         associated with the *description* of the event. The (optional) third
         column specifies the *duration* of each event in samples (defaults to
         ``1``). All events are written as *type* "Stimulus" and interpreted
-        as relevant to all *channels*. For more fine grained control over how to
+        as relevant to all *channels*. For more fine-grained control over how to
         write events, pass a list of dict as described next.
 
         If list of dict is passed, each dict in the list corresponds to an
@@ -324,8 +324,8 @@ def _chk_events(events, ch_names, n_times):
     """Check that the events parameter is as expected.
 
     This function will always return `events` as a list of dicts.
-    If `events` was ``None``, it will be an empty list.
-    If `events` was a list of dict, it will add missing keys to each dict with
+    If `events` is ``None``, it will be an empty list.
+    If `events` is a list of dict, it will add missing keys to each dict with
     default values, and it will turn events[i]["channels"] into a list of
     1-based channel name indices, where 0 = "all". Event descriptions for
     "Stimulus" and "Response" will be reformatted to the "Sxxx" or "Rxxx"
