@@ -4,6 +4,8 @@ import mne
 import numpy as np
 import pytest
 
+from mne.io.constants import FIFF
+
 from pybv._export import _export_mne_raw
 
 
@@ -12,8 +14,8 @@ def test_export_mne_raw(tmpdir):
     # Create a Raw object
     sfreq = 250.0
 
-    ch_names = ["Fp1", "Fp2", "Fz", "Cz", "Pz", "O1", "O2"]
-    ch_types = ["eeg"] * len(ch_names)
+    ch_names = ["Fp1", "Fp2", "Fz", "Cz", "Pz", "O1", "O2", "analog", "temp"]
+    ch_types = ["eeg"] * (len(ch_names) - 2) + ["misc"] * 2
 
     info = mne.create_info(ch_names, ch_types=ch_types, sfreq=sfreq)
 
@@ -22,6 +24,9 @@ def test_export_mne_raw(tmpdir):
     data = np.random.randn(len(ch_names), int(sfreq * 100))
 
     raw = mne.io.RawArray(data, info)
+
+    # Make a fake channel in °C
+    raw.info["chs"][-1]["unit"] = FIFF.FIFF_UNIT_CEL
 
     annots = mne.Annotations(
         onset=[3, 13, 30, 70, 90],  # seconds
@@ -41,3 +46,16 @@ def test_export_mne_raw(tmpdir):
     fname = tmpdir / "mne_export.vhdr"
     with pytest.warns(RuntimeWarning, match="'double' .* Converting to float32"):
         _export_mne_raw(raw=raw, fname=fname)
+
+    # try once more with "single" data and mne events
+    fname = tmpdir / "mne_export_events.vhdr"
+    raw = mne.io.RawArray(data.astype(np.single), info)
+    raw.orig_format = "single"
+    events = np.vstack(
+        [
+            np.linspace(0, sfreq * 00, 10).astype(int),
+            np.zeros(10).astype(int),
+            np.arange(1, 11).astype(int),
+        ]
+    ).T
+    _export_mne_raw(raw=raw, fname=fname, events=events)
