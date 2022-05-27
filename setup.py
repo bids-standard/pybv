@@ -45,6 +45,11 @@ if __name__ == "__main__":
           install_requires=[
               'numpy >=1.18.1',
           ],
+          extras_require={
+              'export': [
+                  'mne >= 0.20',
+              ],
+          },
           classifiers=[
               'Intended Audience :: Science/Research',
               'Intended Audience :: Developers',
