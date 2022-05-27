@@ -3,12 +3,12 @@
 import mne
 import numpy as np
 import pytest
-
 from mne.io.constants import FIFF
 
 from pybv._export import _export_mne_raw
 
 
+@pytest.mark.filterwarnings("ignore:.*non-voltage units.*n/a:UserWarning:pybv")
 def test_export_mne_raw(tmpdir):
     """Test mne export."""
     # Create a Raw object
@@ -46,6 +46,10 @@ def test_export_mne_raw(tmpdir):
     fname = tmpdir / "mne_export.vhdr"
     with pytest.warns(RuntimeWarning, match="'double' .* Converting to float32"):
         _export_mne_raw(raw=raw, fname=fname)
+
+    # test overwrite
+    with pytest.warns():
+        _export_mne_raw(raw=raw, fname=fname, overwrite=True)
 
     # try once more with "single" data and mne events
     fname = tmpdir / "mne_export_events.vhdr"

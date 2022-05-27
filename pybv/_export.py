@@ -133,8 +133,8 @@ def _mne_annots2pybv_events(raw):
         # Add a "pybv" event
         events += [
             dict(
-                onset=onset,
-                duration=duration,
+                onset=onset,  # in samples
+                duration=duration,  # in samples
                 description=description,
                 type=etype,
                 channels=channels,
