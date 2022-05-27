@@ -108,7 +108,7 @@ def _mne_annots2pybv_events(raw):
 
         # Handle onset and duration: seconds to sample,
         # relative to raw.first_samp
-        onset = raw.time_as_index(annot["onset"])
+        onset = raw.time_as_index(annot["onset"]).astype(int)[0]
         duration = int(annot["duration"] * raw.info["sfreq"])
 
         # Triage type and description
@@ -128,7 +128,7 @@ def _mne_annots2pybv_events(raw):
             etype = "Comment"
 
         # Handle channels
-        channels = list(annot["channels"])
+        channels = list(annot["ch_names"])
 
         # Add a "pybv" event
         events += [
