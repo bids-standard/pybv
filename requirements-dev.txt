@@ -1,5 +1,5 @@
 numpy>=1.18.1
-mne
+mne>=0.20
 check-manifest
 pytest
 pytest-cov
