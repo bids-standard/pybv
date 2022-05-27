@@ -44,6 +44,7 @@ events = [
      },
     {"onset": 200,
      "description": 1234,
+     "channels": [],
      },
 ]
 # scale random data to reasonable EEG signal magnitude in V

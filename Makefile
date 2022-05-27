@@ -7,8 +7,10 @@ inplace:
 	@python setup.py develop
 
 test:
-	@echo "Running pytest"
-	@pytest --doctest-modules --cov=./pybv --cov-report=xml --verbose
+	@echo "Running pytest: doctests"
+	@pytest pybv/io.py --doctest-modules -W ignore::UserWarning --verbose
+	@echo "Running pytest: test modules"
+	@pytest --cov=./pybv --cov-report=xml --verbose
 
 flake:
 	@echo "Running flake8"
