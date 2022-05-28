@@ -412,7 +412,7 @@ def _chk_events(events, ch_names, n_times):
         # validate key types
         # `onset`, `duration`
         for key in ["onset", "duration"]:
-            if not np.issubdtype(type(event[key]), np.int64):
+            if not isinstance(event[key], (int, np.integer)):
                 raise ValueError(f"events: `{key}` must be int")
 
         if not (0 <= event["onset"] < n_times):
