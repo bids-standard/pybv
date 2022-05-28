@@ -74,7 +74,7 @@ html_sidebars = {
 # When functions from other packages are mentioned, link to them
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'mne': ('http://mne.tools/dev/', None),
+    'mne': ('https://mne.tools/dev/', None),
     'numpy': ('https://www.numpy.org/devdocs', None),
 }
-intersphinx_timeout = 5
+intersphinx_timeout = 10
