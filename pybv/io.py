@@ -539,7 +539,7 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
     """Write BrainvVision marker file."""
     with open(vmrk_fname, 'w', encoding='utf-8') as fout:
         print('Brain Vision Data Exchange Marker File, Version 1.0', file=fout)
-        print(f';Exported using pybv {__version__}', file=fout)
+        print(f'; Exported using pybv {__version__}', file=fout)
         print('', file=fout)
         print('[Common Infos]', file=fout)
         print('Codepage=UTF-8', file=fout)
