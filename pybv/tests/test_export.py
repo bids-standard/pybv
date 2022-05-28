@@ -47,6 +47,9 @@ def test_export_mne_raw(tmpdir):
     with pytest.warns(RuntimeWarning, match="'double' .* Converting to float32"):
         _export_mne_raw(raw=raw, fname=fname)
 
+    with pytest.raises(ValueError, match="`fname` must have the '.vhdr'"):
+        _export_mne_raw(raw=raw, fname=str(fname).replace(".vhdr", ".eeg.tar.gz"))
+
     # test overwrite
     with pytest.warns():
         _export_mne_raw(raw=raw, fname=fname, overwrite=True)
@@ -63,3 +66,5 @@ def test_export_mne_raw(tmpdir):
         ]
     ).T
     _export_mne_raw(raw=raw, fname=fname, events=events)
+    raw_read = mne.io.read_raw_brainvision(fname)
+    np.testing.assert_allclose(raw_read.get_data(), raw.get_data())

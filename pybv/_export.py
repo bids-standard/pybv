@@ -17,21 +17,23 @@ def _export_mne_raw(*, raw, fname, events=None, overwrite=False):
     ----------
     raw : mne.io.Raw
         The raw data to export.
-    fname : str
-        The name of the file where raw data will be exported to. Must end with ".vhdr",
-        and accompanying ".vmrk" and ".eeg" files will be written inside the same
-        directory.
+    fname : str | pathlib.Path
+        The name of the file where raw data will be exported to. Must end with
+        ``".vhdr"``, and accompanying *.vmrk* and *.eeg* files will be written
+        inside the same directory.
     events : np.ndarray | None
         Events to be written to the marker file (*.vmrk*). When array, must be in
         `MNE-Python format <https://mne.tools/stable/glossary.html#term-events>`_.
         When ``None`` (default), events will be written based on ``raw.annotations``.
     overwrite : bool
-        Whether or not to overwrite existing data. Default to ``False``.
+        Whether or not to overwrite existing data. Defaults to ``False``.
     """
     # Prepare file location
+    if not str(fname).endswith(".vhdr"):
+        raise ValueError("`fname` must have the '.vhdr' extension for BrainVision.")
     fname = Path(fname)
     folder_out = fname.parents[0]
-    fname_base = fname.name
+    fname_base = fname.stem
 
     # Prepare data from raw
     data = raw.get_data()  # gets data starting from raw.first_samp
