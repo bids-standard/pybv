@@ -1,10 +1,10 @@
-.PHONY: all inplace test flake pydocstyle check-manifest pep build-doc
+.PHONY: all inplace test flake pydocstyle check-manifest pep build-doc dist-build
 
-all: inplace pep test build-doc
+all: inplace pep test build-doc dist-build
 
 inplace:
 	@echo "Installing pybv"
-	@python setup.py develop
+	@python -m pip install --editable .
 
 test:
 	@echo "Running pytest: doctests"
@@ -31,3 +31,8 @@ build-doc:
 	make -C docs/ clean
 	make -C docs/ html
 	cd docs/ && make view
+
+dist-build:
+	@echo "Building dist"
+	rm -rf dist
+	@python -m build
