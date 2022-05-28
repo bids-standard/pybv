@@ -27,20 +27,20 @@ Here we list a changelog of pybv.
    :local:
    :depth: 1
 
-0.8.0 (unreleased)
+0.7.1 (2022-05-28)
 ==================
 
-Changelog
-~~~~~~~~~
-- Nothing yet
+Bug
+~~~
+- Fixed a bug in private ``pybv._export`` module for export to BrainVision from MNE-Python, by `Stefan Appelhoff`_: (:gh:`90`)
 
 0.7.0 (2022-05-28)
 ==================
 
 Changelog
 ~~~~~~~~~
-- Added an overview table of alternative software for BrainVision data, by `Stefan Appelhoff`_: (:gh:`85`)
-- :func:`pybv.write_brainvision` now accepts a list of dict as argument to the ``events`` parameter, allowing for more control over what to write to ``.vmrk``, by `Stefan Appelhoff`_: (:gh:`86`)
+- Added an overview table of alternative software for BrainVision data, by `Stefan Appelhoff`_ (:gh:`85`)
+- :func:`pybv.write_brainvision` now accepts a list of dict as argument to the ``events`` parameter, allowing for more control over what to write to ``.vmrk``, by `Stefan Appelhoff`_ (:gh:`86`)
 
 0.6.0 (2021-09-29)
 ==================
