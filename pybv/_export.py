@@ -109,8 +109,9 @@ def _mne_annots2pybv_events(raw):
     for annot in raw.annotations:
 
         # Handle onset and duration: seconds to sample,
-        # relative to raw.first_samp
-        onset = raw.time_as_index(annot["onset"]).astype(int)[0]
+        # relative to raw.first_samp / raw.first_time
+        onset = annot["onset"] - raw.first_time
+        onset = raw.time_as_index(onset).astype(int)[0]
         duration = int(annot["duration"] * raw.info["sfreq"])
 
         # Triage type and description
