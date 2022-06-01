@@ -27,7 +27,7 @@ Here we list a changelog of pybv.
    :local:
    :depth: 1
 
-0.8.0 (unreleased)
+0.7.2 (2022-06-01)
 ==================
 
 Bug
