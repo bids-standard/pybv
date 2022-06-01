@@ -30,9 +30,9 @@ Here we list a changelog of pybv.
 0.8.0 (unreleased)
 ==================
 
-Changelog
-~~~~~~~~~
-- Nothing yet
+Bug
+~~~
+- Fixed that ``raw.annotations`` must take ``raw.first_time`` into account in private ``pybv._export`` module for export to BrainVision from MNE-Python, by `Stefan Appelhoff`_: (:gh:`91`)
 
 0.7.1 (2022-05-28)
 ==================
