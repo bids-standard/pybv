@@ -423,7 +423,7 @@ def _chk_events(events, ch_names, n_times):
             raise ValueError("events: at least one duration is too short. Durations "
                              "must be >= 1 sample.")
 
-        if not (0 <= event["onset"] + event["duration"] < n_times):
+        if not (0 <= event["onset"] + event["duration"] <= n_times):
             raise ValueError("events: at least one event has a duration that exceeds "
                              f"the range of data (0-{n_times-1})")
 
