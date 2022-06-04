@@ -15,6 +15,15 @@ People who contributed to this software across releases (in **alphabetical order
 - `Stefan Appelhoff`_
 - `Tristan Stenner`_
 
+.. _Chris Holdgraf: https://bids.berkeley.edu/people/chris-holdgraf
+.. _Stefan Appelhoff: http://stefanappelhoff.com/
+.. _Tristan Stenner: https://github.com/tstenner
+.. _Phillip Alday: https://palday.bitbucket.io/
+.. _Clemens Brunner: https://cbrnr.github.io/
+.. _Richard Höchenberger: https://hoechenberger.net/
+.. _Adam Li: https://adam2392.github.io/
+.. _Aniket Pradhan: http://home.iiitd.edu.in/~aniket17133/
+
 .. _changelog:
 
 =========
@@ -26,6 +35,13 @@ Here we list a changelog of pybv.
 .. contents:: Contents
    :local:
    :depth: 1
+
+0.7.3 (2022-06-04)
+==================
+
+Bug
+~~~
+- Fix in private ``pybv._export`` module: ``durations`` of 1 sample length are fine even if they are at the last data sample, by `Stefan Appelhoff`_: (:gh:`92`)
 
 0.7.2 (2022-06-01)
 ==================
@@ -143,12 +159,3 @@ Changelog
 ~~~~~~~~~
 - Initial import from `philistine <https://pypi.org/project/philistine/>`_ package by `Phillip Alday`_
   and removing dependency on MNE-Python, by `Chris Holdgraf`_, and `Stefan Appelhoff`_
-
-.. _Chris Holdgraf: https://bids.berkeley.edu/people/chris-holdgraf
-.. _Stefan Appelhoff: http://stefanappelhoff.com/
-.. _Tristan Stenner: https://github.com/tstenner
-.. _Phillip Alday: https://palday.bitbucket.io/
-.. _Clemens Brunner: https://cbrnr.github.io/
-.. _Richard Höchenberger: https://hoechenberger.net/
-.. _Adam Li: https://adam2392.github.io/
-.. _Aniket Pradhan: http://home.iiitd.edu.in/~aniket17133/
