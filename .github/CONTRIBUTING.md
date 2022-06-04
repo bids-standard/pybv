@@ -119,5 +119,6 @@ the next release:
       [semantic versioning](https://semver.org/) so that the version will be
       the version that is planned to be released next (e.g., `1.3.0`).
     - Append `.dev0` to the version (e.g., `1.3.0.dev0`).
+        - (if you had a version like `1.3.0.dev0` before, release `1.3.0.dev1` instead, etc.)
 1. Add a "Current (unreleased)" headline to `docs/changelog.rst`.
 1. Commit the changes and git push to `main` (or make a pull request).
