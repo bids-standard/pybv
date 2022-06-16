@@ -70,7 +70,7 @@ This ensures that the data file is uniformly written irrespective of the
 native system architecture.
 
 A documentation for the BrainVision file format is provided by Brain Products.
-You can `view the specification <https://www.brainproducts.com/productdetails.php?id=21&tab=5>`_
+You can `view the specification <https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/>`_
 as hosted by Brain Products.
 
 

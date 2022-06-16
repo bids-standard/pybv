@@ -160,7 +160,7 @@ def write_brainvision(*, data, sfreq, ch_names,
 
     References
     ----------
-    .. [1] https://www.brainproducts.com/productdetails.php?id=21&tab=5
+    .. [1] https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/
 
     Examples
     --------
@@ -177,7 +177,7 @@ def write_brainvision(*, data, sfreq, ch_names,
     >>> # remove the files
     >>> for ext in [".vhdr", ".vmrk", ".eeg"]:
     ...     os.remove("pybv_test_file" + ext)
-    """
+    """  # noqa: E501
     # Input checks
     if not isinstance(data, np.ndarray):
         raise ValueError(f"data must be np.ndarray, but found: {type(data)}")
