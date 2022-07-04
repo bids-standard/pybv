@@ -440,7 +440,7 @@ def _chk_events(events, ch_names, n_times):
                 raise ValueError(f"events: when `type` is {event['type']}, "
                                  "`description` must be positive int")
 
-            if event["description"] < 1:
+            if event["description"] < 0:
                 raise ValueError(f"events: when `type` is {event['type']}, "
                                  "descriptions must be positve ints.")
 
