@@ -442,7 +442,7 @@ def _chk_events(events, ch_names, n_times):
 
             if event["description"] < 0:
                 raise ValueError(f"events: when `type` is {event['type']}, "
-                                 "descriptions must be positve ints.")
+                                 "descriptions must be non-negative ints.")
 
             # NOTE: We format 1 -> "S  1", 10 -> "S 10", 100 -> "S100", etc.,
             # https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677
