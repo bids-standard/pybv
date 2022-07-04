@@ -41,7 +41,7 @@ Here we list a changelog of pybv.
 
 Changelog
 ~~~~~~~~~
-- Nothing yet
+- Updated ``_chk_events`` to accept label values >= 0
 
 0.7.3 (2022-06-04)
 ==================
