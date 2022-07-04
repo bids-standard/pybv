@@ -29,6 +29,9 @@ authors:
 - given-names: "Aniket"
   family-names: "Pradhan"
   orcid: https://orcid.org/0000-0002-6705-5116
+- given-names: "Pierre"
+  family-names: "Cutellic"
+  orcid: "https://orcid.org/0000-0002-7224-9222"
 type: software
 repository-code: "https://github.com/bids-standard/pybv"
 url: "https://pybv.readthedocs.io/"
