@@ -84,7 +84,7 @@ def test_bv_writer_events_array(tmpdir, events_errormsg):
      ([{"onset": 1, "description": 2}, np.ones(12)], "events must be a list of dict"),
      ([{"onset": "1", "description": 2}], "events: `onset` must be int"),
      ([{"onset": -1, "description": 2}], r"events: at least one onset sample is not in range of data \(0-4999\)"),  # noqa: E501
-     ([{"onset": 100, "description": 1, "duration": 0}], "events: at least one duration is too short."),  # noqa: E501
+     ([{"onset": 100, "description": 1, "duration": -1}], "events: at least one duration is negative."),  # noqa: E501
      ([{"onset": 100, "description": 1, "duration": 4901}], "events: at least one event has a duration that exceeds"),  # noqa: E501
      ([{"onset": 1, "description": 2, "type": "bogus"}], "`type` must be one of"),  # noqa: E501
      ([{"onset": 1, "description": "bogus"}], "when `type` is Stimulus, `description` must be non-negative int"),  # noqa: E501
