@@ -87,9 +87,9 @@ def test_bv_writer_events_array(tmpdir, events_errormsg):
      ([{"onset": 100, "description": 1, "duration": 0}], "events: at least one duration is too short."),  # noqa: E501
      ([{"onset": 100, "description": 1, "duration": 4901}], "events: at least one event has a duration that exceeds"),  # noqa: E501
      ([{"onset": 1, "description": 2, "type": "bogus"}], "`type` must be one of"),  # noqa: E501
-     ([{"onset": 1, "description": "bogus"}], "when `type` is Stimulus, `description` must be positive int"),  # noqa: E501
+     ([{"onset": 1, "description": "bogus"}], "when `type` is Stimulus, `description` must be non-negative int"),  # noqa: E501
      ([{"onset": 1, "description": {}, "type": "Comment"}], "when `type` is Comment, `description` must be str or int"),  # noqa: E501
-     ([{"onset": 1, "description": -1}], "when `type` is Stimulus, descriptions must be positve ints."),  # noqa: E501
+     ([{"onset": 1, "description": -1}], "when `type` is Stimulus, descriptions must be non-negative ints."),  # noqa: E501
      ([{"onset": 1, "description": 1, "channels": "bogus"}], "found channel .* bogus"),
      ([{"onset": 1, "description": 1, "channels": ["ch_1", "ch_1"]}], "events: found duplicate channel names"),  # noqa: E501
      ([{"onset": 1, "description": 1, "channels": ["ch_1", "ch_2"]}], "warn___feature may not be supported"),  # noqa: E501

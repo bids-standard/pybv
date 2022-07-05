@@ -88,7 +88,7 @@ def write_brainvision(*, data, sfreq, ch_names,
             - ``"duration"`` : int
                 The duration of the event in samples (defaults to ``1``).
             - ``"description"`` : str | int
-                The description of the event. Must be a positive int when
+                The description of the event. Must be a non-negative int when
                 `type` (see below) is either ``"Stimulus"`` or ``"Response"``, and may
                 be a str when `type` is ``"Comment"``.
             - ``"type"`` : str
@@ -438,11 +438,11 @@ def _chk_events(events, ch_names, n_times):
         if event["type"] in ["Stimulus", "Response"]:
             if not isinstance(event["description"], int):
                 raise ValueError(f"events: when `type` is {event['type']}, "
-                                 "`description` must be positive int")
+                                 "`description` must be non-negative int")
 
-            if event["description"] < 1:
+            if event["description"] < 0:
                 raise ValueError(f"events: when `type` is {event['type']}, "
-                                 "descriptions must be positve ints.")
+                                 "descriptions must be non-negative ints.")
 
             # NOTE: We format 1 -> "S  1", 10 -> "S 10", 100 -> "S100", etc.,
             # https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677
