@@ -438,7 +438,7 @@ def _chk_events(events, ch_names, n_times):
         if event["type"] in ["Stimulus", "Response"]:
             if not isinstance(event["description"], int):
                 raise ValueError(f"events: when `type` is {event['type']}, "
-                                 "`description` must be positive int")
+                                 "`description` must be non-negative int")
 
             if event["description"] < 0:
                 raise ValueError(f"events: when `type` is {event['type']}, "
