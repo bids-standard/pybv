@@ -70,7 +70,7 @@ def write_brainvision(*, data, sfreq, ch_names,
         (not writing any events).
 
         If an array is passed, it must have either two or three columns and
-        consist of nonnegative integers. The first column is always the
+        consist of non-negative integers. The first column is always the
         zero-based *onset* index of each event (corresponding to the
         time dimension of the `data` array). The second column is a number
         associated with the *description* of the event. The (optional) third
@@ -419,9 +419,9 @@ def _chk_events(events, ch_names, n_times):
             raise ValueError("events: at least one onset sample is not in range of "
                              f"data (0-{n_times-1})")
 
-        if event["duration"] < 1:
-            raise ValueError("events: at least one duration is too short. Durations "
-                             "must be >= 1 sample.")
+        if event["duration"] < 0:
+            raise ValueError("events: at least one duration is negative. Durations "
+                             "must be >= 0 samples.")
 
         if not (0 <= event["onset"] + event["duration"] <= n_times):
             raise ValueError("events: at least one event has a duration that exceeds "
