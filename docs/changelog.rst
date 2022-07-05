@@ -11,6 +11,7 @@ People who contributed to this software across releases (in **alphabetical order
 - `Chris Holdgraf`_
 - `Clemens Brunner`_
 - `Phillip Alday`_
+- `Pierre Cutellic`_
 - `Richard Höchenberger`_
 - `Stefan Appelhoff`_
 - `Tristan Stenner`_
@@ -23,6 +24,7 @@ People who contributed to this software across releases (in **alphabetical order
 .. _Richard Höchenberger: https://hoechenberger.net/
 .. _Adam Li: https://adam2392.github.io/
 .. _Aniket Pradhan: http://home.iiitd.edu.in/~aniket17133/
+.. _Pierre Cutellic: https://github.com/compmonks
 
 .. _changelog:
 
@@ -41,7 +43,7 @@ Here we list a changelog of pybv.
 
 Changelog
 ~~~~~~~~~
-- Updated ``_chk_events`` to accept label values >= 0
+- Updated ``_chk_events`` to accept label values >= 0, by `Pierre Cutellic`_: (:gh:`95`)
 
 0.7.3 (2022-06-04)
 ==================

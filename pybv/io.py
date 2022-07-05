@@ -88,7 +88,7 @@ def write_brainvision(*, data, sfreq, ch_names,
             - ``"duration"`` : int
                 The duration of the event in samples (defaults to ``1``).
             - ``"description"`` : str | int
-                The description of the event. Must be a positive int when
+                The description of the event. Must be a non-negative int when
                 `type` (see below) is either ``"Stimulus"`` or ``"Response"``, and may
                 be a str when `type` is ``"Comment"``.
             - ``"type"`` : str
