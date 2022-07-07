@@ -38,13 +38,13 @@ Here we list a changelog of pybv.
    :local:
    :depth: 1
 
-0.8.0 (unreleased)
+0.7.4 (2022-07-07)
 ==================
 
 Changelog
 ~~~~~~~~~
-- Updated ``_chk_events`` to accept label values >= 0, by `Pierre Cutellic`_: (:gh:`95`)
-- Updated ``_chk_events`` to accept duration == 0, by `Clemens Brunner`_: (:gh:`96`)
+- Events: accept ``description`` label values >= 0 when ``type`` is ``"Stimulus"`` or ``"Response"``, by `Pierre Cutellic`_: (:gh:`95`)
+- Events: accept ``duration == 0``, by `Clemens Brunner`_: (:gh:`96`)
 
 0.7.3 (2022-06-04)
 ==================
