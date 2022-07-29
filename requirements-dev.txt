@@ -6,9 +6,10 @@ pytest-cov
 pytest-sugar
 flake8>=3.9.2
 flake8-docstrings
-flake8-isort>=4.0.0
 pycodestyle
 sphinx
 sphinx-copybutton
 numpydoc
 isort
+black
+pre-commit

@@ -4,7 +4,6 @@ include LICENSE
 include requirements-dev.txt
 include CITATION.cff
 include .mailmap
-include .flake8
 
 graft docs
 graft pybv
@@ -14,8 +13,10 @@ recursive-exclude pybv/__pycache__ *
 recursive-exclude pybv/tests/__pycache__ *
 recursive-exclude docs/_build *
 recursive-exclude docs/generated *
-recursive-exclude .github *
+recursive-exclude .github/ *
 
+exclude .git-blame-ignore-revs
+exclude .pre-commit-config.yaml
 exclude .gitignore
 exclude Makefile
 global-exclude *.pyc

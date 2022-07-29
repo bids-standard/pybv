@@ -22,7 +22,11 @@ git clone https://github.com/USERNAME/pybv
 cd pybv
 pip install -r requirements-dev.txt
 pip install -e .
+pre-commit install
 ```
+
+Note that we are working with "pre-commit hooks".
+See https://pre-commit.com/ for more information.
 
 ## Running tests and coverage
 
