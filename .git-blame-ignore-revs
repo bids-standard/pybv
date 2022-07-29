@@ -6,4 +6,4 @@
 # `git config blame.ignoreRevsFile .git-blame-ignore-revs`
 
 # GitHub Pull Request 97: Migrate code style to Black
-0dd45672813ce67138a1fbbdb15f152b6fdca037
+e082af6b224e67c88cff390d7dbf3fb83ef73a6d
