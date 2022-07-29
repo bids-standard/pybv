@@ -1,0 +1,9 @@
+# Since git version 2.23, git-blame has a feature to ignore certain commits.
+#
+# This file contains a list of commits that are ignored in `git blame`
+# Set this file as a default ignore file for blame by running:
+#
+# `git config blame.ignoreRevsFile .git-blame-ignore-revs`
+
+# GitHub Pull Request 97: Migrate code style to Black
+0dd45672813ce67138a1fbbdb15f152b6fdca037

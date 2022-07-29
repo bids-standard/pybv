@@ -1,4 +1,4 @@
-.PHONY: all inplace test flake pydocstyle check-manifest pep build-doc dist-build
+.PHONY: all inplace test flake pydocstyle check-manifest isort black pep build-doc dist-build
 
 all: inplace pep test build-doc dist-build
 
@@ -24,7 +24,15 @@ check-manifest:
 	@echo "Running check-manifest"
 	@check-manifest
 
-pep: flake pydocstyle check-manifest
+isort:
+	@echo "Running check-manifest"
+	@isort .
+
+black:
+	@echo "Running black"
+	@black .
+
+pep: flake pydocstyle check-manifest isort black
 
 build-doc:
 	@echo "Building documentation"
