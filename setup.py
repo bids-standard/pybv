@@ -15,10 +15,12 @@ version = None
 with open(os.path.join("pybv", "__init__.py"), "r") as fid:
     for line in (line.strip() for line in fid):
         if line.startswith("__version__"):
-            version = line.split("=")[1].strip().strip("'")
+            version_str = line.split("=")[1].strip()
+            # strip " or ', depending on what was used
+            version = version_str.strip(version_str[0])
             break
 if version is None:
-    raise RuntimeError("Could not determine version")
+    raise RuntimeError("Could not determine version from __init__.py")
 
 if __name__ == "__main__":
     setup(
