@@ -10,6 +10,7 @@ People who contributed to this software across releases (in **alphabetical order
 - `Aniket Pradhan`_
 - `Chris Holdgraf`_
 - `Clemens Brunner`_
+- `Felix Klotzsche`_
 - `Phillip Alday`_
 - `Pierre Cutellic`_
 - `Richard Höchenberger`_
