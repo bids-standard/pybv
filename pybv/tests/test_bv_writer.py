@@ -1,5 +1,6 @@
 """BrainVision writer tests."""
 
+import itertools
 import os
 import os.path as op
 import re
@@ -64,6 +65,21 @@ data = rng.normal(size=(n_chans, n_times)) * 10 * 1e-6
 # add reference channel
 ref_ch_name = ch_names[-1]
 data[-1, :] = 0.0
+
+
+def test_non_stim_resp_event_first(tmpdir):
+    """Test that events are handled well regardless of which type comes first."""
+    kwargs = dict(
+        data=data,
+        sfreq=sfreq,
+        ch_names=ch_names,
+        fname_base=fname,
+        folder_out=tmpdir,
+        overwrite=True,
+    )
+    for i in itertools.permutations(range(len(events))):
+        ev = list(np.array(events)[list(i)])
+        write_brainvision(**kwargs, events=ev)
 
 
 @pytest.mark.parametrize(

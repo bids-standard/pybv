@@ -428,7 +428,7 @@ def _chk_events(events, ch_names, n_times):
         # we must not edit the original parameter
         events_out = [copy.deepcopy(i) for i in events]
 
-    # now always list of dict: do full validation
+    # now always list of dict
     for event in events_out:
         # each item must be dict
         if not isinstance(event, dict):
@@ -437,6 +437,19 @@ def _chk_events(events, ch_names, n_times):
                 "non-dict element in list"
             )
 
+    # NOTE: We format 1 -> "S  1", 10 -> "S 10", 100 -> "S100", etc.,
+    # https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677
+    max_event_descr = max(
+        [1]
+        + [
+            ev.get("description", "n/a")
+            for ev in events_out
+            if isinstance(ev.get("description", "n/a"), int)
+        ]
+    )
+    twidth = max(3, int(np.ceil(np.log10(max_event_descr))))
+
+    # do full validation
     for iev, event in enumerate(events_out):
         # required keys
         for required_key in ["onset", "description"]:
@@ -495,18 +508,6 @@ def _chk_events(events, ch_names, n_times):
                     "descriptions must be non-negative ints."
                 )
 
-            # NOTE: We format 1 -> "S  1", 10 -> "S 10", 100 -> "S100", etc.,
-            # https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677
-            if iev == 0:
-                max_event_descr = max(
-                    [1]
-                    + [
-                        ev["description"]
-                        for ev in events_out
-                        if isinstance(ev["description"], int)
-                    ]
-                )
-            twidth = max(3, int(np.ceil(np.log10(max_event_descr))))
             tformat = event["type"][0] + "{:>" + str(twidth) + "}"
             event["description"] = tformat.format(event["description"])
 
