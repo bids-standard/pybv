@@ -25,6 +25,9 @@ pip install -e .
 pre-commit install
 ```
 
+You may also clone the repository via ssh, depending on your preferred workflow
+(`git clone git@github.com:USERNAME/pybv.git`).
+
 Note that we are working with "pre-commit hooks".
 See https://pre-commit.com/ for more information.
 
