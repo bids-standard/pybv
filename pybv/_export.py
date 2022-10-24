@@ -130,18 +130,19 @@ def _mne_annots2pybv_events(raw):
             # if cannot convert to int, we must use this as "Comment"
             etype = "Comment"
 
-        # Handle channels
-        channels = list(annot["ch_names"])
+        event_dict = dict(
+            onset=onset,  # in samples
+            duration=duration,  # in samples
+            description=description,
+            type=etype,
+        )
+
+        if "ch_names" in annot:
+            # Handle channels
+            channels = list(annot["ch_names"])
+            event_dict["channels"] = channels
 
         # Add a "pybv" event
-        events += [
-            dict(
-                onset=onset,  # in samples
-                duration=duration,  # in samples
-                description=description,
-                type=etype,
-                channels=channels,
-            )
-        ]
+        events += [event_dict]
 
     return events

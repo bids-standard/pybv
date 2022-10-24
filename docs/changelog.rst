@@ -10,6 +10,7 @@ People who contributed to this software across releases (in **alphabetical order
 - `Aniket Pradhan`_
 - `Chris Holdgraf`_
 - `Clemens Brunner`_
+- `Felix Klotzsche`_
 - `Phillip Alday`_
 - `Pierre Cutellic`_
 - `Richard Höchenberger`_
@@ -25,6 +26,7 @@ People who contributed to this software across releases (in **alphabetical order
 .. _Adam Li: https://adam2392.github.io/
 .. _Aniket Pradhan: http://home.iiitd.edu.in/~aniket17133/
 .. _Pierre Cutellic: https://github.com/compmonks
+.. _Felix Klotzsche: https://github.com/eioe
 
 .. _changelog:
 
@@ -43,7 +45,7 @@ Here we list a changelog of pybv.
 
 Changelog
 ~~~~~~~~~
-- Nothing yet
+- Fix in private ``pybv._export`` module: handle annotations that do not contain an entry ``"ch_names"``, by `Felix Klotzsche`_: (:gh:`100`)
 
 0.7.4 (2022-07-07)
 ==================
