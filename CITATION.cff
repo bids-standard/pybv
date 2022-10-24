@@ -32,6 +32,9 @@ authors:
 - given-names: "Pierre"
   family-names: "Cutellic"
   orcid: "https://orcid.org/0000-0002-7224-9222"
+- given-names: "Felix"
+  family-names: "Klotzsche"
+  orcid: "https://orcid.org/0000-0003-3985-2481"
 type: software
 repository-code: "https://github.com/bids-standard/pybv"
 url: "https://pybv.readthedocs.io/"

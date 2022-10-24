@@ -43,7 +43,7 @@ Here we list a changelog of pybv.
 
 Changelog
 ~~~~~~~~~
-- Nothing yet
+- Fix in private ``pybv._export`` module: handle annotations that do not contain an entry ``"ch_names"``, by `Felix Klotzsche`_: (:gh:`100`)
 
 0.7.4 (2022-07-07)
 ==================
