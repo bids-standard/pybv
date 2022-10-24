@@ -43,16 +43,17 @@ Here we list a changelog of pybv.
 0.8.0 (unreleased)
 ==================
 
-Changelog
-~~~~~~~~~
-- Fix in private ``pybv._export`` module: handle annotations that do not contain an entry ``"ch_names"``, by `Felix Klotzsche`_: (:gh:`100`)
+Bug
+~~~
+- Fix in private ``pybv._export`` module: handle annotations that do not contain an entry ``"ch_names"``, by `Felix Klotzsche`_ (:gh:`100`)
+- Fix issue with variable reference when the first `event` was *not* of type ``"Stimulus""`` or ``"Response"`` , by `Stefan Appelhoff`_: (:gh:`102`)
 
 0.7.4 (2022-07-07)
 ==================
 
 Changelog
 ~~~~~~~~~
-- Events: accept ``description`` label values >= 0 when ``type`` is ``"Stimulus"`` or ``"Response"``, by `Pierre Cutellic`_: (:gh:`95`)
+- Events: accept ``description`` label values >= 0 when ``type`` is ``"Stimulus"`` or ``"Response"``, by `Pierre Cutellic`_ (:gh:`95`)
 - Events: accept ``duration == 0``, by `Clemens Brunner`_: (:gh:`96`)
 
 0.7.3 (2022-06-04)
@@ -60,14 +61,14 @@ Changelog
 
 Bug
 ~~~
-- Fix in private ``pybv._export`` module: ``durations`` of 1 sample length are fine even if they are at the last data sample, by `Stefan Appelhoff`_: (:gh:`92`)
+- Fix in private ``pybv._export`` module: ``durations`` of 1 sample length are fine even if they are at the last data sample, by `Stefan Appelhoff`_ (:gh:`92`)
 
 0.7.2 (2022-06-01)
 ==================
 
 Bug
 ~~~
-- Fixed that ``raw.annotations`` must take ``raw.first_time`` into account in private ``pybv._export`` module for export to BrainVision from MNE-Python, by `Stefan Appelhoff`_: (:gh:`91`)
+- Fixed that ``raw.annotations`` must take ``raw.first_time`` into account in private ``pybv._export`` module for export to BrainVision from MNE-Python, by `Stefan Appelhoff`_ (:gh:`91`)
 
 0.7.1 (2022-05-28)
 ==================
