@@ -107,7 +107,6 @@ def _mne_annots2pybv_events(raw):
     """Convert mne Annotations to pybv events."""
     events = []
     for annot in raw.annotations:
-
         # Handle onset and duration: seconds to sample,
         # relative to raw.first_samp / raw.first_time
         onset = annot["onset"] - raw.first_time

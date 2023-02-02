@@ -316,7 +316,6 @@ def write_brainvision(
 
     # Write output files, but delete everything if we come across an error
     try:
-
         _write_bveeg_file(
             eeg_fname,
             data,
@@ -635,7 +634,6 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
 
         iev = 1 if meas_date is None else 2
         for ev in events:
-
             # Write event once for each channel that this event is relevant for
             # https://github.com/bids-standard/pybv/pull/77
             for ch in ev["channels"]:
