@@ -34,7 +34,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install --upgrade setuptools wheel build
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Build sdist
       run: python -m build --sdist
     - name: Install sdist
@@ -46,7 +46,7 @@ jobs:
     - name: Remove sdist install
       run: pip uninstall -y pybv
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Build wheel
       run: python -m build --wheel
     - name: Install wheel
