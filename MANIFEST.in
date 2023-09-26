@@ -14,6 +14,7 @@ recursive-exclude pybv/tests/__pycache__ *
 recursive-exclude docs/_build *
 recursive-exclude docs/generated *
 recursive-exclude .github *
+recursive-exclude specification *
 
 exclude .git-blame-ignore-revs
 exclude .pre-commit-config.yaml
