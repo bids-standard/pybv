@@ -35,6 +35,9 @@ authors:
 - given-names: "Felix"
   family-names: "Klotzsche"
   orcid: "https://orcid.org/0000-0003-3985-2481"
+- given-names: "Benjamin"
+  family-names: "Beasley"
+  orcid: "https://orcid.org/0009-0002-6936-5959"
 type: software
 repository-code: "https://github.com/bids-standard/pybv"
 url: "https://pybv.readthedocs.io/"
