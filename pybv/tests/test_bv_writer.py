@@ -414,7 +414,7 @@ def test_bad_meas_date(tmpdir, meas_date, match):
 )
 def test_comma_in_ch_name(tmpdir, ch_names_tricky):
     """Test that writing channel names with special characters works."""
-    mne = pytest.importorskip("mne", minversion="0.22")
+    mne = pytest.importorskip("mne", minversion="1.0")
     # write and read data to BV format
     write_brainvision(
         data=data,

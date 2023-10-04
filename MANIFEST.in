@@ -16,6 +16,7 @@ recursive-exclude docs/generated *
 recursive-exclude .github *
 recursive-exclude specification *
 
+exclude .readthedocs.yaml
 exclude .git-blame-ignore-revs
 exclude .pre-commit-config.yaml
 exclude .gitignore

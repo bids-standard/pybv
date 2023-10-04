@@ -21,8 +21,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-20.04, ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.9", "3.10", "3.11"]
+        platform: [ubuntu-22.04, ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12"]
 
     env:
       TZ: Europe/Berlin
@@ -45,7 +45,7 @@ jobs:
         python -m pip install -e .
 
     - name: install MNE-Python main
-      if: "matrix.platform == 'ubuntu-20.04'"
+      if: "matrix.platform == 'ubuntu-22.04'"
       run: |
         pip install -U git+https://github.com/mne-tools/mne-python
 
@@ -58,7 +58,7 @@ jobs:
         mne sys_info
 
     - name: Check formatting
-      if: ${{ matrix.platform == 'ubuntu-20.04' && matrix.python-version == '3.10' }}
+      if: ${{ matrix.platform == 'ubuntu-22.04' && matrix.python-version == '3.11' }}
       run: |
         make pep
         pre-commit run --all-files || ( git status --short ; git diff ; exit 1 )
@@ -72,14 +72,14 @@ jobs:
         make build-doc
 
     - name: Upload artifacts
-      if: ${{ matrix.platform == 'ubuntu-20.04' && matrix.python-version == '3.10' }}
+      if: ${{ matrix.platform == 'ubuntu-22.04' && matrix.python-version == '3.11' }}
       uses: actions/upload-artifact@v3
       with:
         name: docs-artifact
         path: docs/_build/html
 
     - name: Upload coverage report
-      if: ${{ matrix.platform == 'ubuntu-20.04' && matrix.python-version == '3.10' }}
+      if: ${{ matrix.platform == 'ubuntu-22.04' && matrix.python-version == '3.11' }}
       uses: codecov/codecov-action@v3
       with:
         files: ./coverage.xml
