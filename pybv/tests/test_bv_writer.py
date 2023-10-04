@@ -9,7 +9,6 @@ from datetime import datetime, timezone
 import mne
 import numpy as np
 import pytest
-from mne.utils import requires_version
 from numpy.testing import assert_allclose, assert_array_equal
 
 from pybv.io import (
@@ -406,7 +405,6 @@ def test_bad_meas_date(tmpdir, meas_date, match):
         )
 
 
-@requires_version("mne", min_version="0.22")
 @pytest.mark.parametrize(
     "ch_names_tricky",
     [
@@ -416,6 +414,7 @@ def test_bad_meas_date(tmpdir, meas_date, match):
 )
 def test_comma_in_ch_name(tmpdir, ch_names_tricky):
     """Test that writing channel names with special characters works."""
+    mne = pytest.importorskip("mne", minversion="0.22")
     # write and read data to BV format
     write_brainvision(
         data=data,
