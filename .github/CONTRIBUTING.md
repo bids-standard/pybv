@@ -39,7 +39,7 @@ you can run tests by making use of the `Makefile` and
 From the project root, call:
 
 - `make test` to run tests and coverage
-- `make pep` to run style checks
+- `pre-commit run` to run style checks (Ruff and some additional hooks)
 
 ## Building the documentation
 

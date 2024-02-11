@@ -12,7 +12,7 @@ SETUP_REQUIRES += ["wheel"] if "bdist_wheel" in sys.argv else []
 
 # get the version
 version = None
-with open(os.path.join("pybv", "__init__.py"), "r") as fid:
+with open(os.path.join("pybv", "__init__.py")) as fid:
     for line in (line.strip() for line in fid):
         if line.startswith("__version__"):
             version_str = line.split("=")[1].strip()
