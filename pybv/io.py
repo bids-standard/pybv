@@ -511,7 +511,7 @@ def _chk_events(events, ch_names, n_times):
             if not isinstance(event["description"], (int, str)):
                 raise ValueError(
                     f"events: when `type` is {event['type']}, `description` must be str"
-                    "or int"
+                    " or int"
                 )
             event["description"] = str(event["description"])
 
