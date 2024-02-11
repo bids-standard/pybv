@@ -45,7 +45,7 @@ autosummary_generate = True
 
 # General information about the project.
 project = "pybv"
-copyright = f"2018-{date.today().year}, pybv developers"
+copyright = f"2018-{date.today().year}, pybv developers"  # noqa:A001
 author = "pybv developers"
 version = pybv.__version__
 release = version
