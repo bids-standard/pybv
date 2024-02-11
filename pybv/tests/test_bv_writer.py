@@ -501,7 +501,7 @@ resolutions = np.hstack((resolutions, [np.pi, 0.5, 0.27e-6, 13]))
 @pytest.mark.parametrize("format", SUPPORTED_FORMATS.keys())
 @pytest.mark.parametrize("resolution", resolutions)
 @pytest.mark.parametrize("unit", SUPPORTED_VOLTAGE_SCALINGS)
-def test_format_resolution_unit(tmpdir, format, resolution, unit):
+def test_format_resolution_unit(tmpdir, format, resolution, unit):  # noqa: A002
     """Test different combinations of formats, resolutions, and units.
 
     This test would raise warnings for several cases of "unit" ("Encountered unsupported

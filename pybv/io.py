@@ -688,7 +688,7 @@ def _write_vhdr_file(
     ch_names,
     ref_ch_names,
     orientation,
-    format,
+    format,  # noqa: A002
     resolution,
     units,
 ):
@@ -765,7 +765,7 @@ def _check_data_in_range(data, dtype):
     return True
 
 
-def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, units):
+def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, units):  # noqa: A002
     """Write BrainVision data file."""
     # check the orientation and format
     _chk_multiplexed(orientation)
