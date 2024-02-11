@@ -394,7 +394,7 @@ def _chk_events(events, ch_names, n_times):
             raise ValueError(f"When array, events must be 2D, but got {events.ndim}")
         if events.shape[1] not in (2, 3):
             raise ValueError(
-                "When array, events must have 2 or 3 columns, but got "
+                "When array, events must have 2 or 3 columns, but got: "
                 f"{events.shape[1]}"
             )
         if not all([np.issubdtype(i, np.integer) for i in events.flat]):
