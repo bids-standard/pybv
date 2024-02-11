@@ -1,6 +1,6 @@
-.PHONY: all inplace test check-manifest pep build-doc dist-build
+.PHONY: all inplace test check-manifest build-doc dist-build
 
-all: inplace pep test build-doc dist-build
+all: inplace check-manifest test build-doc dist-build
 
 inplace:
 	@echo "Installing pybv"
@@ -15,12 +15,6 @@ test:
 check-manifest:
 	@echo "Running check-manifest"
 	@check-manifest
-
-ruff:
-	@echo "Running ruff"
-	@ruff .
-
-pep: ruff check-manifest
 
 build-doc:
 	@echo "Building documentation"

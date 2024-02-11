@@ -60,7 +60,7 @@ jobs:
     - name: Check formatting
       if: ${{ matrix.platform == 'ubuntu-22.04' && matrix.python-version == '3.11' }}
       run: |
-        make pep
+        make check-manifest
         pre-commit run --all-files || ( git status --short ; git diff ; exit 1 )
 
     - name: Test with pytest
