@@ -20,8 +20,7 @@ Then, in your Python environment follow these steps:
 ```Shell
 git clone https://github.com/USERNAME/pybv
 cd pybv
-pip install -r requirements-dev.txt
-pip install -e .
+pip install -e ".[dev]"
 pre-commit install
 ```
 
