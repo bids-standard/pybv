@@ -4,12 +4,8 @@ check-manifest
 pytest
 pytest-cov
 pytest-sugar
-flake8>=3.9.2
-flake8-docstrings
-pycodestyle
+ruff
 sphinx
 sphinx-copybutton
 numpydoc
-isort
-black
 pre-commit

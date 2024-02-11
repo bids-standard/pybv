@@ -1,4 +1,4 @@
-.PHONY: all inplace test flake pydocstyle check-manifest isort black pep build-doc dist-build
+.PHONY: all inplace test check-manifest pep build-doc dist-build
 
 all: inplace pep test build-doc dist-build
 
@@ -12,27 +12,15 @@ test:
 	@echo "Running pytest: test modules"
 	@pytest --cov=./pybv --cov-report=xml --verbose
 
-flake:
-	@echo "Running flake8"
-	@flake8 --docstring-convention numpy --count pybv
-
-pydocstyle:
-	@echo "Running pydocstyle"
-	@pydocstyle
-
 check-manifest:
 	@echo "Running check-manifest"
 	@check-manifest
 
-isort:
-	@echo "Running check-manifest"
-	@isort .
+ruff:
+	@echo "Running ruff"
+	@ruff .
 
-black:
-	@echo "Running black"
-	@black .
-
-pep: flake pydocstyle check-manifest isort black
+pep: ruff check-manifest
 
 build-doc:
 	@echo "Building documentation"
