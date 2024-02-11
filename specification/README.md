@@ -1,4 +1,4 @@
-The `BrainVisionCoreDataFormat_1-0.pdf` file can be contains the specification
+The file [`BrainVisionCoreDataFormat_1-0.pdf`](BrainVisionCoreDataFormat_1-0.pdf) contains the specification
 for the BrainVision Core Data Format (BVCDF).
 
 The document stored in this repository exists for backup reasons.
