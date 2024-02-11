@@ -294,8 +294,7 @@ def test_bv_writer_inputs(tmpdir):
             fname_base=fname,
             folder_out=tmpdir,
         )
-    # Passing data that's not all-zero for a reference channel should raise
-    # an exception
+    # passing data that's not all-zero for a reference channel should raise an exception
     data_ = data.copy()
     data_[ch_names.index(ref_ch_name), :] = 5
     with pytest.raises(ValueError, match="reference channel.*not.*zero"):
@@ -307,7 +306,7 @@ def test_bv_writer_inputs(tmpdir):
             fname_base=fname,
             folder_out=tmpdir,
         )
-    # Empty str is a reserved value for ref_ch_names
+    # empty str is a reserved value for ref_ch_names
     with pytest.raises(ValueError, match="Empty strings are reserved values"):
         _ref_ch_names = [""] + ch_names[1:]
         write_brainvision(
@@ -318,7 +317,7 @@ def test_bv_writer_inputs(tmpdir):
             fname_base=fname,
             folder_out=tmpdir,
         )
-    # Try ambiguous list of dict events with "all" ch
+    # try ambiguous list of dict events with "all" ch
     with pytest.raises(ValueError, match="Found channel named 'all'.*ambiguous"):
         write_brainvision(
             data=data[:1, :],
@@ -505,18 +504,17 @@ resolutions = np.hstack((resolutions, [np.pi, 0.5, 0.27e-6, 13]))
 def test_format_resolution_unit(tmpdir, format, resolution, unit):
     """Test different combinations of formats, resolutions, and units.
 
-    This test would raise warnings for several cases of "unit"
-    (Encountered unsupported voltage units), and a specific warning
-    if "unit" is "uV" (Encountered small Greek letter mu).
-    We ignore those warnings throughout the test.
+    This test would raise warnings for several cases of "unit" ("Encountered unsupported
+    voltage units"), and a specific warning if "unit" is "uV" ("Encountered small Greek
+    letter mu"). We ignore those warnings throughout the test.
 
-    Each run of the test is furthermore expected to exit early
-    with a ValueError for combinations of "resolution" and "format"
-    that would result in data that cannot accurately be written.
+    Each run of the test is furthermore expected to exit early with a ValueError for
+    combinations of "resolution" and "format" that would result in data that cannot
+    accurately be written.
     """
-    # Check whether this test will be numerically possible
+    # check whether this test will be numerically possible
     tmpdata = _scale_data_to_unit(data.copy(), [unit] * n_chans)
-    tmpdata = tmpdata * np.atleast_2d((1 / resolution)).T
+    tmpdata = tmpdata * np.atleast_2d(1 / resolution).T
     _, dtype = _chk_fmt(format)
     data_will_fit = _check_data_in_range(tmpdata, dtype)
 
@@ -532,7 +530,7 @@ def test_format_resolution_unit(tmpdir, format, resolution, unit):
     )
 
     if not data_will_fit:
-        # End this test early
+        # end this test early
         match = f"can not be represented in '{format}' given"
         with pytest.raises(ValueError, match=match):
             write_brainvision(**kwargs)
@@ -542,14 +540,14 @@ def test_format_resolution_unit(tmpdir, format, resolution, unit):
     vhdr_fname = tmpdir / fname + ".vhdr"
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname, preload=True)
 
-    # Check that the correct units were written in the BV file
+    # check that the correct units were written in the BV file
     orig_units = [u for key, u in raw_written._orig_units.items()]
     assert len(set(orig_units)) == 1
     if unit is not None:
         assert orig_units[0] == unit.replace("u", "µ")
 
-    # Check round trip of data: in binary_int16 format, the tolerance
-    # is given by the lowest resolution
+    # check round trip of data: in binary_int16 format, the tolerance is given by the
+    # lowest resolution
     if format == "binary_int16":
         absolute_tolerance = np.atleast_2d(resolution).min()
     else:
@@ -608,7 +606,7 @@ def test_write_multiple_units(tmpdir, unit):
     absolute_tolerance = 0
     assert_allclose(data, raw_written.get_data(), atol=absolute_tolerance)
 
-    # Check that the correct units were written in the BV file
+    # check that the correct units were written in the BV file
     orig_units = [u for key, u in raw_written._orig_units.items()]
     assert len(set(orig_units)) == 1
     assert orig_units[0] == unit.replace("u", "µ")
@@ -626,7 +624,7 @@ def test_write_multiple_units(tmpdir, unit):
 
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname, preload=True)
 
-    # Check that the correct units were written in the BV file
+    # check that the correct units were written in the BV file
     orig_units = [u for key, u in raw_written._orig_units.items()]
     assert len(set(orig_units)) == 2
     assert all(
@@ -663,7 +661,7 @@ def test_write_unsupported_units(tmpdir):
     absolute_tolerance = 0
     assert_allclose(data, raw_written.get_data(), atol=absolute_tolerance)
 
-    # Check that the correct units were written in the BV file
+    # check that the correct units were written in the BV file
     orig_units = [u for key, u in raw_written._orig_units.items()]
     assert len(set(orig_units)) == 2
     assert all([orig_units[idx] == unit for idx in range(n_chans - 1)])
@@ -768,12 +766,12 @@ def test_event_writing(tmpdir):
     # should be one more, because event[3] is written twice (once per channel)
     assert len(raw.annotations) == len(events) + 1
 
-    # note: mne orders events by onset, use sorted
+    # note: MNE orders events by onset, use sorted
     onsets = np.array([ev["onset"] / raw.info["sfreq"] for ev in events])
     onsets = sorted(onsets) + [1.0]  # add duplicate event (due to channels)
     np.testing.assert_array_equal(raw.annotations.onset, onsets)
 
-    # mne does not (yet; at 1.0.3) read ch_names for annotations from vmrk
+    # MNE does not (yet; at 1.0.3) read ch_names for annotations from vmrk
     np.testing.assert_array_equal(
         [i for i in raw.annotations.ch_names], [() for i in range(len(events) + 1)]
     )

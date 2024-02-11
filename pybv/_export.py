@@ -19,31 +19,31 @@ def _export_mne_raw(*, raw, fname, events=None, overwrite=False):
         The raw data to export.
     fname : str | pathlib.Path
         The name of the file where raw data will be exported to. Must end with
-        ``".vhdr"``, and accompanying *.vmrk* and *.eeg* files will be written
-        inside the same directory.
+        ``".vhdr"``, and accompanying *.vmrk* and *.eeg* files will be written inside
+        the same directory.
     events : np.ndarray | None
-        Events to be written to the marker file (*.vmrk*). When array, must be in
-        `MNE-Python format <https://mne.tools/stable/glossary.html#term-events>`_.
-        When ``None`` (default), events will be written based on ``raw.annotations``.
+        Events to be written to the marker file (*.vmrk*). If array, must be in
+        `MNE-Python format <https://mne.tools/stable/glossary.html#term-events>`_. If
+        ``None`` (default), events will be written based on ``raw.annotations``.
     overwrite : bool
         Whether or not to overwrite existing data. Defaults to ``False``.
+
     """
-    # Prepare file location
+    # prepare file location
     if not str(fname).endswith(".vhdr"):
         raise ValueError("`fname` must have the '.vhdr' extension for BrainVision.")
     fname = Path(fname)
     folder_out = fname.parents[0]
     fname_base = fname.stem
 
-    # Prepare data from raw
+    # prepare data from raw
     data = raw.get_data()  # gets data starting from raw.first_samp
     sfreq = raw.info["sfreq"]  # in Hz
     meas_date = raw.info["meas_date"]  # datetime.datetime
     ch_names = raw.ch_names
 
-    # write voltage units as micro-volts and all other units without
-    # scaling
-    # We write units that we don't know as n/a
+    # write voltage units as micro-volts and all other units without scaling
+    # write units that we don't know as n/a
     unit = []
     for ch in raw.info["chs"]:
         if ch["unit"] == FIFF.FIFF_UNIT_V:
@@ -54,9 +54,9 @@ def _export_mne_raw(*, raw, fname, events=None, overwrite=False):
             unit.append(_unit2human.get(ch["unit"], "n/a"))
     unit = [u if u != "NA" else "n/a" for u in unit]
 
-    # We enforce conversion to float32 format
-    # XXX: Could add a feature that checks data and optimizes `unit`, `resolution`,
-    #      and `format` so that raw.orig_format could be retained if reasonable.
+    # enforce conversion to float32 format
+    # XXX: Could add a feature that checks data and optimizes `unit`, `resolution`, and
+    #      `format` so that raw.orig_format could be retained if reasonable.
     if raw.orig_format != "single":
         warn(
             f"Encountered data in '{raw.orig_format}' format. "
@@ -67,12 +67,12 @@ def _export_mne_raw(*, raw, fname, events=None, overwrite=False):
     fmt = "binary_float32"
     resolution = 0.1
 
-    # Handle events
+    # handle events
     # if we got an ndarray, this is in MNE-Python format
     msg = "`events` must be None or array in MNE-Python format."
     if events is not None:
-        # Subtract raw.first_samp because brainvision marks events starting from
-        # the first available data point and ignores the raw.first_samp
+        # Subtract raw.first_samp because brainvision marks events starting from the
+        # first available data point and ignores the raw.first_samp
         assert isinstance(events, np.ndarray), msg
         assert events.ndim == 2, msg
         assert events.shape[-1] == 3, msg
@@ -107,14 +107,14 @@ def _mne_annots2pybv_events(raw):
     """Convert mne Annotations to pybv events."""
     events = []
     for annot in raw.annotations:
-        # Handle onset and duration: seconds to sample,
-        # relative to raw.first_samp / raw.first_time
+        # handle onset and duration: seconds to sample, relative to
+        # raw.first_samp / raw.first_time
         onset = annot["onset"] - raw.first_time
         onset = raw.time_as_index(onset).astype(int)[0]
         duration = int(annot["duration"] * raw.info["sfreq"])
 
-        # Triage type and description
-        # Defaults to type="Comment", and the full description
+        # triage type and description
+        # defaults to type="Comment" and the full description
         etype = "Comment"
         description = annot["description"]
         for start in ["Stimulus/S", "Response/R", "Comment/"]:
@@ -137,11 +137,11 @@ def _mne_annots2pybv_events(raw):
         )
 
         if "ch_names" in annot:
-            # Handle channels
+            # handle channels
             channels = list(annot["ch_names"])
             event_dict["channels"] = channels
 
-        # Add a "pybv" event
+        # add a "pybv" event
         events += [event_dict]
 
     return events
