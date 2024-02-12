@@ -41,8 +41,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install -r requirements-dev.txt
-        python -m pip install -e .
+        python -m pip install -e .[dev]
 
     - name: install MNE-Python main
       if: "matrix.platform == 'ubuntu-22.04'"

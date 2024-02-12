@@ -16,5 +16,4 @@ python:
    - method: pip
      path: .
      extra_requirements:
-       - export
-   - requirements: docs/requirements-rtd.txt
+       - dev
