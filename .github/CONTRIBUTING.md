@@ -38,7 +38,7 @@ you can run tests by making use of the `Makefile` and
 From the project root, call:
 
 - `make test` to run tests and coverage
-- `pre-commit run` to run style checks (Ruff and some additional hooks)
+- `pre-commit run -a` to run style checks (Ruff and some additional hooks)
 
 ## Building the documentation
 
