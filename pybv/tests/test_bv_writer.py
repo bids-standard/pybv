@@ -97,6 +97,7 @@ def test_non_stim_resp_event_first(tmpdir):
         (events_array, ""),
         (None, ""),
         (np.arange(90).reshape(30, 3), ""),
+        (np.array([[0, -1]]), "descriptions must be non-negative ints"),
     ],
 )
 def test_bv_writer_events_array(tmpdir, events_errormsg):
