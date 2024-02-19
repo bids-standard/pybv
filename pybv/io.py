@@ -424,7 +424,7 @@ def _chk_events(events, ch_names, n_times):
 
         for event in events_out:
             if event["description"] < 0:
-                raise ValueError(f"events: descriptions must be non-negative ints.")
+                raise ValueError("events: descriptions must be non-negative ints.")
             tformat = event["type"][0] + "{:>" + str(twidth) + "}"
             event["description"] = tformat.format(event["description"])
 
