@@ -36,7 +36,7 @@ events = [
     {
         "onset": 1,
         "duration": 10,
-        "description": 1,
+        "description": "1",
         "type": "Stimulus",
         "channels": "all",
     },
@@ -48,13 +48,13 @@ events = [
     },
     {
         "onset": 1000,
-        "description": 2,
+        "description": "2",
         "type": "Response",
         "channels": ["ch_1", "ch_2"],
     },
     {
         "onset": 200,
-        "description": 1234,
+        "description": "1234",
         "channels": [],
     },
 ]
@@ -134,40 +134,26 @@ def test_bv_writer_events_array(tmpdir, events_errormsg):
             [{"onset": 100, "description": 1, "duration": 4901}],
             "events: at least one event has a duration that exceeds",
         ),
+        ([{"onset": 1, "description": {}}], "`description` must be str"),
+        ([{"onset": 1, "description": 1}], "`description` must be str"),
         (
-            [{"onset": 1, "description": 2, "type": "bogus"}],
-            "`type` must be one of",
-        ),
-        (
-            [{"onset": 1, "description": "bogus"}],
-            "when `type` is Stimulus, `description` must be non-negative int",
-        ),
-        (
-            [{"onset": 1, "description": {}, "type": "Comment"}],
-            "when `type` is Comment, `description` must be str or int",
-        ),
-        (
-            [{"onset": 1, "description": -1}],
-            "when `type` is Stimulus, descriptions must be non-negative ints.",
-        ),
-        (
-            [{"onset": 1, "description": 1, "channels": "bogus"}],
+            [{"onset": 1, "description": "1", "channels": "bogus"}],
             "found channel .* bogus",
         ),
         (
-            [{"onset": 1, "description": 1, "channels": ["ch_1", "ch_1"]}],
+            [{"onset": 1, "description": "1", "channels": ["ch_1", "ch_1"]}],
             "events: found duplicate channel names",
         ),
         (
-            [{"onset": 1, "description": 1, "channels": ["ch_1", "ch_2"]}],
+            [{"onset": 1, "description": "1", "channels": ["ch_1", "ch_2"]}],
             "warn___feature may not be supported",
         ),
         (
-            [{"onset": 1, "description": 1, "channels": 1}],
+            [{"onset": 1, "description": "1", "channels": 1}],
             "events: `channels` must be str or list of str",
         ),
         (
-            [{"onset": 1, "description": 1, "channels": [{}]}],
+            [{"onset": 1, "description": "1", "channels": [{}]}],
             "be list of str or list of int corresponding to ch_names",
         ),
         ([], ""),
@@ -757,8 +743,7 @@ def test_event_writing(tmpdir):
         data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir
     )
 
-    with pytest.warns(UserWarning, match="Such events will be written to .vmrk"):
-        write_brainvision(**kwargs, events=events)
+    write_brainvision(**kwargs, events=events)
 
     vhdr_fname = tmpdir / fname + ".vhdr"
     raw = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname, preload=True)
@@ -782,10 +767,10 @@ def test_event_writing(tmpdir):
 
     descr = [
         "Comment/Some string :-)",
-        "Stimulus/S   1",
-        "Stimulus/S1234",
-        "Response/R   2",
-        "Response/R   2",
+        "Stimulus/1",
+        "Stimulus/1234",
+        "Response/2",
+        "Response/2",
     ]
     np.testing.assert_array_equal(raw.annotations.description, descr)
 
@@ -793,3 +778,21 @@ def test_event_writing(tmpdir):
     _events, _event_id = mne.events_from_annotations(raw)
     for _d in descr:
         assert _d in _event_id
+
+
+def test_event_array_writing(tmpdir):
+    """Test writing events as an array."""
+    kwargs = dict(
+        data=data, sfreq=sfreq, ch_names=ch_names, fname_base=fname, folder_out=tmpdir
+    )
+
+    write_brainvision(**kwargs, events=events_array)
+
+    vhdr_fname = tmpdir / fname + ".vhdr"
+    raw = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname, preload=True)
+
+    descr = ["Stimulus/S  1", "Stimulus/S  1", "Stimulus/S  2", "Stimulus/S  2"]
+
+    np.testing.assert_array_equal(raw.annotations.onset, events_array[:, 0] / sfreq)
+    np.testing.assert_array_equal(raw.annotations.duration, np.full(4, 1 / sfreq))
+    np.testing.assert_array_equal(raw.annotations.description, descr)

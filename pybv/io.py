@@ -89,15 +89,10 @@ def write_brainvision(
                 dimension of the `data` array.
             - ``"duration"`` : int
                 The duration of the event in samples (defaults to ``1``).
-            - ``"description"`` : str | int
-                The description of the event. Must be a non-negative int when `type`
-                (see below) is either ``"Stimulus"`` or ``"Response"``, and may be a str
-                when `type` is ``"Comment"``.
+            - ``"description"`` : str
+                The description of the event.
             - ``"type"`` : str
-                The type of the event, must be one of ``{"Stimulus", "Response",
-                "Comment"}`` (defaults to ``"Stimulus"``). Additional types like the
-                known BrainVision types ``"New Segment"``, ``"SyncStatus"``, etc. are
-                currently not supported.
+                The type of the event (defaults to ``"Stimulus"``).
             - ``"channels"`` : str | list of {str | int}
                 The channels that are impacted by the event. Can be ``"all"``
                 (reflecting all channels), or a channel name, or a list of channel
@@ -150,11 +145,6 @@ def write_brainvision(
     will still scale the signals accordingly in the exported file. We will also write
     channels with non-voltage units such as °C as is (without scaling). For maximum
     compatibility, all signals should be written as µV.
-
-    When passing a list of dict to `events`, the event ``type`` that can be passed is
-    currently limited to one of ``{"Stimulus", "Response", "Comment"}``. The BrainVision
-    specification itself does not limit event types, and future extensions of ``pybv``
-    may permit additional or even arbitrary event types.
 
     References
     ----------
@@ -354,12 +344,12 @@ def _chk_events(events, ch_names, n_times):
     ``None``, it will be an empty list. If `events` is a list of dict, it will add
     missing keys to each dict with default values, and it will, for each ith event, turn
     ``events[i]["channels"]`` into a list of 1-based channel name indices, where ``0``
-    equals ``"all"``. Event descriptions for ``"Stimulus"`` and ``"Response"`` will be
-    reformatted to a str of the format ``"S{:>n}"`` (or with a leading ``"R"`` for
-    ``"Response"``), where ``n`` is determined by the description with the most digits
-    (minimum 3). For each ith event, the onset (``events[i]["onset"]``) will be
-    incremented by 1 to comply with the 1-based indexing used in BrainVision marker
-    files (*.vmrk*).
+    equals ``"all"``. Only if `events` is passed as an np.ndarray, event descriptions
+    will be reformatted to a str of the format ``"S{:>n}"``, where ``n`` is determined
+    by the description with the most digits (minimum 3). In addition, event types will
+    be set to ``"Stimulus"``. For each ith event, the onset (``events[i]["onset"]``)
+    will be incremented by 1 to comply with the 1-based indexing used in BrainVision
+    marker files (*.vmrk*).
 
     Parameters
     ----------
@@ -376,12 +366,13 @@ def _chk_events(events, ch_names, n_times):
         The preprocessed events, always provided as list of dict.
 
     """
-    if not isinstance(events, (type(None), np.ndarray, list)):
-        raise ValueError("events must be an array, a list of dict, or None")
-
     # validate input: None
-    if isinstance(events, type(None)):
-        events_out = []
+    if events is None:
+        return []
+
+    # validate input: ndarray, list of dict
+    if not isinstance(events, (np.ndarray, list)):
+        raise ValueError("events must be an array, a list of dict, or None")
 
     # default events
     # NOTE: using "ch_names" as default for channels translates directly into "all" but
@@ -406,6 +397,7 @@ def _chk_events(events, ch_names, n_times):
         durations = np.ones(events.shape[0], dtype=int) * event_defaults["duration"]
         if events.shape[1] == 3:
             durations = events[:, -1]
+
         events_out = []
         for irow, row in enumerate(events[:, 0:2]):
             events_out.append(
@@ -417,6 +409,24 @@ def _chk_events(events, ch_names, n_times):
                     channels=event_defaults["channels"],
                 )
             )
+
+        # NOTE: We format 1 -> "S  1", 10 -> "S 10", 100 -> "S100", etc.,
+        # https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677
+        max_event_descr = max(
+            [1]
+            + [
+                ev.get("description", "n/a")
+                for ev in events_out
+                if isinstance(ev.get("description", "n/a"), int)
+            ]
+        )
+        twidth = max(3, int(np.ceil(np.log10(max_event_descr))))
+
+        for event in events_out:
+            if event["description"] < 0:
+                raise ValueError(f"events: descriptions must be non-negative ints.")
+            tformat = event["type"][0] + "{:>" + str(twidth) + "}"
+            event["description"] = tformat.format(event["description"])
 
     # validate input: list of dict
     if isinstance(events, list):
@@ -432,18 +442,6 @@ def _chk_events(events, ch_names, n_times):
                 "in list"
             )
 
-    # NOTE: We format 1 -> "S  1", 10 -> "S 10", 100 -> "S100", etc.,
-    # https://github.com/bids-standard/pybv/issues/24#issuecomment-512746677
-    max_event_descr = max(
-        [1]
-        + [
-            ev.get("description", "n/a")
-            for ev in events_out
-            if isinstance(ev.get("description", "n/a"), int)
-        ]
-    )
-    twidth = max(3, int(np.ceil(np.log10(max_event_descr))))
-
     # do full validation
     for event in events_out:
         # required keys
@@ -456,7 +454,7 @@ def _chk_events(events, ch_names, n_times):
 
         # populate keys with default if missing (in-place)
         for optional_key, default in event_defaults.items():
-            event[optional_key] = event.get(optional_key, default)
+            event.setdefault(optional_key, default)
 
         # validate key types
         # `onset`, `duration`
@@ -484,36 +482,8 @@ def _chk_events(events, ch_names, n_times):
 
         event["onset"] = event["onset"] + 1  # VMRK uses 1-based indexing
 
-        # `type`
-        event_types = ["Stimulus", "Response", "Comment"]
-        if event["type"] not in event_types:
-            raise ValueError(f"events: `type` must be one of {event_types}")
-
-        # `description`
-        if event["type"] in ["Stimulus", "Response"]:
-            if not isinstance(event["description"], int):
-                raise ValueError(
-                    f"events: when `type` is {event['type']}, `description` must be "
-                    "non-negative int"
-                )
-
-            if event["description"] < 0:
-                raise ValueError(
-                    f"events: when `type` is {event['type']}, descriptions must be "
-                    "non-negative ints."
-                )
-
-            tformat = event["type"][0] + "{:>" + str(twidth) + "}"
-            event["description"] = tformat.format(event["description"])
-
-        else:
-            assert event["type"] == "Comment"
-            if not isinstance(event["description"], (int, str)):
-                raise ValueError(
-                    f"events: when `type` is {event['type']}, `description` must be str"
-                    " or int"
-                )
-            event["description"] = str(event["description"])
+        if not isinstance(event["description"], str):
+            raise ValueError("events: `description` must be str")
 
         # `channels`
         # "all" becomes ch_names (list of all channel names), single str 'ch_name'
@@ -632,8 +602,8 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
             # https://github.com/bids-standard/pybv/pull/77
             for ch in ev["channels"]:
                 print(
-                    f"Mk{iev}={ev['type']},{ev['description']},"
-                    f"{ev['onset']},{ev['duration']},{ch}",
+                    f"Mk{iev}={ev['type']},{ev['description']},{ev['onset']},"
+                    f"{ev['duration']},{ch}",
                     file=fout,
                 )
                 iev += 1
