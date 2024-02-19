@@ -117,18 +117,6 @@ def _mne_annots2pybv_events(raw):
         # defaults to type="Comment" and the full description
         etype = "Comment"
         description = annot["description"]
-        for start in ["Stimulus/S", "Response/R", "Comment/"]:
-            if description.startswith(start):
-                etype = start.split("/")[0]
-                description = description.replace(start, "")
-                break
-
-        if etype in ["Stimulus", "Response"] and description.strip().isdigit():
-            description = int(description.strip())
-        else:
-            # if cannot convert to int, we must use this as "Comment"
-            etype = "Comment"
-
         event_dict = dict(
             onset=onset,  # in samples
             duration=duration,  # in samples
