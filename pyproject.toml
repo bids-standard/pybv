@@ -38,13 +38,9 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-full = [
-    "mne >= 1.0",
-]
-
 dev = [
-    "pybv[full]",
     "check-manifest",
+    "mne",
     "numpydoc",
     "pre-commit",
     "pytest",
