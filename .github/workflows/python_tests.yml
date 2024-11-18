@@ -79,6 +79,6 @@ jobs:
 
     - name: Upload coverage report
       if: ${{ matrix.platform == 'ubuntu-22.04' && matrix.python-version == '3.11' }}
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         files: ./coverage.xml
