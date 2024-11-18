@@ -6,6 +6,8 @@ import os
 import sys
 from datetime import date
 
+from intersphinx_registry import get_intersphinx_mapping
+
 import pybv
 
 curdir = os.path.dirname(__file__)
@@ -45,7 +47,8 @@ autosummary_generate = True
 
 # General information about the project.
 project = "pybv"
-copyright = f"2018-{date.today().year}, pybv developers"  # noqa:A001
+today = date.today().isoformat()
+copyright = f"2018, pybv developers. Last updated on {today}"  # noqa: A001
 author = "pybv developers"
 version = pybv.__version__
 release = version
@@ -78,9 +81,12 @@ html_sidebars = {
 }
 
 # When functions from other packages are mentioned, link to them
-intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
-    "mne": ("https://mne.tools/dev/", None),
-    "numpy": ("https://numpy.org/devdocs", None),
-}
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = get_intersphinx_mapping(
+    packages={
+        "python",
+        "mne",
+        "numpy",
+    }
+)
 intersphinx_timeout = 10

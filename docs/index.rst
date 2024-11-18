@@ -4,4 +4,5 @@
    :hidden:
    :glob:
 
-   *
+   api.rst
+   changelog.rst

@@ -1,67 +1,73 @@
 [build-system]
-requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+requires = ["setuptools"]
 
 [project]
-name = "pybv"
 authors = [
-    {name = "pybv developers"},
+  {name = "pybv developers"},
 ]
-maintainers = [
-    {name = "Stefan Appelhoff", email = "stefan.appelhoff@mailbox.org"},
-]
-description = "pybv – a lightweight I/O utility for the BrainVision data format"
-keywords = ["Brain Products", "BrainVision", "vhdr", "vmrk", "eeg"]
-readme = "README.rst"
-license = {file = "LICENSE"}
-requires-python = ">=3.8"
-dependencies = [
-    "numpy >= 1.18.1",
-]
-dynamic = ["version"]
 classifiers = [
-    "Topic :: Scientific/Engineering",
-    "Intended Audience :: Science/Research",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved",
-    "Topic :: Software Development",
-    "Topic :: Scientific/Engineering",
-    "Operating System :: Microsoft :: Windows",
-    "Operating System :: POSIX :: Linux",
-    "Operating System :: MacOS",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Software Development",
 ]
+dependencies = [
+  "numpy >= 1.18.1",
+]
+description = "pybv - a lightweight I/O utility for the BrainVision data format"
+dynamic = ["version"]
+keywords = ["Brain Products", "BrainVision", "eeg", "vhdr", "vmrk"]
+license = {file = "LICENSE"}
+maintainers = [
+  {email = "stefan.appelhoff@mailbox.org", name = "Stefan Appelhoff"},
+]
+name = "pybv"
+readme = "README.rst"
+requires-python = ">=3.9"
 
 [project.optional-dependencies]
 dev = [
-    "check-manifest",
-    "mne",
-    "numpydoc",
-    "pre-commit",
-    "pytest",
-    "pytest-cov",
-    "pytest-sugar",
-    "ruff",
-    "sphinx",
-    "sphinx-copybutton",
+  "check-manifest",
+  "intersphinx_registry",
+  "mne",
+  "numpydoc",
+  "pre-commit",
+  "pytest",
+  "pytest-cov",
+  "pytest-sugar",
+  "ruff",
+  "sphinx",
+  "sphinx-copybutton",
 ]
 
 [project.urls]
 Documentation = "https://pybv.readthedocs.io"
-Repository = "https://github.com/bids-standard/pybv"
 Issues = "https://github.com/bids-standard/pybv/issues"
+Repository = "https://github.com/bids-standard/pybv"
 
 [tool.ruff.lint]
-select = ["A", "B006", "D", "E", "F", "I", "W", "UP"]
 ignore = ["D203", "D213"]
+select = ["A", "B006", "D", "E", "F", "I", "UP", "W"]
 
 [tool.setuptools.dynamic]
 version = {attr = "pybv.__version__"}
 
 [tool.setuptools.packages.find]
 exclude = ["docs", "specification"]
+
+[tool.tomlsort]
+all = true
+ignore_case = true
+spaces_before_inline_comment = 2
+trailing_comma_inline_array = true

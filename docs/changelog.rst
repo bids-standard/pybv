@@ -17,17 +17,6 @@ People who contributed to this software across releases (in **alphabetical order
 - `Stefan Appelhoff`_
 - `Tristan Stenner`_
 
-.. _Chris Holdgraf: https://bids.berkeley.edu/people/chris-holdgraf
-.. _Stefan Appelhoff: http://stefanappelhoff.com/
-.. _Tristan Stenner: https://github.com/tstenner
-.. _Phillip Alday: https://palday.bitbucket.io/
-.. _Clemens Brunner: https://cbrnr.github.io/
-.. _Richard Höchenberger: https://hoechenberger.net/
-.. _Adam Li: https://adam2392.github.io/
-.. _Aniket Pradhan: http://home.iiitd.edu.in/~aniket17133/
-.. _Pierre Cutellic: https://github.com/compmonks
-.. _Felix Klotzsche: https://github.com/eioe
-
 .. _changelog:
 
 =========
@@ -186,3 +175,5 @@ Changelog
 ~~~~~~~~~
 - Initial import from `philistine <https://pypi.org/project/philistine/>`_ package by `Phillip Alday`_
   and removing dependency on MNE-Python, by `Chris Holdgraf`_, and `Stefan Appelhoff`_
+
+.. include:: authors.rst

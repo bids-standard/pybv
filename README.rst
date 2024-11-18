@@ -77,7 +77,7 @@ as hosted by Brain Products.
 Installation
 ============
 
-``pybv`` runs on Python version 3.8 or higher.
+``pybv`` runs on Python version 3.9 or higher.
 
 ``pybv``'s only dependency is ``numpy``.
 However, we currently recommend that you install MNE-Python for reading BrainVision data.
