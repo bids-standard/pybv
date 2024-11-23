@@ -2,7 +2,6 @@
 
 import itertools
 import os
-import os.path as op
 import re
 from datetime import datetime, timezone
 
@@ -705,10 +704,10 @@ def test_cleanup(tmpdir):
             folder_out=folder_out,
             fmt="binary_float999",
         )
-    assert not op.exists(folder_out)
-    assert not op.exists(folder_out / fname + ".eeg")
-    assert not op.exists(folder_out / fname + ".vmrk")
-    assert not op.exists(folder_out / fname + ".vhdr")
+    assert not (folder_out).exists()
+    assert not (folder_out / fname + ".eeg").exists()
+    assert not (folder_out / fname + ".vmrk").exists()
+    assert not (folder_out / fname + ".vhdr").exists()
 
     # if folder already existed before erroneous writing, it is not deleted
     os.makedirs(folder_out)
@@ -721,12 +720,12 @@ def test_cleanup(tmpdir):
             folder_out=folder_out,
             fmt="binary_float999",
         )
-    assert op.exists(folder_out)
+    assert folder_out.exists()
 
     # but all other (incomplete/erroneous) files are deleted
-    assert not op.exists(folder_out / fname + ".eeg")
-    assert not op.exists(folder_out / fname + ".vmrk")
-    assert not op.exists(folder_out / fname + ".vhdr")
+    assert not (folder_out / fname + ".eeg").exists()
+    assert not (folder_out / fname + ".vmrk").exists()
+    assert not (folder_out / fname + ".vhdr").exists()
 
 
 def test_overwrite(tmpdir):

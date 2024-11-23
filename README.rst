@@ -1,14 +1,18 @@
 .. image:: https://github.com/bids-standard/pybv/workflows/Python%20build/badge.svg
    :target: https://github.com/bids-standard/pybv/actions?query=workflow%3A%22Python+build%22
-   :alt: GitHub Actions Python build
+   :alt: Python build
 
 .. image:: https://github.com/bids-standard/pybv/workflows/Python%20tests/badge.svg
    :target: https://github.com/bids-standard/pybv/actions?query=workflow%3A%22Python+tests%22
-   :alt: GitHub Actions Python tests
+   :alt: Python tests
 
 .. image:: https://codecov.io/gh/bids-standard/pybv/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/bids-standard/pybv
-   :alt: Codecov
+   :alt: Test coverage
+
+.. image:: https://readthedocs.org/projects/pybv/badge/?version=stable
+   :target: https://pybv.readthedocs.io/en/stable/?badge=stable
+   :alt: Documentation Status
 
 .. image:: https://badge.fury.io/py/pybv.svg
    :target: https://badge.fury.io/py/pybv
@@ -18,10 +22,6 @@
    :target: https://anaconda.org/conda-forge/pybv
    :alt: Conda version
 
-.. image:: https://readthedocs.org/projects/pybv/badge/?version=stable
-   :target: https://pybv.readthedocs.io/en/stable/?badge=stable
-   :alt: Documentation Status
-
 .. image:: https://zenodo.org/badge/157434681.svg
    :target: https://zenodo.org/badge/latestdoi/157434681
    :alt: Zenodo archive
@@ -30,16 +30,17 @@
 pybv
 ====
 
+For documentation, see the:
+
+- `stable documentation <https://pybv.rtfd.io/en/stable/>`_
+- `latest (development) documentation <https://pybv.rtfd.io/en/latest/>`_
+
+.. docs_readme_include_label
+
 ``pybv`` is a lightweight I/O utility for the BrainVision data format.
 
 The BrainVision data format is a recommended data format for use in the
 `Brain Imaging Data Structure <https://bids.neuroimaging.io>`_.
-
-
-The documentation can be found under the following links:
-
-- for the `stable release <https://pybv.rtfd.io/en/stable/>`_
-- for the `latest (development) version <https://pybv.rtfd.io/en/latest/>`_
 
 About the BrainVision data format
 =================================
@@ -73,7 +74,6 @@ A documentation for the BrainVision file format is provided by Brain Products.
 You can `view the specification <https://www.brainproducts.com/support-resources/brainvision-core-data-format-1-0/>`_
 as hosted by Brain Products.
 
-
 Installation
 ============
 
@@ -87,11 +87,26 @@ After you have a working installation of MNE-Python (or only ``numpy`` if you
 do not want to read data and only write it), you can install ``pybv`` through
 the following:
 
-- ``pip install --upgrade pybv``
+.. code-block:: Text
+
+   python -m pip install --upgrade pybv
 
 or if you use `conda <https://docs.conda.io/en/latest/miniconda.html>`_:
 
-- ``conda install --channel conda-forge pybv``
+.. code-block:: Text
+
+   conda install --channel conda-forge pybv
+
+For installing the **latest (development)** version of ``pyprep``, call:
+
+.. code-block:: Text
+
+   python -m pip install --upgrade https://github.com/bids-standard/pybv/archive/refs/heads/main.zip
+
+Both the *stable* and the *latest* installation will additionally install
+all required dependencies automatically.
+The dependencies are defined in the ``pyproject.toml`` file under the
+``dependencies`` and ``project.optional-dependencies`` sections.
 
 Contributing
 ============
@@ -100,7 +115,13 @@ The development of ``pybv`` is taking place on
 `GitHub <https://github.com/bids-standard/pybv>`_.
 
 For more information, please see
-`CONTRIBUTING.md <https://github.com/bids-standard/pybv/blob/main/.github/CONTRIBUTING.md>`_
+`CONTRIBUTING.md <https://github.com/bids-standard/pybv/blob/main/.github/CONTRIBUTING.md>`_.
+
+Citing
+======
+
+If you use this software in academic work, please cite it using the `Zenodo entry <https://zenodo.org/badge/latestdoi/157434681>`_.
+Metadata is encoded in the `CITATION.cff` file.
 
 Usage
 =====

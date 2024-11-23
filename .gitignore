@@ -14,3 +14,7 @@ htmlcov/
 .vscode/
 .venv
 .idea
+.ruff_cache
+*.vmrk
+*.eeg
+*.vhdr
