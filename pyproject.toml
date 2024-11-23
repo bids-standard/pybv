@@ -37,18 +37,26 @@ readme = "README.rst"
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-dev = [
-  "check-manifest",
+dev = ["ipykernel", "ipython", "pybv[test,docs]"]
+# Dependencies for developer installations
+docs = [
   "intersphinx_registry",
-  "mne",
+  "matplotlib",
   "numpydoc",
+  "sphinx",
+  "sphinx-copybutton",
+]
+test = [
+  "build",
+  "check-manifest",
+  "matplotlib",
+  "mne",
   "pre-commit",
   "pytest",
   "pytest-cov",
   "pytest-sugar",
   "ruff",
-  "sphinx",
-  "sphinx-copybutton",
+  "twine",
 ]
 
 [project.urls]
