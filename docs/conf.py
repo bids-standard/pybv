@@ -3,17 +3,17 @@
 See: https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
 
-import os
 import sys
 from datetime import date
+from pathlib import Path
 
 from intersphinx_registry import get_intersphinx_mapping
 
 import pybv
 
-curdir = os.path.dirname(__file__)
-sys.path.append(os.path.abspath(os.path.join(curdir, "..", "pybv")))
-sys.path.append(os.path.abspath(os.path.join(curdir, "sphinxext")))
+curdir = Path(__file__).parent
+sys.path.append((curdir / ".." / "pybv").resolve())
+sys.path.append((curdir / ".." / "sphinxext").resolve())
 
 # see: https://sphinx.readthedocs.io/en/1.3/extensions.html
 extensions = [

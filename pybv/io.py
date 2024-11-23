@@ -5,7 +5,7 @@ import datetime
 import os
 import shutil
 import sys
-from os import path as op
+from pathlib import Path
 from warnings import warn
 
 import numpy as np
@@ -63,7 +63,7 @@ def write_brainvision(
     fname_base : str
         The base name for the output files. Three files will be created (*.vhdr*,
         *.vmrk*, *.eeg*), and all will share this base name.
-    folder_out : str
+    folder_out : str | pathlib.Path
         The folder where output files will be saved. Will be created if it does not
         exist.
     overwrite : bool
@@ -182,6 +182,8 @@ def write_brainvision(
 
     """
     # input checks
+    folder_out = Path(folder_out)
+
     if not isinstance(data, np.ndarray):
         raise ValueError(f"data must be np.ndarray, but found: {type(data)}")
 
@@ -299,13 +301,13 @@ def write_brainvision(
         )
 
     # create output file names/paths, checking if they already exist
-    folder_out_created = not op.exists(folder_out)
-    os.makedirs(folder_out, exist_ok=True)
-    eeg_fname = op.join(folder_out, fname_base + ".eeg")
-    vmrk_fname = op.join(folder_out, fname_base + ".vmrk")
-    vhdr_fname = op.join(folder_out, fname_base + ".vhdr")
+    folder_out_created = not folder_out.exists()
+    folder_out.mkdir(parents=True, exist_ok=True)
+    eeg_fname = folder_out / f"{fname_base}.eeg"
+    vmrk_fname = folder_out / f"{fname_base}.vmrk"
+    vhdr_fname = folder_out / f"{fname_base}.vhdr"
     for fname in (eeg_fname, vmrk_fname, vhdr_fname):
-        if op.exists(fname) and not overwrite:
+        if fname.exists() and not overwrite:
             raise OSError(
                 f"File already exists: {fname}.\n" f"Consider setting overwrite=True."
             )
@@ -341,7 +343,7 @@ def write_brainvision(
         else:
             # else, only remove the files we might have created
             for fname in (eeg_fname, vmrk_fname, vhdr_fname):
-                if op.exists(fname):  # pragma: no cover
+                if fname.exists():  # pragma: no cover
                     os.remove(fname)
 
         raise
@@ -703,8 +705,8 @@ def _write_vhdr_file(
         print("", file=fout)
         print("[Common Infos]", file=fout)
         print("Codepage=UTF-8", file=fout)
-        print(f"DataFile={op.basename(eeg_fname)}", file=fout)
-        print(f"MarkerFile={op.basename(vmrk_fname)}", file=fout)
+        print(f"DataFile={eeg_fname.name}", file=fout)
+        print(f"MarkerFile={vmrk_fname.name}", file=fout)
 
         if format.startswith("binary"):
             print("DataFormat=BINARY", file=fout)
