@@ -64,6 +64,18 @@ Documentation = "https://pybv.readthedocs.io"
 Issues = "https://github.com/bids-standard/pybv/issues"
 Repository = "https://github.com/bids-standard/pybv"
 
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_lines = ["if 0:", "if __name__ == .__main__.:", "pragma: no cover"]
+
+[tool.coverage.run]
+omit = ["*tests*"]
+
+[tool.pytest.ini_options]
+addopts = """. --doctest-modules --cov=pybv/ --cov-report=xml --cov-config=pyproject.toml --verbose -s"""
+filterwarnings = [
+]
+
 [tool.ruff.lint]
 ignore = ["D203", "D213"]
 select = ["A", "B006", "D", "E", "F", "I", "UP", "W"]

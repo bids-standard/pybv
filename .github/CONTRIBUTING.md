@@ -34,21 +34,15 @@ See https://pre-commit.com/ for more information.
 ## Running tests and coverage
 
 If you have followed the steps to get the development version,
-you can run tests by making use of the `Makefile` and
-[GNU Make](https://www.gnu.org/software/make/).
+you can run tests as follows.
 From the project root, call:
 
-- `make test` to run tests and coverage
+- `pytest` to run tests and coverage
 - `pre-commit run -a` to run style checks (Ruff and some additional hooks)
 
 ## Building the documentation
 
 The documentation can be built using [Sphinx](https://www.sphinx-doc.org).
-Again, assuming that you followed the steps to get the development version,
-you can use the `Makefile`.
-From the project root, call:
-
-- `make build-doc` to build the documentation and open a browser window to view it
 
 The publicly accessible documentation is built and hosted by
 [Read the Docs](https://readthedocs.org/).

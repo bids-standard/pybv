@@ -19,5 +19,4 @@ exclude .readthedocs.yaml
 exclude .git-blame-ignore-revs
 exclude .pre-commit-config.yaml
 exclude .gitignore
-exclude Makefile
 global-exclude *.pyc

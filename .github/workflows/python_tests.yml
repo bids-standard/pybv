@@ -71,16 +71,17 @@ jobs:
     - name: Check formatting
       if: matrix.platform == 'ubuntu-latest'
       run: |
-        make check-manifest
+        check-manifest
         pre-commit run --all-files
 
     - name: Test with pytest
-      run: |
-        make test
+      # Options defined in pyproject.toml
+      run: pytest
 
     - name: Build docs
       run: |
-        make build-doc
+        make -C docs/ clean
+        make -C docs/ html
 
     - name: Upload artifacts
       if: ${{ matrix.platform == 'ubuntu-latest' && matrix.python-version == '3.12' && matrix.mne-version == 'mne-stable'}}
