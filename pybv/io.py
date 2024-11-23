@@ -606,7 +606,7 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
         print("", file=fout)
         print("[Common Infos]", file=fout)
         print("Codepage=UTF-8", file=fout)
-        print(f"DataFile={eeg_fname.split(os.sep)[-1]}", file=fout)
+        print(f"DataFile={eeg_fname.name}", file=fout)
         print("", file=fout)
         print("[Marker Infos]", file=fout)
         print(

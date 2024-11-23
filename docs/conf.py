@@ -12,8 +12,9 @@ from intersphinx_registry import get_intersphinx_mapping
 import pybv
 
 curdir = Path(__file__).parent
-sys.path.append((curdir / ".." / "pybv").resolve())
-sys.path.append((curdir / ".." / "sphinxext").resolve())
+
+sys.path.append((curdir.parent / "pybv").resolve().as_posix())
+sys.path.append((curdir / "sphinxext").resolve().as_posix())
 
 # see: https://sphinx.readthedocs.io/en/1.3/extensions.html
 extensions = [
