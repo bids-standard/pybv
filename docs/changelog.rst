@@ -30,12 +30,12 @@ Here we list a changelog of pybv.
    :local:
    :depth: 1
 
-0.8.0 (unreleased)
+0.7.6 (2024-11-25)
 ==================
 
-Changelog
-~~~~~~~~~
-- Nothing yet
+Code health
+~~~~~~~~~~~
+- Various changes to the code infrastructure, by `Stefan Appelhoff`_: (:gh:`124`, :gh:`125`)
 
 0.7.5 (2022-10-24)
 ==================
@@ -50,7 +50,7 @@ Bug
 
 Changelog
 ~~~~~~~~~
-- Events: accept ``description`` label values >= 0 when ``type`` is ``"Stimulus"`` or ``"Response"``, by `Pierre Cutellic`_ (:gh:`95`)
+- Events: accept ``description`` label values ``>= 0`` when ``type`` is ``"Stimulus"`` or ``"Response"``, by `Pierre Cutellic`_ (:gh:`95`)
 - Events: accept ``duration == 0``, by `Clemens Brunner`_: (:gh:`96`)
 
 0.7.3 (2022-06-04)
