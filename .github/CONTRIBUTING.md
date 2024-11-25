@@ -94,14 +94,14 @@ The release protocol can be briefly described as follows:
    version
 1. Commit the change and git push to upstream `main`.
    Include "REL" in your commit message.
-1. Then, make an annotated tag, for example for the version `1.2.3`:
-   `git tag -a -m "1.2.3" 1.2.3 upstream/main`
+1. Then, make an annotated tag, for example for the version `v1.2.3`:
+   `git tag -a -m "v1.2.3" v1.2.3 upstream/main`
    (This assumes that you have a git remote configured with the name "upstream" and
    pointing to https://github.com/bids-standard/pybv).
    **NOTE: Make sure you have your `main` branch up to date for this step!**
 1. `git push --follow-tags upstream`
 1. Make a [release on GitHub](https://help.github.com/en/articles/creating-releases),
-   using the git tag from the previous step (e.g., `1.2.3`).
+   using the git tag from the previous step (e.g., `v1.2.3`).
    Fill the tag name into the "Release title" field, and fill the "Description" field
    as you see fit.
 1. This will trigger a GitHub Action that will build the package and release it to PyPi.
