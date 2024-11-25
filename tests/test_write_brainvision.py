@@ -1,5 +1,8 @@
 """BrainVision writer tests."""
 
+# Authors: pybv developers
+# SPDX-License-Identifier: BSD-3-Clause
+
 import itertools
 import os
 import re

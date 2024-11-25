@@ -54,6 +54,7 @@ Credentials for Read the Docs are currently held by:
 ## Info about versioning
 
 We follow a [semantic versioning scheme](https://semver.org/).
+This is implemented via [hatch-vcs](https://github.com/ofek/hatch-vcs).
 
 ## Making a release on GitHub, PyPi, and Conda-Forge
 

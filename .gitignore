@@ -18,3 +18,4 @@ htmlcov/
 *.vmrk
 *.eeg
 *.vhdr
+.ruff_cache

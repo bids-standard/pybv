@@ -71,7 +71,6 @@ jobs:
     - name: Check formatting
       if: matrix.platform == 'ubuntu-latest'
       run: |
-        check-manifest
         pre-commit run --all-files
 
     - name: Test with pytest
