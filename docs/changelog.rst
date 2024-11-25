@@ -14,6 +14,7 @@ People who contributed to this software across releases (in **alphabetical order
 - `Phillip Alday`_
 - `Pierre Cutellic`_
 - `Richard Höchenberger`_
+- `Robert Oostenveld`_
 - `Stefan Appelhoff`_
 - `Tristan Stenner`_
 

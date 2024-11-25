@@ -1,6 +1,6 @@
 [build-system]
-build-backend = "setuptools.build_meta"
-requires = ["setuptools"]
+build-backend = "hatchling.build"
+requires = ["hatch-vcs", "hatchling"]
 
 [project]
 authors = [
@@ -19,8 +19,6 @@ classifiers = [
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python",
   "Topic :: Scientific/Engineering",
-  "Topic :: Scientific/Engineering",
-  "Topic :: Software Development",
 ]
 dependencies = [
   "numpy >= 1.18.1",
@@ -33,12 +31,11 @@ maintainers = [
   {email = "stefan.appelhoff@mailbox.org", name = "Stefan Appelhoff"},
 ]
 name = "pybv"
-readme = "README.rst"
+readme = {content-type = "text/x-rst", file = "README.rst"}
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
 dev = ["ipykernel", "ipython", "pybv[test,docs]"]
-# Dependencies for developer installations
 docs = [
   "intersphinx_registry",
   "matplotlib",
@@ -48,7 +45,6 @@ docs = [
 ]
 test = [
   "build",
-  "check-manifest",
   "matplotlib",
   "mne",
   "pre-commit",
@@ -71,6 +67,22 @@ exclude_lines = ["if 0:", "if __name__ == .__main__.:", "pragma: no cover"]
 [tool.coverage.run]
 omit = ["*tests*"]
 
+[tool.hatch.build]
+exclude = [
+  "/.*",
+  "/.github/**",
+  "/docs",
+  "/specification",
+  "tests/**",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true  # allow specifying URLs in our dependencies
+
+[tool.hatch.version]
+raw-options = {version_scheme = "release-branch-semver"}
+source = "vcs"
+
 [tool.pytest.ini_options]
 addopts = """. --doctest-modules --cov=pybv/ --cov-report=xml --cov-config=pyproject.toml --verbose -s"""
 filterwarnings = [
@@ -80,11 +92,8 @@ filterwarnings = [
 ignore = ["D203", "D213"]
 select = ["A", "B006", "D", "E", "F", "I", "UP", "W"]
 
-[tool.setuptools.dynamic]
-version = {attr = "pybv.__version__"}
-
-[tool.setuptools.packages.find]
-exclude = ["docs", "specification"]
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
 
 [tool.tomlsort]
 all = true

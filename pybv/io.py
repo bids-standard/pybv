@@ -1,5 +1,8 @@
 """BrainVision writer."""
 
+# Authors: pybv developers
+# SPDX-License-Identifier: BSD-3-Clause
+
 import copy
 import datetime
 import os

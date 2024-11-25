@@ -6,5 +6,6 @@
 .. _Phillip Alday: https://palday.bitbucket.io/
 .. _Pierre Cutellic: https://github.com/compmonks
 .. _Richard Höchenberger: https://hoechenberger.net/
+.. _Robert Oostenveld: https://github.com/robertoostenveld
 .. _Stefan Appelhoff: http://stefanappelhoff.com/
 .. _Tristan Stenner: https://github.com/tstenner
