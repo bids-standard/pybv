@@ -38,6 +38,9 @@ authors:
 - given-names: "Benjamin"
   family-names: "Beasley"
   orcid: "https://orcid.org/0009-0002-6936-5959"
+- given-names: "Robert"
+  family-names: "Oostenveld"
+  orcid: "https://orcid.org/0000-0002-1974-1293"
 type: software
 repository-code: "https://github.com/bids-standard/pybv"
 url: "https://pybv.readthedocs.io/"
