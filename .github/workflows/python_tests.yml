@@ -19,14 +19,14 @@ jobs:
       fail-fast: false
       matrix:
         platform: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.10", "3.12"]
+        python-version: ["3.10", "3.13"]
         mne-version: [mne-stable]
 
         include:
           # special test runs running only on single CI systems to save resources
           # Test development versions
           - platform: ubuntu-latest
-            python-version: "3.12"
+            python-version: "3.13"
             mne-version: mne-main
 
     runs-on: ${{ matrix.platform }}
@@ -83,7 +83,7 @@ jobs:
         make -C docs/ html
 
     - name: Upload artifacts
-      if: ${{ matrix.platform == 'ubuntu-latest' && matrix.python-version == '3.12' && matrix.mne-version == 'mne-stable'}}
+      if: ${{ matrix.platform == 'ubuntu-latest' && matrix.python-version == '3.13' && matrix.mne-version == 'mne-stable'}}
       uses: actions/upload-artifact@v4
       with:
         name: docs-artifact

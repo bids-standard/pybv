@@ -200,7 +200,7 @@ def write_brainvision(
 
     nchan = len(ch_names)
     for ch in ch_names:
-        if not isinstance(ch, (str, int)):
+        if not isinstance(ch, str | int):
             raise ValueError("ch_names must be a list of str or list of int.")
     ch_names = [str(ch) for ch in ch_names]
 
@@ -246,7 +246,7 @@ def write_brainvision(
                 "reference channel, or omit the ref_ch_name parameter."
             )
 
-    if not isinstance(sfreq, (int, float)):
+    if not isinstance(sfreq, int | float):
         raise ValueError("sfreq must be one of (float | int)")
     sfreq = float(sfreq)
 
@@ -288,7 +288,7 @@ def write_brainvision(
         )
 
     # measurement date
-    if not isinstance(meas_date, (str, datetime.datetime, type(None))):
+    if not isinstance(meas_date, str | datetime.datetime | type(None)):
         raise ValueError(
             f"`meas_date` must be of type str, datetime.datetime, or None but is of "
             f'type "{type(meas_date)}"'
@@ -381,7 +381,7 @@ def _chk_events(events, ch_names, n_times):
         The preprocessed events, always provided as list of dict.
 
     """
-    if not isinstance(events, (type(None), np.ndarray, list)):
+    if not isinstance(events, type(None) | np.ndarray | list):
         raise ValueError("events must be an array, a list of dict, or None")
 
     # validate input: None
@@ -466,7 +466,7 @@ def _chk_events(events, ch_names, n_times):
         # validate key types
         # `onset`, `duration`
         for key in ["onset", "duration"]:
-            if not isinstance(event[key], (int, np.integer)):
+            if not isinstance(event[key], int | np.integer):
                 raise ValueError(f"events: `{key}` must be int")
 
         if not (0 <= event["onset"] < n_times):
@@ -513,7 +513,7 @@ def _chk_events(events, ch_names, n_times):
 
         else:
             assert event["type"] == "Comment"
-            if not isinstance(event["description"], (int, str)):
+            if not isinstance(event["description"], int | str):
                 raise ValueError(
                     f"events: when `type` is {event['type']}, `description` must be str"
                     " or int"
@@ -523,7 +523,7 @@ def _chk_events(events, ch_names, n_times):
         # `channels`
         # "all" becomes ch_names (list of all channel names), single str 'ch_name'
         # becomes [ch_name]
-        if not isinstance(event["channels"], (list, str)):
+        if not isinstance(event["channels"], list | str):
             raise ValueError("events: `channels` must be str or list of str")
 
         if isinstance(event["channels"], str):
@@ -542,7 +542,7 @@ def _chk_events(events, ch_names, n_times):
 
         # now channels is a list
         for ch in event["channels"]:
-            if not isinstance(ch, (str, int)):
+            if not isinstance(ch, str | int):
                 raise ValueError(
                     "events: `channels` must be list of str or list of int "
                     "corresponding to ch_names"
