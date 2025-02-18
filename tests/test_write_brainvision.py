@@ -7,6 +7,8 @@ import itertools
 import os
 import re
 from datetime import datetime, timezone
+from importlib.metadata import version
+from packaging.version import Version
 
 import mne
 import numpy as np
@@ -470,8 +472,11 @@ def test_write_read_cycle(tmpdir, meas_date, ref_ch_names):
         )
     vhdr_fname = tmpdir / fname + ".vhdr"
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname, preload=True)
-    # delete the first annotation because it's just marking a new segment
-    raw_written.annotations.delete(0)
+
+    if Version(version("mne")) < Version("1.10"):
+        # delete the first annotation because it's just marking a new segment
+        # (this is fixed in MNE-Python 1.10 or later)
+        raw_written.annotations.delete(0)
     # convert our annotations to events
     events_written, event_id = mne.events_from_annotations(raw_written)
 
