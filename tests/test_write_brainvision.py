@@ -473,7 +473,7 @@ def test_write_read_cycle(tmpdir, meas_date, ref_ch_names):
     vhdr_fname = tmpdir / fname + ".vhdr"
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname, preload=True)
 
-    if Version(version("mne")) < Version("1.10"):
+    if Version(version("mne")).release < (1, 10):
         # delete the first annotation because it's just marking a new segment
         # (this is fixed in MNE-Python 1.10 or later)
         raw_written.annotations.delete(0)
