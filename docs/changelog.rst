@@ -33,9 +33,9 @@ Here we list a changelog of pybv.
 0.8.0 (unreleased)
 ==================
 
-Changelog
-~~~~~~~~~
-- Nothing yet
+Code health
+~~~~~~~~~~~
+- Add support for Python 3.13 and drop support for Python 3.9, by `Clemens Brunner`_ (:gh:`128`)
 
 0.7.6 (2024-11-25)
 ==================
