@@ -7,11 +7,13 @@ import itertools
 import os
 import re
 from datetime import datetime, timezone
+from importlib.metadata import version
 
 import mne
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose, assert_array_equal
+from packaging.version import Version
 
 from pybv.io import (
     SUPPORTED_FORMATS,
@@ -440,7 +442,7 @@ def test_write_read_cycle(tmpdir, meas_date, ref_ch_names):
     """Test that a write/read cycle produces identical data."""
     # First fail writing due to wrong unit
     unsupported_unit = "rV"
-    with pytest.warns(UserWarning, match="Encountered unsupported " "non-voltage unit"):
+    with pytest.warns(UserWarning, match="Encountered unsupported non-voltage unit"):
         write_brainvision(
             data=data,
             sfreq=sfreq,
@@ -470,8 +472,11 @@ def test_write_read_cycle(tmpdir, meas_date, ref_ch_names):
         )
     vhdr_fname = tmpdir / fname + ".vhdr"
     raw_written = mne.io.read_raw_brainvision(vhdr_fname=vhdr_fname, preload=True)
-    # delete the first annotation because it's just marking a new segment
-    raw_written.annotations.delete(0)
+
+    if Version(version("mne")).release < (1, 10):
+        # delete the first annotation because it's just marking a new segment
+        # (this is fixed in MNE-Python 1.10 or later)
+        raw_written.annotations.delete(0)
     # convert our annotations to events
     events_written, event_id = mne.events_from_annotations(raw_written)
 
@@ -648,7 +653,7 @@ def test_write_unsupported_units(tmpdir):
 
     # write brain vision file
     vhdr_fname = tmpdir / (fname + ".vhdr")
-    with pytest.warns(UserWarning, match="Encountered unsupported " "non-voltage unit"):
+    with pytest.warns(UserWarning, match="Encountered unsupported non-voltage unit"):
         write_brainvision(
             data=data,
             sfreq=sfreq,
