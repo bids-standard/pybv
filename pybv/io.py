@@ -192,7 +192,7 @@ def write_brainvision(
 
     if not data.ndim == 2:
         raise ValueError(
-            "data must be 2D: shape (n_channels, n_times), " f"but found {data.ndim}"
+            f"data must be 2D: shape (n_channels, n_times), but found {data.ndim}"
         )
 
     if not isinstance(overwrite, bool):
@@ -312,7 +312,7 @@ def write_brainvision(
     for fname in (eeg_fname, vmrk_fname, vhdr_fname):
         if fname.exists() and not overwrite:
             raise OSError(
-                f"File already exists: {fname}.\n" f"Consider setting overwrite=True."
+                f"File already exists: {fname}.\nConsider setting overwrite=True."
             )
 
     # write output files, but delete everything if we come across an error
@@ -584,7 +584,7 @@ def _chk_fmt(fmt):
     if fmt not in SUPPORTED_FORMATS:
         errmsg = (
             f"Data format {fmt} not supported. Currently supported formats are: "
-            f'{", ".join(SUPPORTED_FORMATS)}'
+            f"{', '.join(SUPPORTED_FORMATS)}"
         )
         raise ValueError(errmsg)
     return SUPPORTED_FORMATS[fmt]
@@ -595,7 +595,7 @@ def _chk_multiplexed(orientation):
     if orientation not in SUPPORTED_ORIENTS:
         errmsg = (
             f"Orientation {orientation} not supported. Currently supported orientations"
-            f'are: {", ".join(SUPPORTED_ORIENTS)}'
+            f"are: {', '.join(SUPPORTED_ORIENTS)}"
         )
         raise ValueError(errmsg)
     return orientation == "multiplexed"
@@ -668,7 +668,7 @@ def _scale_data_to_unit(data, units):
 
     if len(voltage_units) > 0:
         msg = (
-            f'Encountered unsupported voltage units: {", ".join(voltage_units)}\n'
+            f"Encountered unsupported voltage units: {', '.join(voltage_units)}\n"
             "We will scale the data appropriately, but for maximum compatibility you "
             "should use µV for all channels."
         )
@@ -676,7 +676,7 @@ def _scale_data_to_unit(data, units):
 
     if len(non_voltage_units) > 0:
         msg = (
-            f'Encountered unsupported non-voltage units: {", ".join(non_voltage_units)}'
+            f"Encountered unsupported non-voltage units: {', '.join(non_voltage_units)}"
             "\nNote that the BrainVision format specification supports only µV."
         )
         warn(msg)
