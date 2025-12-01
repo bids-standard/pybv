@@ -40,8 +40,8 @@ docs = [
   "intersphinx_registry",
   "matplotlib",
   "numpydoc",
-  "sphinx",
   "sphinx-copybutton",
+  "sphinx<9",
 ]
 test = [
   "build",
