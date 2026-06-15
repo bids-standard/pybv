@@ -781,7 +781,9 @@ def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, units): 
 
     # invert the resolution so that we know how much to scale our data
     scaling_factor = 1 / resolution
-    data = data * np.atleast_2d(scaling_factor).T
+    # `data` is a fresh array returned by `_scale_data_to_unit` (the caller's input is
+    # never mutated), so we can scale it in place to avoid allocating another full copy
+    data *= np.atleast_2d(scaling_factor).T
 
     # convert the data to required format
     if not _check_data_in_range(data, dtype):
