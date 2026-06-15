@@ -644,8 +644,13 @@ def _write_vmrk_file(vmrk_fname, eeg_fname, events, meas_date):
                 iev += 1
 
 
-def _scale_data_to_unit(data, units):
-    """Scale `data` in Volts to `data` in `units`."""
+def _scale_data_to_unit(data, units, extra_scale=None):
+    """Scale `data` in Volts to `data` in `units`.
+
+    If `extra_scale` (a per-channel column vector, shape (n_channels, 1) or (1, 1)) is
+    provided, it is folded into the per-channel unit scaling so that the data array is
+    scaled by both factors in a single multiplication (saving one full-array copy).
+    """
     # only µV is supported by the BrainVision specs, but we support additional voltage
     # prefixes (e.g., V, mV, nV); if such voltage units are used, we issue a warning
     voltage_units = set()
@@ -680,6 +685,11 @@ def _scale_data_to_unit(data, units):
             "\nNote that the BrainVision format specification supports only µV."
         )
         warn(msg)
+
+    # fold an optional extra per-channel factor (e.g. the resolution scaling) into the
+    # tiny (n_channels, 1) scales vector so the large data array is scaled only once
+    if extra_scale is not None:
+        scales = scales * extra_scale
     return data * scales
 
 
@@ -776,12 +786,11 @@ def _write_bveeg_file(eeg_fname, data, orientation, format, resolution, units): 
     _chk_multiplexed(orientation)
     _, dtype = _chk_fmt(format)
 
-    # convert the data to the desired unit
-    data = _scale_data_to_unit(data, units)
-
-    # invert the resolution so that we know how much to scale our data
-    scaling_factor = 1 / resolution
-    data = data * np.atleast_2d(scaling_factor).T
+    # convert the data to the desired unit and scale by the (inverted) resolution in a
+    # single multiplication; both factors are per-channel, so folding them avoids
+    # allocating a second full-size copy of the data array
+    scaling_factor = np.atleast_2d(1 / resolution).T
+    data = _scale_data_to_unit(data, units, extra_scale=scaling_factor)
 
     # convert the data to required format
     if not _check_data_in_range(data, dtype):
