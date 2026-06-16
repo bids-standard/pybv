@@ -36,6 +36,7 @@ Here we list a changelog of pybv.
 Code health
 ~~~~~~~~~~~
 - Add support for Python 3.13 and drop support for Python 3.9, by `Clemens Brunner`_ (:gh:`128`)
+- Add support for Python 3.14, by `Stefan Appelhoff`_ (:gh:`145`)
 - Reduce peak memory usage of :func:`pybv.write_brainvision` by scaling the data to its unit and resolution in a single operation instead of allocating an extra copy, by `Stefan Appelhoff`_ (:gh:`144`)
 
 0.7.6 (2024-11-25)
