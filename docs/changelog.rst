@@ -30,7 +30,7 @@ Here we list a changelog of pybv.
    :local:
    :depth: 1
 
-0.8.0 (unreleased)
+0.8.1 (2026-06-16)
 ==================
 
 Code health
