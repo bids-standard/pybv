@@ -402,7 +402,7 @@ def _chk_events(events, ch_names, n_times):
                 "When array, events must have 2 or 3 columns, but got: "
                 f"{events.shape[1]}"
             )
-        if not all([np.issubdtype(i, np.integer) for i in events.flat]):
+        if not np.issubdtype(events.dtype, np.integer):
             raise ValueError(
                 "When array, all entries in events must be int, but found other types"
             )
